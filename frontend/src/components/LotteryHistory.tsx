@@ -11,22 +11,20 @@ function LotteryHistory() {
     getTX();
   }, []);
   return (
-    <div className="border border-gray-800 rounded-lg p-8 text-white">
-      <h1 className="text-2xl font-bold">Lottery History</h1>
-      <div className="text-[20px] mt-5">
+    <div className="p-[2px] rounded-lg bg-gradient-to-r from-[#b8b151] to-[#FF8E53]">
+      <div className="bg-[#0b0f19] rounded-lg p-5 text-white text-[20px] ">
+        <h1 className="text-2xl font-bold mb-4">Lottery History</h1>
+
         {transactions &&
-          transactions.map((item) => {
+          transactions.map((item, index) => {
             let { address, amount }: any = item;
             address =
               address.slice(0, 4) +
               "..." +
-              address.slice(address.length - 4, address.length - 1);
+              address.slice(address.length - 4, address.length);
 
             return (
-              <div
-                key={item}
-                className="text-white mt-3 text-neon-cyan text-sm"
-              >
+              <div key={index} className="mt-3 text-[#fbbf24] text-sm">
                 <span className="flex justify-between">
                   <h1>{address || null}</h1>
                   <h1>{amount} Dragon</h1>
