@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+:root {
+  /* Backgrounds */
+  --color-background: #0b0f19; /* dark navy/black background */
+  --color-card: #2b2e33; /* gunmetal gray */
+
+  /* Primary */
+  --dragon-red: #ff2c55;
+  --black-charcoal: #121212;
+  --neon-cyan: #00f0ff;
+
+  /* Secondary / Support */
+  --jet-silver: #b0bec5;
+  --deep-purple: #6c2bd9;
+
+  /* Feedback / States */
+  --success-green: #00e676;
+  --warning-orange: #ffa726;
+  --error-red: #ff1744;
+
+  /* Text Colors */
+  --color-text-main: var(--jet-silver);
+  --color-text-muted: #7a7f87;
+  --color-accent-pink: var(--dragon-red);
+  --color-accent-blue: var(--neon-cyan);
+  --color-accent-green: var(--success-green);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-main);
+}
+
+/* Background utilities */
+.bg-card {
+  background-color: var(--color-card);
+}
+
+.bg-dragon-red {
+  background-color: var(--dragon-red);
+}
+
+.bg-black-charcoal {
+  background-color: var(--black-charcoal);
+}
+
+.bg-neon-cyan {
+  background-color: var(--neon-cyan);
+}
+
+/* Text color utilities */
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.text-accent-pink {
+  color: var(--color-accent-pink);
+}
+
+.text-accent-blue,
+.text-neon-cyan {
+  /* neon cyan text */
+  color: var(--neon-cyan);
+}
+
+.text-accent-green {
+  color: var(--color-accent-green);
+}
+
+.text-success-green {
+  color: var(--success-green);
+}
+
+.text-warning-orange {
+  color: var(--warning-orange);
+}
+
+.text-error-red {
+  color: var(--error-red);
+}
