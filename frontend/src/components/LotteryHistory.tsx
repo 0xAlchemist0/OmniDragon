@@ -11,8 +11,8 @@ function LotteryHistory() {
     getTX();
   }, []);
   return (
-    <div className="p-[2px] rounded-lg bg-gradient-to-r from-[#b8b151] to-[#FF8E53]">
-      <div className="bg-[#0b0f19] rounded-lg p-5 text-white text-[20px] ">
+    <div className="p-[2px] rounded-lg bg-gradient-to-r  from-yellow-700 to-red-800">
+      <div className="bg-[#0f172afa] rounded-lg p-5 text-white text-[20px] ">
         <h1 className="text-2xl font-bold mb-4">Lottery History</h1>
 
         {transactions &&

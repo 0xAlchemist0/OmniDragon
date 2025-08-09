@@ -13,7 +13,7 @@ function PartnersCard() {
   }, []);
   return (
     <div className="p-[2px] rounded-lg border border-gray-800">
-      <div className="bg-[#0b0f19] rounded-lg p-8">
+      <div className="bg-[#0f172afa] rounded-lg p-8">
         <h1 className="text-2xl font-bold text-white">Partners</h1>
         <div className="mt-5 text-white text-xl">
           {partners &&

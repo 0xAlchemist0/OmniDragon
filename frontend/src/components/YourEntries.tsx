@@ -1,7 +1,7 @@
 function YourEntries() {
   return (
     <div className="p-[2px] rounded-lg border  border-gray-800">
-      <div className="bg-[#0b0f19] rounded-lg p-8">
+      <div className="bg-[#0f172afa] rounded-lg p-8">
         <h1 className="text-2xl text-white font-bold">Your Entries</h1>
         <div className="mt-5">
           <span className="flex justify-between text-xl">
@@ -13,7 +13,7 @@ function YourEntries() {
             <h1 className="text-[#fbbf24]">0</h1>
           </span>
           <div className="mt-8 flex justify-center">
-            <button className="border p-2 w-80 rounded-md bg-[#fbbf24] text-white font-bold border-[#fbbf24] hover:bg-[#fbbf24]/50 hover:border-[#fbbf24]/50 hover:text-[#fbbf24]/50">
+            <button className="border border-yellow-900 font-extrabold  rounded-xl p-2 w-70 bg-gradient-to-r from-yellow-500 to-red-500 text-white">
               Lock
             </button>
           </div>
