@@ -3,6 +3,7 @@ import "./App.css";
 import Layout from "./Layout";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
+import LockDex from "./pages/LockDex";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/" element={<Home />} />
+            <Route path="/lock" element={<LockDex />} />
           </Route>
         </Routes>
       </BrowserRouter>
