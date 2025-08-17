@@ -1,44 +1,84 @@
-import { FaArrowDown } from "react-icons/fa";
-
+import { Box, Tab, Tabs } from "@mui/material";
+import React, { useEffect } from "react";
+import ClaimLock from "../components/ClaimLock";
+import SwapComponent from "../components/SwapComponent";
+//0 lock, 1 claim
 function LockDex() {
-  return (
-    <div className="border bg-[#0f172afa] border-gray-600 rounded-lg w-md m-auto p-5">
-      <h1 className="font-bold text-3xl text">Lock</h1>
-      <h3 className="text-md mt-2 text-gray-400">
-        Locking DRAGON gives you veDRAGON, which lets you earn boosted rewards
-        from gauges, influence reward distribution through voting, and get
-        access to lotteries and partner incentives.
-      </h3>
+  const [value, setValue] = React.useState(0);
+  useEffect(() => {
+    console.log(value);
+  }, [value]);
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
 
-      <div className="mt-5">
-        <div className="border rounded-2xl p-4  grid grid-rows-3">
-          <div>
-            <h1 className="text-gray-600">From</h1>
-          </div>
-          <div>
-            <span className="flex justify-between">
-              <h1 className="text-4xl">0.00</h1>
-              <div className="border p-2 rounded-lg flex gap-3">
-                <h1>4xl</h1>
-                <h1>Dragon</h1>
-              </div>
-            </span>
-          </div>
-          <div className="flex justify-between mt-3">
-            <h1>$0.00</h1>
-            <h1>Balance: 0.00</h1>
-          </div>
-        </div>
-        <div className="flex justify-center p-3">
-          <FaArrowDown />
-        </div>
-        <div className="border rounded-md p-2 "></div>
+  return (
+    <div className="">
+      <div className="p-1 mb-3  w-md flex m-auto">
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+            sx={{
+              border: "1px solid gray", // border around all tabs
+              borderRadius: "8px",
+              minHeight: "40px",
+              "& .MuiTabs-flexContainer": {
+                display: "flex",
+              },
+              "& .MuiTabs-indicator": {
+                display: "none", // hide default underline indicator
+              },
+            }}
+          >
+            <Tab
+              label="Lock"
+              className=""
+              sx={{
+                flex: 1, // all tabs equal width
+                borderRight: "1px solid gray", // divider between tabs
+                textTransform: "none",
+                fontWeight: "bold",
+                minHeight: "40px",
+                color: "white",
+                "&.Mui-selected": {
+                  backgroundColor: "#0f172afa",
+                  color: "white",
+                },
+              }}
+            />
+            <Tab
+              label="Claim"
+              sx={{
+                flex: 1, // all tabs equal width
+                borderRight: "1px solid gray", // divider between tabs
+                textTransform: "none",
+                fontWeight: "bold",
+                minHeight: "40px",
+                color: "white",
+                "&.Mui-selected": {
+                  backgroundColor: "#0f172afa",
+                  color: "white",
+                },
+              }}
+            />
+          </Tabs>
+        </Box>
       </div>
-      <div className="mt-5 flex justify-center">
-        <button className="border border-yellow-900 font-extrabold  rounded-xl p-2 bg-yellow-600 text-white w-90">
-          Lock and Activate
-        </button>
-      </div>
+      {value == 0 ? (
+        <SwapComponent
+          description={
+            "Locking DRAGON gives you veDRAGON, which lets you earn boosted rewards from gauges, influence reward distribution through voting, and get access to lotteries and partner incentives."
+          }
+          manageLock={true}
+          chainLogo={
+            "https://theoregongroup.com/wp-content/uploads/2024/12/sonic-fantom-crypto.jpg"
+          }
+        />
+      ) : (
+        <ClaimLock />
+      )}
     </div>
   );
 }
