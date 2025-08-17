@@ -1,13 +1,19 @@
 import { Box, Tab, Tabs } from "@mui/material";
+import { useWallets } from "@privy-io/react-auth";
 import React, { useEffect } from "react";
 import ClaimLock from "../components/ClaimLock";
 import SwapComponent from "../components/SwapComponent";
 //0 lock, 1 claim
 function LockDex() {
-  const [value, setValue] = React.useState(0);
+  const { wallets } = useWallets();
   useEffect(() => {
-    console.log(value);
-  }, [value]);
+    const user = wallets[0];
+  }, [wallets]);
+
+  const [value, setValue] = React.useState(0);
+  // useEffect(() => {
+  //   console.log(value);
+  // }, [value]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
