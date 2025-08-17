@@ -1,6 +1,7 @@
 import { IoWalletOutline } from "react-icons/io5";
 
-function ClaimLock() {
+function ClaimLock({ balances }: any) {
+  const { dragon } = balances;
   return (
     <div>
       <div className="border bg-[#0f172afa] border-gray-600 rounded-lg w-md m-auto p-5">
@@ -18,7 +19,7 @@ function ClaimLock() {
           <h1>Amount</h1>
           <h1 className="text-sm text-gray-600 flex gap-2">
             <IoWalletOutline className="mt-0.5" />
-            0.0 Dragon
+            {dragon} Dragon
           </h1>
         </span>
         <div className="border mt-3 border-gray-600 rounded-md p-3 text-white ">

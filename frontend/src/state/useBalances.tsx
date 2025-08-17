@@ -1,25 +1,40 @@
+import { useWallets } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import balanceOf from "../lib/contract-reads";
-import { dragonABI } from "../utils/abi/dragonABI";
-import contactBook from "../utils/contract-book";
+import { omniDRAGONAbi } from "../utils/abi/omniDRAGONAbi";
+import contracts from "../utils/contracts";
 function useBalances(address?: any) {
-  const [balances, setBalances] = useState(null);
-  const { dragon }: any = contactBook;
+  const { wallets } = useWallets();
+  const [balances, setBalances] = useState({});
+  const { omniDRAGON }: any = contracts["Tokens"];
 
   useEffect(() => {
-    getBalances();
-  }, [address]);
+    const user: any = wallets[0];
+    if (user) {
+      getBalances(user.address);
+    }
+  }, [wallets]);
 
-  async function getBalances() {
-    await getDragonBalnce();
+  async function getBalances(userAddress: any) {
+    const dragon: any = await getDragonBalnce(userAddress);
+    setBalances({
+      dragon: dragon,
+    });
   }
 
   async function getveDragonBalance() {}
-  async function getDragonBalnce() {
-    const dragonBalance = await balanceOf(dragon, address, dragonABI);
+  async function getDragonBalnce(userAddress: any) {
+    console.log(userAddress);
+    const dragonBalance: any = await balanceOf(
+      omniDRAGON,
+      userAddress,
+      omniDRAGONAbi
+    );
+    return dragonBalance;
   }
 
   async function getMainnetBalance() {}
+  return balances;
 }
 
 export default useBalances;

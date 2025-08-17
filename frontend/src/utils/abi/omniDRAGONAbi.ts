@@ -1,4 +1,4 @@
-export const dragonABI = [
+export const omniDRAGONAbi = [
   {
     inputs: [
       { internalType: "string", name: "_name", type: "string" },

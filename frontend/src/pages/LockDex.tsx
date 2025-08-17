@@ -1,14 +1,14 @@
 import { Box, Tab, Tabs } from "@mui/material";
 import { useWallets } from "@privy-io/react-auth";
-import React, { useEffect } from "react";
+import React from "react";
 import ClaimLock from "../components/ClaimLock";
 import SwapComponent from "../components/SwapComponent";
+import useBalances from "../state/useBalances";
 //0 lock, 1 claim
 function LockDex() {
   const { wallets } = useWallets();
-  useEffect(() => {
-    const user = wallets[0];
-  }, [wallets]);
+
+  const balances = useBalances();
 
   const [value, setValue] = React.useState(0);
   // useEffect(() => {
@@ -81,9 +81,10 @@ function LockDex() {
           chainLogo={
             "https://theoregongroup.com/wp-content/uploads/2024/12/sonic-fantom-crypto.jpg"
           }
+          balances={balances}
         />
       ) : (
-        <ClaimLock />
+        <ClaimLock balances={balances} />
       )}
     </div>
   );

@@ -1,6 +1,7 @@
 import { Box, Slider } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import { styled } from "@mui/material/styles";
+import React, { useEffect, useState } from "react";
 import { IoWalletOutline } from "react-icons/io5";
 
 const SmallAvatar = styled(Avatar)(({ theme }) => ({
@@ -10,7 +11,10 @@ const SmallAvatar = styled(Avatar)(({ theme }) => ({
   borderRadius: 5,
 }));
 
-function SwapComponent({ description, manageLock, chainLogo }: any) {
+function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
+  const [duration, setDuration] = React.useState(7);
+  const [votingPower, setVotingPower] = useState(0);
+  const { dragon } = balances;
   //     {
   //   title,
   //   description,
@@ -18,51 +22,43 @@ function SwapComponent({ description, manageLock, chainLogo }: any) {
   //   mainBtnAction,
   // }: any
 
+  useEffect(() => {}, [duration]);
+
   function TimeSlider() {
     const marks = [
-      {
-        value: 7,
-        label: "7 days",
-      },
-      {
-        value: 14,
-        label: "3 months",
-      },
-      {
-        value: 30,
-        label: "6 months",
-      },
-      {
-        value: 60,
-        label: "1 year",
-      },
+      { value: 7, label: "7 days" },
+      { value: 90, label: "3 months" },
+      { value: 180, label: "6 months" },
+      { value: 270, label: "9 months" },
 
-      {
-        value: 365,
-        label: "1 yer",
-      },
+      { value: 365, label: "1 year" },
     ];
+    const handleChange = (_: Event, newValue: number | number[]) => {
+      console.log(newValue);
+      setDuration(newValue as number);
+    };
 
-    function valuetext(value: number) {
-      return `${value}`;
-    }
     return (
       <Box sx={{ width: "90%", color: "white" }}>
         <Slider
-          aria-label="Restricted values"
+          aria-label="Lock duration"
           defaultValue={7}
-          getAriaValueText={valuetext}
+          value={duration}
+          onChange={handleChange}
           step={null}
-          valueLabelDisplay="auto"
           marks={marks}
+          min={7}
+          max={365}
+          valueLabelDisplay="off"
           sx={{
             "& .MuiSlider-markLabel": {
-              //   color: "white",
-              fontSize: "10px", // smaller so they fit
+              fontSize: "10px",
               whiteSpace: "nowrap",
+              display: "block",
+              color: "white",
             },
-            "& .MuiSlider-markLabel[data-index]": {
-              display: "block !important", // force all labels
+            "& .MuiSlider-mark": {
+              display: "block",
             },
           }}
         />
@@ -75,7 +71,7 @@ function SwapComponent({ description, manageLock, chainLogo }: any) {
       <div className="grid grid-rows-1 gap-3">
         <div className="border rounded-md text-right bg-gray-800 border-gray-600 text-white">
           <span className="grid grid-rows-1 p-5">
-            <h1 className="text-lg">4 Years</h1>
+            <h1 className="text-lg">{duration} Years</h1>
             <h1 className="text-xs">New Lock Time</h1>
           </span>
         </div>
@@ -102,7 +98,7 @@ function SwapComponent({ description, manageLock, chainLogo }: any) {
           <h1>Amount</h1>
           <h1 className="text-sm text-gray-600 flex gap-2">
             <IoWalletOutline className="mt-0.5" />
-            0.0 Dragon
+            {dragon} Dragon
           </h1>
         </span>
         <div className="border mt-3 border-gray-600 rounded-md p-3 text-white ">
