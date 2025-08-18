@@ -4,7 +4,7 @@ import { styled } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import { IoWalletOutline } from "react-icons/io5";
 import { calculateVotingPower } from "../lib/contract-reads";
-import { lock } from "../lib/contract-writes";
+import { Write } from "../lib/contract-writes";
 import { dateToTimestamp } from "../utils/conversionHandler";
 
 const SmallAvatar = styled(Avatar)(({ theme }) => ({
@@ -50,11 +50,8 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
 
   async function excecuteLock() {
     const convertedDuration = dateToTimestamp(duration);
-    console.log([lockAmount, convertedDuration]);
-    const result = await lock(balances.signer, [
-      String(lockAmount),
-      String(convertedDuration),
-    ]);
+    const txClient = new Write(balances.provider, balances.account);
+    const response = await txClient.lock(lockAmount, duration);
   }
 
   function handleAmountChange(event: any) {

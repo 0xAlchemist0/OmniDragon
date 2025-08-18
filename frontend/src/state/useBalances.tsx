@@ -17,12 +17,17 @@ function useBalances(address?: any) {
     }
   }, [wallets]);
 
+  // const provider = await wallets[0]?.getEthereumProvider();
+  //   const account = await provider.request({ method: "eth_requestAccounts" });
+
   async function getBalances(userAddress: any) {
-    const signer = wallets[0].address;
+    const provider = await wallets[0]?.getEthereumProvider();
+    const account = await provider.request({ method: "eth_requestAccounts" });
     const dragon: any = await getDragonBalnce(userAddress);
     setBalances({
       dragon: dragon,
-      signer,
+      provider,
+      account: wallets[0],
     });
   }
 
