@@ -3,6 +3,9 @@ import Avatar from "@mui/material/Avatar";
 import { styled } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import { IoWalletOutline } from "react-icons/io5";
+import { calculateVotingPower } from "../lib/contract-reads";
+import { lock } from "../lib/contract-writes";
+import { dateToTimestamp } from "../utils/conversionHandler";
 
 const SmallAvatar = styled(Avatar)(({ theme }) => ({
   width: 15,
@@ -13,7 +16,8 @@ const SmallAvatar = styled(Avatar)(({ theme }) => ({
 
 function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
   const [duration, setDuration] = React.useState(7);
-  const [votingPower, setVotingPower] = useState(0);
+  const [votingPower, setVotingPower] = useState(null);
+  const [lockAmount, setLockAmount] = useState(0);
   const { dragon } = balances;
   //     {
   //   title,
@@ -22,7 +26,41 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
   //   mainBtnAction,
   // }: any
 
-  useEffect(() => {}, [duration]);
+  useEffect(() => {
+    getVotingPower();
+  }, [lockAmount, duration]);
+
+  async function getVotingPower() {
+    const convertedDuration = dateToTimestamp(duration);
+    console.log(convertedDuration);
+    console.log(lockAmount);
+    if (lockAmount > 0) {
+      console.log("doing");
+      const power = await calculateVotingPower(
+        String(lockAmount),
+        String(convertedDuration)
+      );
+      setVotingPower({
+        power: power,
+        timestamp: convertedDuration,
+        amount: lockAmount,
+      });
+    }
+  }
+
+  async function excecuteLock() {
+    const convertedDuration = dateToTimestamp(duration);
+    console.log([lockAmount, convertedDuration]);
+    const result = await lock(balances.signer, [
+      String(lockAmount),
+      String(convertedDuration),
+    ]);
+  }
+
+  function handleAmountChange(event: any) {
+    console.log("amount:", event.target.value);
+    setLockAmount(event.target.value);
+  }
 
   function TimeSlider() {
     const marks = [
@@ -77,7 +115,9 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
         </div>
         <div className="border rounded-md text-right bg-gray-800 border-gray-600 text-white">
           <span className="grid grid-rows-1 p-5">
-            <h1 className="text-lg">0.00 VeDragon</h1>
+            <h1 className="text-lg">
+              {votingPower ? votingPower.power : 0.0} VeDragon
+            </h1>
             <h1 className="text-xs">New estimated voting power</h1>
           </span>
         </div>
@@ -111,10 +151,16 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
               />
               <h1 className="text-xs mt-1">Dragon</h1>
             </span>
-            <span className="grid grid-rows-1 text-gray-600">
-              <h1 className="text-2xl text-right">0</h1>
-              <h1 className="text-xs">~$0.00</h1>
-            </span>
+            <div className="grid grid-rows-1 text-gray-600">
+              <input
+                type="number"
+                className="text-2xl text-right w-70 outline-0 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-moz-appearance:textfield]"
+                defaultValue={0}
+                onChange={handleAmountChange}
+              />
+
+              <h1 className="text-xs text-right">~$0.00</h1>
+            </div>
           </span>
         </div>
         <div className="flex justify-center mt-4">
@@ -127,7 +173,12 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
           <button className="border p-2.5 rounded-lg w-50 border-gray-600 bg-gray-700">
             Cancel
           </button>
-          <button className="border p-2.5 rounded-lg w-50 border-gray-600 bg-amber-600">
+          <button
+            className="border p-2.5 rounded-lg w-50 border-gray-600 bg-amber-600"
+            onClick={() => {
+              excecuteLock();
+            }}
+          >
             Create Lock
           </button>
         </div>

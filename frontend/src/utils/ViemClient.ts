@@ -1,9 +1,12 @@
-import { createPublicClient, http } from "viem";
+import { createPublicClient, createWalletClient, http } from "viem";
 import { sonic } from "viem/chains";
 
-const viemClient = createPublicClient({
+export const viemClient = createPublicClient({
   chain: sonic,
   transport: http(),
 });
 
-export default viemClient;
+export const walletClient = createWalletClient({
+  chain: sonic,
+  transport: http(),
+});

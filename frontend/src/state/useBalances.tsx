@@ -1,24 +1,28 @@
-import { useWallets } from "@privy-io/react-auth";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import balanceOf from "../lib/contract-reads";
 import { omniDRAGONAbi } from "../utils/abi/omniDRAGONAbi";
 import contracts from "../utils/contracts";
 function useBalances(address?: any) {
   const { wallets } = useWallets();
+  const { user } = usePrivy();
   const [balances, setBalances] = useState({});
   const { omniDRAGON }: any = contracts["Tokens"];
 
   useEffect(() => {
     const user: any = wallets[0];
+
     if (user) {
       getBalances(user.address);
     }
   }, [wallets]);
 
   async function getBalances(userAddress: any) {
+    const signer = wallets[0].address;
     const dragon: any = await getDragonBalnce(userAddress);
     setBalances({
       dragon: dragon,
+      signer,
     });
   }
 

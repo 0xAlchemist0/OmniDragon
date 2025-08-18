@@ -1,5 +1,5 @@
 import { formatUnits } from "viem";
-import viemClient from "../utils/ViemClient";
+import { viemClient } from "../utils/ViemClient";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
 
@@ -25,7 +25,7 @@ export default async function balanceOf(
   }
 }
 
-async function calculateVotingPower(amount: string, duration: string) {
+export async function calculateVotingPower(amount: any, duration: any) {
   try {
     const data: any = await viemClient.readContract({
       address: contracts.Tokens.veDRAGON,

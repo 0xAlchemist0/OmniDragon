@@ -6,7 +6,7 @@ const contracts: any = {
   Tokens: {
     omniDRAGON: "0x69dc1c36f8b26db3471acf0a6469d815e9a27777",
     redDRAGON: "0x69320eb5b9161a34cb9cdd163419f826691a1777",
-    veDRAGON: "0x69f9d14a337823fad783d21f3669e29088e45777",
+    veDRAGON: "0x69492C71d7A3caf0277E238D9D4305c6af930777",
   },
   Pool: {
     UniswapV2LP: "0x33503bc86f2808151a6e083e67d7d97a66dfec11",
