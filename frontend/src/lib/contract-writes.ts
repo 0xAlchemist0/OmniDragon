@@ -40,6 +40,31 @@ export class Write {
       transport: custom(provider),
     });
   }
+  // /approve before calling functions
+  public async approveTokens(
+    spender: any,
+    amount: any,
+    allower: any,
+    allowerAbi: any
+  ) {
+    const response = await this.submitTransaction({
+      address: allower,
+      abi: allowerAbi,
+      functionName: "apporve",
+      args: [spender, amount],
+    });
+
+    return response;
+  }
+
+  //updaters used in use effect hooks
+
+  public async updateUserInfo(newProvider: any, newWallet: any) {
+    this.wallet = newWallet;
+    this.initializeWalletClient(newProvider);
+  }
+
+  public async switchChaim() {}
 
   public async lock(amount: any, duration: any) {
     const response = await this.submitTransaction({

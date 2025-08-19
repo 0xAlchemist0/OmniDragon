@@ -1,3 +1,5 @@
+import { useWallets } from "@privy-io/react-auth";
+import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Layout from "./Layout";
@@ -6,6 +8,11 @@ import Home from "./pages/Home";
 import LockDex from "./pages/LockDex";
 
 function App() {
+  const { wallets } = useWallets();
+  const [rInstance, setRInstance] = React.useState(null);
+  const [wInstance, setWInstance] = React.useState(null);
+
+  useEffect(() => {}, []);
   return (
     <>
       <BrowserRouter>

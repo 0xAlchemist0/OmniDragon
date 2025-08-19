@@ -40,3 +40,41 @@ export async function calculateVotingPower(amount: any, duration: any) {
     return 0;
   }
 }
+
+
+/class makes things easier
+export class Read {
+  public wallet: any;
+  public Constructor(user: any) {
+    this.wallet = user;
+  }
+
+  //updaters used in use effect hooks
+
+  public updateWallet(newWallet: any) {
+    this.wallet - newWallet;
+  }
+
+  public async calculateVotingPower(amount: any, duration: any) {
+    const votingPower = await viemClient.readContract({
+      address: contracts.Tokens.veDRAGON,
+      abi: veDRAGONAbi,
+      functionName: "calculateVotingPower",
+      args: [amount, duration],
+    });
+
+    return votingPower;
+  }
+
+  public async balanceOf(allower: any, spender: any, amount: any, abi: any) {
+    const balance: any = await viemClient.readContract({
+      address: allower,
+      account: this.wallet,
+      abi,
+      functionName: "balanceOf",
+      args: [spender, amount],
+    });
+    const decimals = 10;
+    return formatUnits(balance, decimals);
+  }
+}
