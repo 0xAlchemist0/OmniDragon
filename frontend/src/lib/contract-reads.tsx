@@ -1,52 +1,19 @@
-import { formatUnits } from "viem";
+import { createPublicClient, formatUnits, http } from "viem";
 import { viemClient } from "../utils/ViemClient";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
+import { findChain } from "./chainFinder";
 //check approval before tx in read
-export default async function balanceOf(
-  tokenAddress: any,
-  userAddress: any,
-  abi: any
-) {
-  try {
-    const data: any = await viemClient.readContract({
-      address: tokenAddress,
-      account: userAddress,
-      abi,
-      functionName: "balanceOf",
-      args: [userAddress],
-    });
-    const decimals = 18;
-
-    return formatUnits(data, decimals);
-  } catch (error) {
-    console.log("Error", error);
-    return 0;
-  }
-}
-
-export async function calculateVotingPower(amount: any, duration: any) {
-  try {
-    const data: any = await viemClient.readContract({
-      address: contracts.Tokens.veDRAGON,
-      abi: veDRAGONAbi,
-      functionName: "calculateVotingPower",
-      args: [amount, duration],
-    });
-    console.log("Voting Power:", data);
-    return data;
-  } catch (error) {
-    console.log(error);
-    return 0;
-  }
-}
-
 
 //class makes things easier
 export class Read {
   public wallet: any;
-  public Constructor(user: any) {
+  public viemClient: any;
+  public currChainId: any;
+
+  public constructor(user: any, chainId: any) {
     this.wallet = user;
+    this.currChainId = chainId;
   }
 
   //updaters used in use effect hooks
@@ -54,19 +21,43 @@ export class Read {
   public updateWallet(newWallet: any) {
     this.wallet - newWallet;
   }
-  
+
+  public async intializeClient() {
+    this.viemClient = createPublicClient({
+      chain: this.currChainId,
+      transport: http(),
+    });
+  }
+
+  public async updateChain(chainId: any) {
+    const newChain: any = findChain(chainId);
+
+    if (newChain) {
+      this.viemClient = createPublicClient({
+        chain: newChain,
+        transport: http(),
+      });
+    }
+  }
+
   //Approvsl before tx
-  
-  public async isApproved(owner:string,spender:string, allowerAbi:any, amountToTransact:string ){
-  const currentAllowance = await vienClient.readContract({
-  address: spender,
-  abi: spemderAbi
-  functionName: "allowance",
-  args: [owner, spender],
-  });
-  
-   currentAllowance >=  amountToTransact ? return true: return false;
-  
+  //always check this to make sure u can spend tokens
+  public async isApproved(
+    owner: any,
+    spender: any,
+    allowerAbi: any,
+    amountToTransact: string
+  ) {
+    const currentAllowance: any = await viemClient.readContract({
+      address: spender,
+      abi: allowerAbi,
+      functionName: "allowance",
+      args: [owner, spender],
+    });
+
+    const isApproved = currentAllowance >= amountToTransact ? true : false;
+
+    return isApproved;
   }
 
   public async calculateVotingPower(amount: any, duration: any) {

@@ -1,47 +1,30 @@
-// export async function lock(signer: any, params: any) {
-//   console.log("igner: ", signer);
-//   await walletClient.writeContract({
-//     address: contracts.veDRAGON,
-//     account: signer,
-//     abi: veDRAGONAbi,
-//     functionName: "lock",
-//     args: params,
-//   });
-//   return 0;
-// }
-
 import { createWalletClient, custom } from "viem";
-import { sonic } from "viem/chains";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
-
-// export async initializeClient(chain){
-//       this.walletClient = createWalletClient({
-//       account: this._wallet,
-//       chain: sonic,
-//       transport: custom(provider),
-//     });
-// }
+import { findChain } from "./chainFinder";
+import { Read } from "./contract-reads";
 
 export class Write {
   public walletClient: any = null;
   public wallet: any = null;
   public account = null;
-  public readInstance : any = null;
+  public readInstance: any = null;
+  public currChain: any;
 
-  public constructor(provider: any, account: any) {
+  //initialize each instance with the current chain
+  public constructor(provider: any, account: any, chainId: any) {
     this.wallet = account;
+    this.currChain = findChain(chainId);
     this.initializeWalletClient(provider);
   }
 
   public async initializeWalletClient(provider: any) {
     this.walletClient = createWalletClient({
       account: this.wallet,
-      chain: sonic,
+      chain: this.currChain,
       transport: custom(provider),
     });
   }
-  
 
   // /approve before calling functions
   //call approval to all check if user is approved brfore
@@ -51,11 +34,12 @@ export class Write {
     allower: any,
     allowerAbi: any
   ) {
+    const isApproved = await 
     const response = await this.submitTransaction({
       address: allower,
       abi: allowerAbi,
       functionName: "apporve",
-      args: [spender, amount],
+      args: [spender, "1000000000000"],
     });
 
     return response;
@@ -68,14 +52,16 @@ export class Write {
     this.initializeWalletClient(newProvider);
   }
 
-  public async switchChaim(newChain: any) {}
-  
-  public async getRead(){
-  return new Read(this.account);
+  public async updateChain(newChain: any) {
+    this.walletClient.switchChaim(newChain);
   }
-  
-  public async switchChain(chainId: any){
-  this.walletClient.switchChain(chainId) 
+
+  public async getRead() {
+    this.readInstance = new Read(this.account , this.currChain.id);
+  }
+
+  public async switchChain(chainId: any) {
+    this.walletClient.switchChain(chainId);
   }
 
   public async lock(amount: any, duration: any) {
@@ -98,8 +84,7 @@ export class Write {
     const resposne: any = this.txResponse(Boolean(txHash), txHash);
     return resposne;
   }
-  
-  
+
   public txResponse(txSuccess: boolean, txHash: any = null) {
     if (txSuccess) {
       return {
