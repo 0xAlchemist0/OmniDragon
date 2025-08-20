@@ -2,7 +2,7 @@ import { formatUnits } from "viem";
 import { viemClient } from "../utils/ViemClient";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
-
+//check approval before tx in read
 export default async function balanceOf(
   tokenAddress: any,
   userAddress: any,
@@ -42,7 +42,7 @@ export async function calculateVotingPower(amount: any, duration: any) {
 }
 
 
-/class makes things easier
+//class makes things easier
 export class Read {
   public wallet: any;
   public Constructor(user: any) {
@@ -53,6 +53,20 @@ export class Read {
 
   public updateWallet(newWallet: any) {
     this.wallet - newWallet;
+  }
+  
+  //Approvsl before tx
+  
+  public async isApproved(owner:string,spender:string, allowerAbi:any, amountToTransact:string ){
+  const currentAllowance = await vienClient.readContract({
+  address: spender,
+  abi: spemderAbi
+  functionName: "allowance",
+  args: [owner, spender],
+  });
+  
+   currentAllowance >=  amountToTransact ? return true: return false;
+  
   }
 
   public async calculateVotingPower(amount: any, duration: any) {

@@ -27,6 +27,7 @@ export class Write {
   public walletClient: any = null;
   public wallet: any = null;
   public account = null;
+  public readInstance : any = null;
 
   public constructor(provider: any, account: any) {
     this.wallet = account;
@@ -40,7 +41,10 @@ export class Write {
       transport: custom(provider),
     });
   }
+  
+
   // /approve before calling functions
+  //call approval to all check if user is approved brfore
   public async approveTokens(
     spender: any,
     amount: any,
@@ -64,7 +68,15 @@ export class Write {
     this.initializeWalletClient(newProvider);
   }
 
-  public async switchChaim() {}
+  public async switchChaim(newChain: any) {}
+  
+  public async getRead(){
+  return new Read(this.account);
+  }
+  
+  public async switchChain(chainId: any){
+  this.walletClient.switchChain(chainId) 
+  }
 
   public async lock(amount: any, duration: any) {
     const response = await this.submitTransaction({
@@ -86,6 +98,8 @@ export class Write {
     const resposne: any = this.txResponse(Boolean(txHash), txHash);
     return resposne;
   }
+  
+  
   public txResponse(txSuccess: boolean, txHash: any = null) {
     if (txSuccess) {
       return {
