@@ -3,8 +3,6 @@ import Avatar from "@mui/material/Avatar";
 import { styled } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import { IoWalletOutline } from "react-icons/io5";
-import { calculateVotingPower } from "../lib/contract-reads";
-import { Write } from "../lib/contract-writes";
 import { dateToTimestamp } from "../utils/conversionHandler";
 
 const SmallAvatar = styled(Avatar)(({ theme }) => ({
@@ -36,22 +34,13 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
     console.log(lockAmount);
     if (lockAmount > 0) {
       console.log("doing");
-      const power = await calculateVotingPower(
-        String(lockAmount),
-        String(convertedDuration)
-      );
-      setVotingPower({
-        power: power,
-        timestamp: convertedDuration,
-        amount: lockAmount,
-      });
+
+      //voting power goes here
     }
   }
 
   async function excecuteLock() {
-    const convertedDuration = dateToTimestamp(duration);
-    const txClient = new Write(balances.provider, balances.account);
-    const response = await txClient.lock(lockAmount, duration);
+    //tx exec goes here
   }
 
   function handleAmountChange(event: any) {
@@ -112,9 +101,7 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
         </div>
         <div className="border rounded-md text-right bg-gray-800 border-gray-600 text-white">
           <span className="grid grid-rows-1 p-5">
-            <h1 className="text-lg">
-              {votingPower ? votingPower.power : 0.0} VeDragon
-            </h1>
+            <h1 className="text-lg">{0.0} VeDragon</h1>
             <h1 className="text-xs">New estimated voting power</h1>
           </span>
         </div>

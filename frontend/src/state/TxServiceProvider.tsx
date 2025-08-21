@@ -1,14 +1,13 @@
 import React, { useEffect } from "react";
 import { Read } from "../lib/contract-reads";
 import { Write } from "../lib/contract-writes";
+const TxServiceContext: any = React.createContext(null);
 
 function TxServiceProvider({ children, userInfo }: any) {
-  const TxServiceContext: any = React.createContext(null);
-
   const { account, provider } = userInfo;
 
   const txServices = {
-    reader: new Read(),
+    reader: new Read(userInfo.account, userInfo.chainid),
     writer: new Write(provider, account, "146"),
   };
 

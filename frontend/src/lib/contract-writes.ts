@@ -25,24 +25,40 @@ export class Write {
       transport: custom(provider),
     });
   }
+  public async updateChain(newChain: any) {
+    this.walletClient.switchChaim(newChain);
+  }
+
+  public async getRead() {
+    this.readInstance = new Read(this.account, this.currChain.id);
+  }
 
   // /approve before calling functions
   //call approval to all check if user is approved brfore
+
   public async approveTokens(
     spender: any,
     amount: any,
     allower: any,
     allowerAbi: any
   ) {
-    const isApproved = await 
-    const response = await this.submitTransaction({
-      address: allower,
-      abi: allowerAbi,
-      functionName: "apporve",
-      args: [spender, "1000000000000"],
-    });
+    const isApproved = await this.readInstance.isApproved(
+      this.account,
+      spender,
+      allowerAbi,
+      amount
+    );
+    if (isApproved) {
+      const response = await this.submitTransaction({
+        address: allower,
+        abi: allowerAbi,
+        functionName: "apporve",
+        args: [spender, "1000000000000"],
+      });
 
-    return response;
+      return response;
+    }
+    return false;
   }
 
   //updaters used in use effect hooks
@@ -50,18 +66,6 @@ export class Write {
   public async updateUserInfo(newProvider: any, newWallet: any) {
     this.wallet = newWallet;
     this.initializeWalletClient(newProvider);
-  }
-
-  public async updateChain(newChain: any) {
-    this.walletClient.switchChaim(newChain);
-  }
-
-  public async getRead() {
-    this.readInstance = new Read(this.account , this.currChain.id);
-  }
-
-  public async switchChain(chainId: any) {
-    this.walletClient.switchChain(chainId);
   }
 
   public async lock(amount: any, duration: any) {
