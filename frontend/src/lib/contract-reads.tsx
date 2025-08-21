@@ -11,10 +11,10 @@ export class Read {
   public viemClient: any;
   public chainConfig: any;
 
-  public constructor(user: any, chainId: any) {
+  public constructor(user: any, chain: any) {
     this.wallet = user;
-    const chainConfig = findChain(chainId);
-    this.chainConfig = chainConfig;
+    this.chainConfig = chain;
+    this.intializeClient();
   }
 
   //updaters used in use effect hooks

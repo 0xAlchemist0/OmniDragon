@@ -25,11 +25,14 @@ function useBalances(address?: any) {
     const chain = wallets[0].chainId;
     const chainId = chain.slice(chain.indexOf(":") + 1, chain.length);
     const chainConfig = findChain(chainId);
+    console.log(provider);
+    console.log(chainConfig);
     setBalances({
       dragon: dragon, //dragon balance
       provider, //use tosign all txs from connected wallet
       account, //wallet addy
       chain: chainConfig, //chain config to initialize cleints
+      chainId: chainId,
     });
   }
 

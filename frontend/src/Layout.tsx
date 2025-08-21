@@ -7,18 +7,23 @@ import useBalances from "./state/useBalances";
 
 function Layout() {
   const { wallets } = useWallets();
-  const [balances, setBalances] = useState({});
+  const [userInfo, setuserInfo] = useState({});
 
   useEffect(() => {
     if (wallets) {
       const res = useBalances(wallets[0].address);
-      if (res) setBalances(res);
+      const { account, provider }: any = res;
+      if (res)
+        setuserInfo({
+          account,
+          provider,
+        });
     }
   }, [wallets]);
 
   //fix bug here when using the provider check bugs remmebr we dont pass in the real objects we need to pass
   return (
-    <TxServiceProvider userInfo={balances}>
+    <TxServiceProvider userInfo={userInfo}>
       <div className="text-accent-pink">
         <NavigatorTab />
         <Outlet />

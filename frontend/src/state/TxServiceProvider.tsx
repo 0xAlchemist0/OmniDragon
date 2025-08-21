@@ -7,8 +7,8 @@ function TxServiceProvider({ children, userInfo }: any) {
   const { account, provider } = userInfo;
 
   const txServices = {
-    reader: new Read(userInfo.account, userInfo.chainid),
-    writer: new Write(provider, account, "146"),
+    reader: new Read(userInfo.account, userInfo.chainConfig),
+    writer: new Write(provider, account, userInfo.chainConfig),
   };
 
   useEffect(() => {

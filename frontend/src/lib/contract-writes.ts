@@ -1,7 +1,6 @@
 import { createWalletClient, custom } from "viem";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
-import { findChain } from "./chainFinder";
 import { Read } from "./contract-reads";
 
 export class Write {
@@ -10,19 +9,20 @@ export class Write {
   public account = null;
   public readInstance: any = null;
   public currChain: any;
-
+  public provider: any;
   //initialize each instance with the current chain
-  public constructor(provider: any, account: any, chainId: any) {
+  public constructor(provider: any, account: any, chain: any) {
     this.wallet = account;
-    this.currChain = findChain(chainId);
-    this.initializeWalletClient(provider);
+    this.currChain = chain;
+    this.provider = provider;
+    this.initializeWalletClient();
   }
 
-  public async initializeWalletClient(provider: any) {
+  public async initializeWalletClient() {
     this.walletClient = createWalletClient({
       account: this.wallet,
       chain: this.currChain,
-      transport: custom(provider),
+      transport: custom(this.provider),
     });
   }
   public async updateChain(newChain: any) {
