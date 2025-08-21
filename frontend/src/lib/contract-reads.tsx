@@ -9,11 +9,12 @@ import { findChain } from "./chainFinder";
 export class Read {
   public wallet: any;
   public viemClient: any;
-  public currChainId: any;
+  public chainConfig: any;
 
   public constructor(user: any, chainId: any) {
     this.wallet = user;
-    this.currChainId = chainId;
+    const chainConfig = findChain(chainId);
+    this.chainConfig = chainConfig;
   }
 
   //updaters used in use effect hooks
@@ -24,19 +25,18 @@ export class Read {
 
   public async intializeClient() {
     this.viemClient = createPublicClient({
-      chain: this.currChainId,
+      chain: this.chainConfig,
       transport: http(),
     });
   }
 
+  //updates automatically pass chain id boom goes the function
   public async updateChain(chainId: any) {
     const newChain: any = findChain(chainId);
 
     if (newChain) {
-      this.viemClient = createPublicClient({
-        chain: newChain,
-        transport: http(),
-      });
+      this.chainConfig = newChain;
+      this.intializeClient();
     }
   }
 

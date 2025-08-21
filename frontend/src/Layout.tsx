@@ -1,11 +1,24 @@
+import { useWallets } from "@privy-io/react-auth";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import NavigatorTab from "./components/NavigatorTab";
 import TxServiceProvider from "./state/TxServiceProvider";
+import useBalances from "./state/useBalances";
 
 function Layout() {
+  const { wallets } = useWallets();
+  const [balances, setBalances] = useState({});
+
+  useEffect(() => {
+    if (wallets) {
+      const res = useBalances(wallets[0].address);
+      if (res) setBalances(res);
+    }
+  }, [wallets]);
+
   //fix bug here when using the provider check bugs remmebr we dont pass in the real objects we need to pass
   return (
-    <TxServiceProvider userInfo={{ account: "0x123", chainId: "146" }}>
+    <TxServiceProvider userInfo={balances}>
       <div className="text-accent-pink">
         <NavigatorTab />
         <Outlet />

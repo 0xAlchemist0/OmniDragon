@@ -1,5 +1,6 @@
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
+import { findChain } from "../lib/chainFinder";
 import contracts from "../utils/contracts";
 function useBalances(address?: any) {
   const { wallets } = useWallets();
@@ -19,19 +20,21 @@ function useBalances(address?: any) {
 
   async function getBalances(userAddress: any) {
     const provider = await wallets[0]?.getEthereumProvider();
-    const account = await provider.request({ method: "eth_requestAccounts" });
+    const account = wallets[0]?.address;
     const dragon: any = await getDragonBalnce(userAddress);
     const chain = wallets[0].chainId;
     const chainId = chain.slice(chain.indexOf(":") + 1, chain.length);
+    const chainConfig = findChain(chainId);
     setBalances({
-      dragon: dragon,
-      provider,
-      account: wallets[0],
-      chainId,
+      dragon: dragon, //dragon balance
+      provider, //use tosign all txs from connected wallet
+      account, //wallet addy
+      chain: chainConfig, //chain config to initialize cleints
     });
   }
 
   async function getveDragonBalance() {}
+
   async function getDragonBalnce(userAddress: any) {
     console.log(userAddress);
   }
