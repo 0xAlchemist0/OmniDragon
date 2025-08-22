@@ -9,11 +9,13 @@ import { findChain } from "./chainFinder";
 export class Read {
   public wallet: any;
   public viemClient: any;
+  public provider: any;
   public chainConfig: any;
 
-  public constructor(user: any, chain: any) {
+  public constructor(user: any, chain: any, provider: any) {
     this.wallet = user;
     this.chainConfig = chain;
+    this.provider = provider;
     this.intializeClient();
   }
 
@@ -24,9 +26,10 @@ export class Read {
   }
 
   public async intializeClient() {
+    console.log(this.provider);
     this.viemClient = createPublicClient({
       chain: this.chainConfig,
-      transport: http(),
+      transport: http(this.provider),
     });
   }
 
