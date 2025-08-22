@@ -16,7 +16,6 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
   const [duration, setDuration] = React.useState(7);
   const [votingPower, setVotingPower] = useState(null);
   const [lockAmount, setLockAmount] = useState(0);
-  const { dragon } = balances;
   //     {
   //   title,
   //   description,
@@ -122,7 +121,7 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
           <h1>Amount</h1>
           <h1 className="text-sm text-gray-600 flex gap-2">
             <IoWalletOutline className="mt-0.5" />
-            {dragon} Dragon
+            Dragon
           </h1>
         </span>
         <div className="border mt-3 border-gray-600 rounded-md p-3 text-white ">

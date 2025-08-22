@@ -1,48 +1,44 @@
-import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { useWallets } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import { findChain } from "../lib/chainFinder";
-import contracts from "../utils/contracts";
-function useBalances(address?: any) {
+
+function useBalances(address?: string) {
   const { wallets } = useWallets();
-  const { user } = usePrivy();
-  const [balances, setBalances] = useState({});
-  const { omniDRAGON }: any = contracts["Tokens"];
+  const [balances, setBalances] = useState<any>(null);
+
   useEffect(() => {
-    const user: any = wallets[0];
-    console.log(user);
-    if (user) {
-      getBalances(user.address);
-    }
+    const user = wallets?.[0];
+    if (!user) return;
+
+    const loadBalances = async () => {
+      const provider = await user.getEthereumProvider();
+      const account = user.address;
+      const dragon = await getDragonBalance(account);
+
+      const chain = user.chainId;
+      const chainId = chain.slice(chain.indexOf(":") + 1);
+      const chainConfig = findChain(chainId);
+      console.log("config: ");
+      console.log(chainConfig);
+
+      setBalances({
+        dragon, // dragon balance
+        provider, // use to sign txs
+        account, // wallet address
+        chain: chainConfig, // chain config
+        chainId,
+      });
+    };
+
+    loadBalances();
   }, [wallets]);
 
-  // const provider = await wallets[0]?.getEthereumProvider();
-  //   const account = await provider.request({ method: "eth_requestAccounts" });
-
-  async function getBalances(userAddress: any) {
-    const provider = await wallets[0]?.getEthereumProvider();
-    const account = wallets[0]?.address;
-    const dragon: any = await getDragonBalnce(userAddress);
-    const chain = wallets[0].chainId;
-    const chainId = chain.slice(chain.indexOf(":") + 1, chain.length);
-    const chainConfig = findChain(chainId);
-    console.log(provider);
-    console.log(chainConfig);
-    setBalances({
-      dragon: dragon, //dragon balance
-      provider, //use tosign all txs from connected wallet
-      account, //wallet addy
-      chain: chainConfig, //chain config to initialize cleints
-      chainId: chainId,
-    });
+  async function getDragonBalance(userAddress: string) {
+    console.log("Fetching dragon balance for", userAddress);
+    // TODO: implement actual fetch
+    return 0;
   }
 
-  async function getveDragonBalance() {}
-
-  async function getDragonBalnce(userAddress: any) {
-    console.log(userAddress);
-  }
-
-  async function getMainnetBalance() {}
   return balances;
 }
 

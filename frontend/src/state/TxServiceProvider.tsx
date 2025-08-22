@@ -1,4 +1,3 @@
-import { useWallets } from "@privy-io/react-auth";
 import React, { useEffect } from "react";
 import { Read } from "../lib/contract-reads";
 import { Write } from "../lib/contract-writes";
@@ -7,8 +6,7 @@ const TxServiceContext: any = React.createContext(null);
 function DetectWallet() {}
 
 function TxServiceProvider({ children, userInfo }: any) {
-  const { wallets } = useWallets();
-
+  console.log("connected");
   const { account, provider, chainConfig } = userInfo;
 
   const txServices = {
@@ -23,11 +21,9 @@ function TxServiceProvider({ children, userInfo }: any) {
 
   return (
     <>
-      {wallets && (
-        <TxServiceContext.Provider value={txServices}>
-          {children}
-        </TxServiceContext.Provider>
-      )}
+      <TxServiceContext.Provider value={txServices}>
+        {children}
+      </TxServiceContext.Provider>
     </>
   );
 }

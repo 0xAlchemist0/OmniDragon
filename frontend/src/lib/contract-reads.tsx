@@ -13,6 +13,7 @@ export class Read {
   public chainConfig: any;
 
   public constructor(user: any, chain: any, provider: any) {
+    console.log(chain);
     this.wallet = user;
     this.chainConfig = chain;
     this.provider = provider;
@@ -26,10 +27,9 @@ export class Read {
   }
 
   public async intializeClient() {
-    console.log(this.provider);
     this.viemClient = createPublicClient({
       chain: this.chainConfig,
-      transport: http(this.provider),
+      transport: http(),
     });
   }
 
