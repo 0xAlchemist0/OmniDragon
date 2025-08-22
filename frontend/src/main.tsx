@@ -1,6 +1,7 @@
 import { PrivyProvider } from "@privy-io/react-auth";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { sonic } from "viem/chains";
 import App from "./App.tsx";
 import "./index.css";
 const appID = import.meta.env.VITE_APP_ID;
@@ -15,6 +16,8 @@ createRoot(document.getElementById("root")!).render(
         appearance: {
           theme: "dark",
         },
+        defaultChain: sonic,
+        supportedChains: [sonic],
       }}
     >
       <App />

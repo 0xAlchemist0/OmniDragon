@@ -16,16 +16,16 @@ function useBalances(address?: string) {
       const dragon = await getDragonBalance(account);
 
       const chain = user.chainId;
+      console.log("Chain: ", chain);
       const chainId = chain.slice(chain.indexOf(":") + 1);
-      const chainConfig = findChain(chainId);
-      console.log("config: ");
-      console.log(chainConfig);
 
+      const chainConfig = findChain(Number(chainId));
+      console.log("Config: ", chainConfig);
       setBalances({
         dragon, // dragon balance
         provider, // use to sign txs
         account, // wallet address
-        chain: chainConfig, // chain config
+        chainConfig, // chain config
         chainId,
       });
     };
@@ -34,7 +34,6 @@ function useBalances(address?: string) {
   }, [wallets]);
 
   async function getDragonBalance(userAddress: string) {
-    console.log("Fetching dragon balance for", userAddress);
     // TODO: implement actual fetch
     return 0;
   }

@@ -1,27 +1,16 @@
 import { Box, Slider } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
-import { styled } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import { IoWalletOutline } from "react-icons/io5";
+import { useTxService } from "../state/TxServiceProvider";
+import { omniDRAGONAbi } from "../utils/abi/omniDRAGONAbi";
+import contracts from "../utils/contracts";
 import { dateToTimestamp } from "../utils/conversionHandler";
-
-const SmallAvatar = styled(Avatar)(({ theme }) => ({
-  width: 15,
-  height: 15,
-  border: `2px solid black`,
-  borderRadius: 5,
-}));
 
 function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
   const [duration, setDuration] = React.useState(7);
   const [votingPower, setVotingPower] = useState(null);
   const [lockAmount, setLockAmount] = useState(0);
-  //     {
-  //   title,
-  //   description,
-  //   mainBtnLabel,
-  //   mainBtnAction,
-  // }: any
+  const { reader, writer }: any = useTxService();
 
   useEffect(() => {
     getVotingPower();
@@ -33,12 +22,28 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
     console.log(lockAmount);
     if (lockAmount > 0) {
       console.log("doing");
+      const powerRes = await reader.calculateVotingPower(
+        String(lockAmount),
+        String(convertedDuration)
+      );
+      setVotingPower(powerRes);
 
       //voting power goes here
     }
   }
 
   async function excecuteLock() {
+    const convertedDuration = dateToTimestamp(duration);
+
+    //we have to approve spending on the dragon contract so vedragon can spend
+    const approval = await writer.approveTokens(
+      contracts.Tokens.veDRAGON,
+      lockAmount,
+      contracts.Tokens.omniDRAGON,
+      omniDRAGONAbi
+    );
+
+    const lockRes = await writer.lock(lockAmount, convertedDuration);
     //tx exec goes here
   }
 
@@ -100,7 +105,7 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
         </div>
         <div className="border rounded-md text-right bg-gray-800 border-gray-600 text-white">
           <span className="grid grid-rows-1 p-5">
-            <h1 className="text-lg">{0.0} VeDragon</h1>
+            <h1 className="text-lg">{votingPower || 0.0} VeDragon</h1>
             <h1 className="text-xs">New estimated voting power</h1>
           </span>
         </div>

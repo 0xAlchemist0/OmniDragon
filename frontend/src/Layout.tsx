@@ -13,34 +13,21 @@ function Layout() {
   const res = useBalances(wallets[0]?.address);
 
   useEffect(() => {
-    if (wallets && res) {
-      const { account, provider }: any = res;
-      if (wallets && res)
-        setuserInfo({
-          account,
-          provider,
-        });
-      console.log("account", account);
-      console.log("Provider: ", provider);
+    if (wallets[0] && res) {
+      const { account, provider, chainConfig }: any = res;
+      setuserInfo({ account, provider, chainConfig });
     }
   }, [address, res]);
 
   //fix bug here when using the provider check bugs remmebr we dont pass in the real objects we need to pass
   return (
     <>
-      {wallets[0] ? (
-        <TxServiceProvider userInfo={userInfo}>
-          <div className="text-accent-pink">
-            <NavigatorTab />
-            <Outlet />
-          </div>
-        </TxServiceProvider>
-      ) : (
+      <TxServiceProvider userInfo={userInfo}>
         <div className="text-accent-pink">
           <NavigatorTab />
           <Outlet />
         </div>
-      )}
+      </TxServiceProvider>
     </>
   );
 }

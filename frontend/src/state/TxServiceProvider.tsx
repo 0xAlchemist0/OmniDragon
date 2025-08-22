@@ -1,14 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Read } from "../lib/contract-reads";
 import { Write } from "../lib/contract-writes";
 const TxServiceContext: any = React.createContext(null);
 
-function DetectWallet() {}
-
 function TxServiceProvider({ children, userInfo }: any) {
   console.log("connected");
   const { account, provider, chainConfig } = userInfo;
-
+  console.log(chainConfig);
   const txServices = {
     reader: new Read(account, chainConfig, provider),
     writer: new Write(provider, account, chainConfig),
@@ -26,6 +24,13 @@ function TxServiceProvider({ children, userInfo }: any) {
       </TxServiceContext.Provider>
     </>
   );
+}
+
+export function useTxService() {
+  const context: any = useContext(TxServiceContext);
+  if (!context) throw new Error("No context");
+
+  return context;
 }
 
 export default TxServiceProvider;

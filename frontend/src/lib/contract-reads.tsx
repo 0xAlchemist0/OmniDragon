@@ -43,27 +43,38 @@ export class Read {
     }
   }
 
+  public async simulateTX(args: any) {
+    const { request }: any = await this.viemClient.simulateContract({
+      account: this.wallet,
+      ...args,
+    });
+    return request;
+  }
+
   //Approvsl before tx
   //always check this to make sure u can spend tokens
   public async isApproved(
     owner: any,
     spender: any,
-    allowerAbi: any,
+    spenderAbi: any,
     amountToTransact: string
   ) {
     const currentAllowance: any = await viemClient.readContract({
       address: spender,
-      abi: allowerAbi,
+      abi: spenderAbi,
       functionName: "allowance",
       args: [owner, spender],
     });
+    console.log("alowance: ", currentAllowance);
 
     const isApproved = currentAllowance >= amountToTransact ? true : false;
+    console.log("isApproved:", isApproved);
 
     return isApproved;
   }
 
   public async calculateVotingPower(amount: any, duration: any) {
+    console.log("Getting Power");
     const votingPower = await viemClient.readContract({
       address: contracts.Tokens.veDRAGON,
       abi: veDRAGONAbi,

@@ -15,6 +15,7 @@ export class Write {
     this.wallet = account;
     this.currChain = chain;
     this.provider = provider;
+    this.getRead();
     this.initializeWalletClient();
   }
 
@@ -30,7 +31,7 @@ export class Write {
   }
 
   public async getRead() {
-    this.readInstance = new Read(this.account, this.currChain.id);
+    this.readInstance = new Read(this.account, this.currChain, this.provider);
   }
 
   // /approve before calling functions
@@ -38,53 +39,56 @@ export class Write {
 
   public async approveTokens(
     spender: any,
-    amount: any,
+    value: any,
+    //allower is where the contract which we call approve
     allower: any,
     allowerAbi: any
   ) {
     const isApproved = await this.readInstance.isApproved(
-      this.account,
+      this.wallet,
       spender,
       allowerAbi,
-      amount
+      value
     );
-    if (isApproved) {
+    if (!isApproved) {
       const response = await this.submitTransaction({
         address: allower,
         abi: allowerAbi,
-        functionName: "apporve",
-        args: [spender, "1000000000000"],
+        functionName: "approve",
+        args: [spender, "1000000000000000000000000000000"],
       });
 
-      return response;
+      return true;
     }
-    return false;
+    return true;
   }
 
   //updaters used in use effect hooks
 
   public async updateUserInfo(newProvider: any, newWallet: any) {
     this.wallet = newWallet;
-    this.initializeWalletClient(newProvider);
+    this.provider = newProvider;
+    this.initializeWalletClient();
   }
 
   public async lock(amount: any, duration: any) {
-    const response = await this.submitTransaction({
-      address: contracts.veDRAGON,
-      abi: veDRAGONAbi,
-      functionName: "lock",
-      args: [amount, duration],
-    });
+    try {
+      const response = await this.submitTransaction({
+        address: contracts.Tokens.veDRAGON,
+        abi: veDRAGONAbi,
+        functionName: "lock",
+        args: [amount, duration],
+      });
 
-    return response;
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   public async submitTransaction(args: any) {
-    const { request }: any = await this.walletClient.simulateContract({
-      account: this.wallet,
-      ...args,
-    });
-    const txHash: any = await this.walletClient.writeContract(request);
+    // const request = await this.readInstance.simulateTx(args);
+    const txHash: any = await this.walletClient.writeContract(args);
     const resposne: any = this.txResponse(Boolean(txHash), txHash);
     return resposne;
   }
