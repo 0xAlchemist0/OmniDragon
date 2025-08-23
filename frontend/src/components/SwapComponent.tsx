@@ -18,10 +18,8 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
 
   async function getVotingPower() {
     const convertedDuration = dateToTimestamp(duration);
-    console.log(convertedDuration);
-    console.log(lockAmount);
+
     if (lockAmount > 0) {
-      console.log("doing");
       const powerRes = await reader.calculateVotingPower(
         String(lockAmount),
         String(convertedDuration)
@@ -48,7 +46,6 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
   }
 
   function handleAmountChange(event: any) {
-    console.log("amount:", event.target.value);
     setLockAmount(event.target.value);
   }
 
@@ -62,7 +59,6 @@ function SwapComponent({ description, manageLock, chainLogo, balances }: any) {
       { value: 365, label: "1 year" },
     ];
     const handleChange = (_: Event, newValue: number | number[]) => {
-      console.log(newValue);
       setDuration(newValue as number);
     };
 

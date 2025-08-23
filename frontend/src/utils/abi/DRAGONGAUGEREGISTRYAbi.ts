@@ -1,0 +1,381 @@
+export const DRAGONGAUGEREGISTRYAbi = [
+  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
+  {
+    inputs: [
+      { internalType: "uint256", name: "provided", type: "uint256" },
+      { internalType: "uint256", name: "maximum", type: "uint256" },
+    ],
+    name: "BoostTooHigh",
+    type: "error",
+  },
+  { inputs: [], name: "FeeMRegistrationFailed", type: "error" },
+  {
+    inputs: [
+      { internalType: "uint256", name: "provided", type: "uint256" },
+      { internalType: "uint256", name: "maximum", type: "uint256" },
+    ],
+    name: "FeeShareTooHigh",
+    type: "error",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "index", type: "uint256" },
+      { internalType: "uint256", name: "length", type: "uint256" },
+    ],
+    name: "IndexOutOfBounds",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "address", name: "owner", type: "address" }],
+    name: "OwnableInvalidOwner",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "address", name: "account", type: "address" }],
+    name: "OwnableUnauthorizedAccount",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "address", name: "partner", type: "address" }],
+    name: "PartnerAlreadyActive",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "address", name: "partner", type: "address" }],
+    name: "PartnerAlreadyExists",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "address", name: "partner", type: "address" }],
+    name: "PartnerDoesNotExist",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "address", name: "partner", type: "address" }],
+    name: "PartnerNotActive",
+    type: "error",
+  },
+  { inputs: [], name: "RegistrationFailed", type: "error" },
+  { inputs: [], name: "ZeroAddress", type: "error" },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newBoost",
+        type: "uint256",
+      },
+    ],
+    name: "DefaultProbabilityBoostUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "distributor",
+        type: "address",
+      },
+    ],
+    name: "DistributorAuthorized",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "distributor",
+        type: "address",
+      },
+    ],
+    name: "DistributorUnauthorized",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "partner",
+        type: "address",
+      },
+    ],
+    name: "PartnerActivated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "partner",
+        type: "address",
+      },
+      { indexed: false, internalType: "string", name: "name", type: "string" },
+    ],
+    name: "PartnerAdded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "partner",
+        type: "address",
+      },
+    ],
+    name: "PartnerDeactivated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "partner",
+        type: "address",
+      },
+    ],
+    name: "PartnerRemoved",
+    type: "event",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "partnerAddress", type: "address" },
+    ],
+    name: "activatePartner",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "partnerAddress", type: "address" },
+      { internalType: "string", name: "name", type: "string" },
+      { internalType: "uint256", name: "feeShare", type: "uint256" },
+      { internalType: "uint256", name: "probabilityBoost", type: "uint256" },
+    ],
+    name: "addPartner",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "partnerAddress", type: "address" },
+      { internalType: "string", name: "name", type: "string" },
+      { internalType: "uint256", name: "feeShare", type: "uint256" },
+    ],
+    name: "addPartnerWithDefaultBoost",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "distributor", type: "address" }],
+    name: "authorizedDistributors",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "checkFeeMStatus",
+    outputs: [{ internalType: "bool", name: "isRegistered", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "partnerAddress", type: "address" },
+    ],
+    name: "deactivatePartner",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "defaultProbabilityBoost",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "partner", type: "address" }],
+    name: "getPartnerBoost",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getPartnerCount",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "partnerAddress", type: "address" },
+    ],
+    name: "getPartnerDetails",
+    outputs: [
+      { internalType: "string", name: "name", type: "string" },
+      { internalType: "uint256", name: "feeShare", type: "uint256" },
+      { internalType: "uint256", name: "probabilityBoost", type: "uint256" },
+      { internalType: "bool", name: "isActive", type: "bool" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "distributor", type: "address" }],
+    name: "isDistributorAuthorized",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "", type: "address" }],
+    name: "isPartnerActive",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "partner", type: "address" }],
+    name: "isWhitelistedPartner",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "owner",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "index", type: "uint256" }],
+    name: "partnerList",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "partnerAddress", type: "address" },
+    ],
+    name: "partners",
+    outputs: [
+      { internalType: "string", name: "name", type: "string" },
+      { internalType: "uint256", name: "feeShare", type: "uint256" },
+      { internalType: "uint256", name: "probabilityBoost", type: "uint256" },
+      { internalType: "bool", name: "isActive", type: "bool" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "partner", type: "address" },
+      { internalType: "uint256", name: "boost", type: "uint256" },
+    ],
+    name: "registerPartner",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "partner", type: "address" }],
+    name: "removePartner",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "boost", type: "uint256" }],
+    name: "setDefaultProbabilityBoost",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "distributor", type: "address" },
+      { internalType: "bool", name: "authorized", type: "bool" },
+    ],
+    name: "setDistributorAuthorization",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "partnerAddress", type: "address" },
+      { internalType: "string", name: "name", type: "string" },
+      { internalType: "uint256", name: "feeShare", type: "uint256" },
+      { internalType: "uint256", name: "probabilityBoost", type: "uint256" },
+    ],
+    name: "updatePartner",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "partnerAddress", type: "address" },
+      { internalType: "string", name: "name", type: "string" },
+      { internalType: "uint256", name: "feeShare", type: "uint256" },
+    ],
+    name: "updatePartnerWithDefaultBoost",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];

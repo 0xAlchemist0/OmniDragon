@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Layout from "./Layout";
 import Dashboard from "./pages/Dashboard";
+import Gauges from "./pages/Gauges";
 import Home from "./pages/Home";
 import LockDex from "./pages/LockDex";
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/" element={<Home />} />
             <Route path="/lock" element={<LockDex />} />
+            <Route path="/gauges" element={<Gauges />} />
           </Route>
         </Routes>
       </BrowserRouter>

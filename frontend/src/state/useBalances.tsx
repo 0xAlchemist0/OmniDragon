@@ -16,11 +16,11 @@ function useBalances(address?: string) {
       const dragon = await getDragonBalance(account);
 
       const chain = user.chainId;
-      console.log("Chain: ", chain);
+ 
       const chainId = chain.slice(chain.indexOf(":") + 1);
 
       const chainConfig = findChain(Number(chainId));
-      console.log("Config: ", chainConfig);
+ 
       setBalances({
         dragon, // dragon balance
         provider, // use to sign txs

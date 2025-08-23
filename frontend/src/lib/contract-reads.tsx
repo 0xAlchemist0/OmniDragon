@@ -1,5 +1,6 @@
 import { createPublicClient, formatUnits, http } from "viem";
 import { viemClient } from "../utils/ViemClient";
+import { DRAGONGAUGEREGISTRYAbi } from "../utils/abi/DRAGONGAUGEREGISTRYAbi";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
 import { findChain } from "./chainFinder";
@@ -13,7 +14,6 @@ export class Read {
   public chainConfig: any;
 
   public constructor(user: any, chain: any, provider: any) {
-    console.log(chain);
     this.wallet = user;
     this.chainConfig = chain;
     this.provider = provider;
@@ -65,16 +65,13 @@ export class Read {
       functionName: "allowance",
       args: [owner, spender],
     });
-    console.log("alowance: ", currentAllowance);
 
     const isApproved = currentAllowance >= amountToTransact ? true : false;
-    console.log("isApproved:", isApproved);
 
     return isApproved;
   }
 
   public async calculateVotingPower(amount: any, duration: any) {
-    console.log("Getting Power");
     const votingPower = await viemClient.readContract({
       address: contracts.Tokens.veDRAGON,
       abi: veDRAGONAbi,
@@ -95,5 +92,37 @@ export class Read {
     });
     const decimals = 10;
     return formatUnits(balance, decimals);
+  }
+
+  //getting partners for gauges info we loop until error is met
+  public async getGaugePartners() {
+    const partners = [];
+    let currPartner = null;
+    let currIndex = 0;
+    while (currPartner !== "stop") {
+      currPartner = await this.partnerList(currIndex);
+
+      if (currPartner !== "stop") {
+        partners.push(currPartner);
+        ++currIndex;
+      }
+    }
+    return partners;
+  }
+
+  public async partnerList(index: any) {
+    console.log("index: ", index);
+    try {
+      const partner = await viemClient.readContract({
+        address: "0x698402021A594515F5a379F6C4E77d3E1F452777",
+        abi: DRAGONGAUGEREGISTRYAbi,
+        functionName: "partnerList",
+        args: [BigInt(index)],
+      });
+      return partner;
+    } catch (error) {
+      console.log("EDDKMDDMKDMKDMKDKM ", error);
+      return "stop";
+    }
   }
 }

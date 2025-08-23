@@ -4,9 +4,9 @@ import { Write } from "../lib/contract-writes";
 const TxServiceContext: any = React.createContext(null);
 
 function TxServiceProvider({ children, userInfo }: any) {
-  console.log("connected");
+ 
   const { account, provider, chainConfig } = userInfo;
-  console.log(chainConfig);
+ 
   const txServices = {
     reader: new Read(account, chainConfig, provider),
     writer: new Write(provider, account, chainConfig),
