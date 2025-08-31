@@ -4,6 +4,7 @@ import { DRAGONGAUGEREGISTRYAbi } from "../utils/abi/DRAGONGAUGEREGISTRYAbi";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
 import { findChain } from "./chainFinder";
+import { findChainName } from "./chainMap";
 //check approval before tx in read
 
 //class makes things easier
@@ -23,7 +24,17 @@ export class Read {
   //updaters used in use effect hooks
 
   public updateWallet(newWallet: any) {
-    this.wallet - newWallet;
+    this.wallet = newWallet;
+  }
+
+  public async getChainId() {
+    return await this.viemClient.getChainId();
+  }
+
+  public async getChainName() {
+    const chainId: number = await this.getChainId();
+    const chainName: string = await findChainName(chainId);
+    return chainName;
   }
 
   public async intializeClient() {
