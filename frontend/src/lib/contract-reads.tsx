@@ -105,8 +105,14 @@ export class Read {
     return formatUnits(balance, decimals);
   }
 
+  public async getGaugePartners(reader: any) {
+    const partners = partnersSeach();
+    const partnerInfo = getTokensInfo(partners, reader);
+    return partnerInfo;
+  }
+
   //getting partners for gauges info we loop until error is met
-  public async getGaugePartners() {
+  public async partnersSearch() {
     const partners = [];
     let currPartner = null;
     let currIndex = 0;
@@ -120,6 +126,8 @@ export class Read {
     }
     return partners;
   }
+
+  //read should het all its info and stuff not through frontend frontend should be clean
 
   public async partnerList(index: any) {
     console.log("index: ", index);
