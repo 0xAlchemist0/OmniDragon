@@ -1,16 +1,20 @@
 function GaugeCard({ partner }: any) {
-  const { partnerDetails } = partner;
+  const { partnerDetails, info } = partner;
   const partnerName = partnerDetails[0];
   const feeShare = partnerDetails[1];
   const partnerBoost = partnerDetails[2];
-
+  const logo = info["imageUrl"];
   function TwoColorText({ color, size, first, second }: any) {
     return (
-      <span className={`flex gap-2 text-[${size}px]`}>
+      <span className={`flex gap-2 text-[11px]`}>
         <h1 className={`text-${color}-400`}>{first}:</h1>
         <h1 className="">{second}</h1>
       </span>
     );
+  }
+
+  function GaugeStats({ stats }: any) {
+    return <div>Stats</div>;
   }
 
   return (
@@ -18,7 +22,10 @@ function GaugeCard({ partner }: any) {
       <div className="flex justify-between p-4">
         <span>
           <span className="flex gap-3">
-            <h1> {partnerDetails[0]}/Sonic</h1>
+            <span className="flex gap-2">
+              {/* <img src={logo} alt="" className="size-5" /> */}
+              <h1> {partnerDetails[0]}/Sonic</h1>
+            </span>
             <h1 className="border text-xs w-20 p-0.5 bg-gray-900 border-gray-600 rounded-md text-center text-nowrap">
               {partnerBoost}% FEE
             </h1>
@@ -30,17 +37,20 @@ function GaugeCard({ partner }: any) {
         <span className=" font-light grid grid-flow-row ">
           <TwoColorText
             color={"gray"}
-            size={"11"}
+            size={"9"}
             first={"APR"}
             second={`${partnerBoost}%`}
           />
           <TwoColorText
             color={"gray"}
-            size={"11"}
+            size={"9"}
             first={"Rewards"}
             second={"$34956"}
           />
         </span>
+      </div>
+      <div className="mt-2 mb-2 ms-2 text-xs">
+        <GaugeStats info={null} />
       </div>
       <div className="bg-gray-800 border-gray-800 border w-full p-2">
         <h1 className="text-xs ms-1">My Vote</h1>
