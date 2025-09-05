@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getTokensInfo } from "../lib/dexscreener-handler";
 import { useTxService } from "../state/TxServiceProvider";
 
 function Gauges() {
@@ -10,8 +9,7 @@ function Gauges() {
     getPartners();
   }, [reader]);
   async function getPartners() {
-    const partnersRaw = await reader.getGaugePartners();
-    const partnersInfo = await getTokensInfo(partnersRaw, reader);
+    const partners = await reader.getGaugePartners(reader);
   }
   return <div>Gauges</div>;
 }

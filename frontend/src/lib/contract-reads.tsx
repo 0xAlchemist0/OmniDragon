@@ -5,6 +5,7 @@ import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
 import { findChain } from "./chainFinder";
 import { findChainName } from "./chainMap";
+import { getTokensInfo } from "./dexscreener-handler";
 //check approval before tx in read
 
 //class makes things easier
@@ -106,9 +107,32 @@ export class Read {
   }
 
   public async getGaugePartners(reader: any) {
-    const partners = partnersSeach();
-    const partnerInfo = getTokensInfo(partners, reader);
+    const partners = await this.partnersSearch();
+    const partnerInfo = await getTokensInfo(partners, reader);
+    console.log("Partners available: ");
     return partnerInfo;
+  }
+
+  public async getPartnerStats(partners: any) {
+    for (const partner in partners) {
+      const { baseToken }: any = partners[partner];
+      const { address }: any = baseToken;
+    }
+  }
+
+  public async getPartnerBoost(partner: any) {
+    try {
+      const boost = await this.viemClient.readContract({
+        address: "0x698402021A594515F5a379F6C4E77d3E1F452777",
+        abi: DRAGONGAUGEREGISTRYAbi,
+        functionName: "getPartnerDetails",
+        args: [partner],
+      });
+      //index 0
+      return boost;
+    } catch (error) {
+      return 0;
+    }
   }
 
   //getting partners for gauges info we loop until error is met
