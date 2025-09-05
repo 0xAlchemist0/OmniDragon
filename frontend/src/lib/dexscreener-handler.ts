@@ -60,6 +60,7 @@ function getVolumeLiquidityRatio(info: any) {
   return (liquidity["usd"] + volume["h24"]) * 2;
 }
 
+//i think we have to check that the best pair is actually paired to dragon it cant be paird to another token
 function unknownPairBody(chainName: any, tokenAddress: any) {
   const body = {
     chainId: { chainName },

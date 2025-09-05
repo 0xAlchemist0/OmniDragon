@@ -12,6 +12,7 @@ const contracts: any = {
     UniswapV2LP: "0x33503bc86f2808151a6e083e67d7d97a66dfec11",
   },
   Lottery: {
+    Oracle: "0x69A366F17b78fA60795d64B348bBc41197270777",
     OmniDragonPrimaryOracle: "0x175c9571771894e151317e80d7b4434e1f583d59",
     OmniDragonLotteryManager: "0x69a6a2813c2224bbc34b3d0bf56c719de3c34777",
     OmniDragonJackpotVault: "0x69ec31a869c537749af7fd44dd1fd347d62c7777",
@@ -45,3 +46,13 @@ const contracts: any = {
 };
 
 export default contracts;
+
+// So the main contracts will be
+
+// Registry
+// Token
+// Oracle
+// Lottery
+// VRF
+// JackpotVault
+// Multisig Wallet  (temporary to be replaced by veDRAGONRevenueDistributor)

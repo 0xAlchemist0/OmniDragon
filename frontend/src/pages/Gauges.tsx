@@ -10,6 +10,8 @@ function Gauges() {
   }, [reader]);
   async function getPartners() {
     const partners = await reader.getGaugePartners(reader);
+    console.log("partners found: ");
+    console.log(partners);
   }
   return <div>Gauges</div>;
 }

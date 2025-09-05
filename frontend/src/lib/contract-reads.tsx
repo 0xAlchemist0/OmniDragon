@@ -109,18 +109,21 @@ export class Read {
   public async getGaugePartners(reader: any) {
     const partners = await this.partnersSearch();
     const partnerInfo = await getTokensInfo(partners, reader);
-    console.log("Partners available: ");
-    return partnerInfo;
+    const finalPartnersInfo = await this.getPartnerStats(partnerInfo);
+    return finalPartnersInfo;
   }
 
   public async getPartnerStats(partners: any) {
     for (const partner in partners) {
       const { baseToken }: any = partners[partner];
       const { address }: any = baseToken;
+      const partnerDetails = await this.getPartnerDetails(address);
+      partners[partner] = { ...partners[partner], partnerDetails };
     }
+    return partners;
   }
 
-  public async getPartnerBoost(partner: any) {
+  public async getPartnerDetails(partner: any) {
     try {
       const boost = await this.viemClient.readContract({
         address: "0x698402021A594515F5a379F6C4E77d3E1F452777",
@@ -128,7 +131,7 @@ export class Read {
         functionName: "getPartnerDetails",
         args: [partner],
       });
-      //index 0
+      //index 0 name, indx 1 fee share, index 2 proability boost (important), index 3 is partner active
       return boost;
     } catch (error) {
       return 0;
