@@ -1,0 +1,31 @@
+🏗 Core
+CREATE2FactoryWithOwnership : 0xAA28020DDA6b954D16208eccF873D79AC6533833
+Registry                    : 0x6940aDc0A505108bC11CA28EefB7E3BAc7AF0777
+omniDRAGON                  : 0x69dc1c36f8b26db3471acf0a6469d815e9a27777
+ - Sonic
+ - Arbitrum
+ - Base
+ - Ethereum
+
+💧 Pool
+UniswapV2Router             : 0xF5F7231073b3B41c04BA655e1a7438b1a7b29c27
+UniswapV2Factory            : 0x05c1be79d3aC21Cc4B727eeD58C9B2fF757F5663
+UniswapV2LP                 : 0x33503bc86f2808151a6e083e67d7d97a66dfec11
+
+🎰 Lottery
+OmniDragonOracle            : 0x69c1E310B9AD8BeA139696Df55A8Cb32A9f00777
+ - Sonic (Primary)
+ - Arbitrum (Secondary)
+ - Base (Secondary)
+ - Ethereum (Secondary)
+ - HyperEVM (Secondary)
+OmniDragonLotteryManager    : [pending]
+DragonJackpotVault          : 
+0x2daf1f080da5ffadd7e1b2284d014536af65ceb4
+Multisig Treasury Wallet    : [temporary replacement for veDRAGONRevenueDistributor]
+
+🎲 VRF
+ChainlinkVRFIntegratorV2_5  : 0x694f00e7CAB26F9D05261c3d62F52a81DE18A777
+ - Sonic
+OmniDragonVRFConsumerV2_5   : 0x697a9d438a5b61ea75aa823f98a85efb70fd23d5
+ - Arbitrum
