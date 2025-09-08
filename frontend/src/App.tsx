@@ -6,6 +6,7 @@ import Layout from "./Layout";
 import Dashboard from "./pages/Dashboard";
 import Gauges from "./pages/Gauges";
 import Home from "./pages/Home";
+import LiquidityHub from "./pages/LiquidityHub";
 import LockDex from "./pages/LockDex";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/lock" element={<LockDex />} />
             <Route path="/gauges" element={<Gauges />} />
+            <Route path="/liquidity" element={<LiquidityHub />} />
           </Route>
         </Routes>
       </BrowserRouter>

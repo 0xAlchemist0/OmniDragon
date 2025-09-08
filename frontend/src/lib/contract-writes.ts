@@ -1,4 +1,5 @@
 import { createWalletClient, custom } from "viem";
+import UniswapV2FactoryABI from "../utils/abi/UniswapV2FactoryABI";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
 import { Read } from "./contract-reads";
@@ -84,6 +85,20 @@ export class Write {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  public async createPair(tokenA: any, tokenB: any, pool: any) {
+    try {
+      const response = await this.submitTransaction({
+        address: contracts.Uniswap.UniswapV2Factory,
+        abi: UniswapV2FactoryABI,
+        function: "createPair",
+        args: [tokenA, tokenB, pool],
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    return null;
   }
 
   public async submitTransaction(args: any) {

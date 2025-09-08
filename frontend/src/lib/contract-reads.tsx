@@ -1,6 +1,7 @@
 import { createPublicClient, formatUnits, http } from "viem";
 import { viemClient } from "../utils/ViemClient";
 import { DRAGONGAUGEREGISTRYAbi } from "../utils/abi/DRAGONGAUGEREGISTRYAbi";
+import UniswapV2FactoryABI from "../utils/abi/UniswapV2FactoryABI";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
 import { findChain } from "./chainFinder";
@@ -92,6 +93,38 @@ export class Read {
     });
 
     return votingPower;
+  }
+
+  public async allPairs(limit: any) {
+    const maxPairs: any = await this.allPairsLength();
+    const pairs = [];
+    if (limit <= maxPairs) {
+      for (let index = 0; index < limit; index++) {
+        const pairAddress: any =
+          (await viemClient.readContract({
+            address: contracts.Uniswap.UnswapV2Factory,
+            account: this.wallet,
+            abi: UniswapV2FactoryABI,
+            functionName: "allPairs",
+            args: [index],
+          })) || null;
+        if (pairs !== null) pairs.push(pairAddress);
+      }
+      return pairs;
+    }
+    return null;
+  }
+
+  public async allPairsLength() {
+    const numPairsAvailable: any = await viemClient.readContract({
+      address: contracts.Uniswap.UniswapV2Factory,
+      account: this.wallet,
+      abi: UniswapV2FactoryABI,
+      functionName: "allPairsLength",
+      args: [],
+    });
+
+    return numPairsAvailable;
   }
 
   public async balanceOf(allower: any, spender: any, amount: any, abi: any) {

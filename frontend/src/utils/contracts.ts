@@ -3,10 +3,14 @@ const contracts: any = {
   CREATE2FactoryWithOwnership: "0xAA28020DDA6b954D16208eccF873D79AC6533833",
   //this is where we get the list of partners
   Registry: "0x6940aDc0A505108bC11CA28EefB7E3BAc7AF0777",
+
   Tokens: {
     omniDRAGON: "0x69dc1c36f8b26db3471acf0a6469d815e9a27777",
     redDRAGON: "0x69320eb5b9161a34cb9cdd163419f826691a1777",
     veDRAGON: "0x69492C71d7A3caf0277E238D9D4305c6af930777",
+  },
+  Uniswap: {
+    UniswapV2Factory: "0x05c1be79d3aC21Cc4B727eeD58C9B2fF757F5663",
   },
   Pool: {
     UniswapV2LP: "0x33503bc86f2808151a6e083e67d7d97a66dfec11",
