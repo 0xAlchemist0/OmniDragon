@@ -1,6 +1,7 @@
 import { createPublicClient, formatUnits, http } from "viem";
 import { viemClient } from "../utils/ViemClient";
 import { DRAGONGAUGEREGISTRYAbi } from "../utils/abi/DRAGONGAUGEREGISTRYAbi";
+import ERC20ABI from "../utils/abi/ERC20ABI";
 import UniswapV2FactoryABI from "../utils/abi/UniswapV2FactoryABI";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
@@ -31,6 +32,10 @@ export class Read {
 
   public async getChainId() {
     return await this.viemClient.getChainId();
+  }
+
+  public async getchainLogo() {
+    return await this.viemClient.getchainLogo();
   }
 
   public async getChainName() {
@@ -95,36 +100,13 @@ export class Read {
     return votingPower;
   }
 
-  public async allPairs(limit: any) {
-    const maxPairs: any = await this.allPairsLength();
-    const pairs = [];
-    if (limit <= maxPairs) {
-      for (let index = 0; index < limit; index++) {
-        const pairAddress: any =
-          (await viemClient.readContract({
-            address: contracts.Uniswap.UnswapV2Factory,
-            account: this.wallet,
-            abi: UniswapV2FactoryABI,
-            functionName: "allPairs",
-            args: [index],
-          })) || null;
-        if (pairs !== null) pairs.push(pairAddress);
-      }
-      return pairs;
-    }
-    return null;
-  }
-
-  public async allPairsLength() {
-    const numPairsAvailable: any = await viemClient.readContract({
-      address: contracts.Uniswap.UniswapV2Factory,
-      account: this.wallet,
-      abi: UniswapV2FactoryABI,
-      functionName: "allPairsLength",
-      args: [],
+  public async balanceOfnew(tokenAddress: any) {
+    const balance: any = await viemClient.readContract({
+      address: tokenAddress,
+      abi: ERC20ABI,
+      functionName: "balanceOf",
+      args: [this.wallet],
     });
-
-    return numPairsAvailable;
   }
 
   public async balanceOf(allower: any, spender: any, amount: any, abi: any) {
@@ -185,6 +167,48 @@ export class Read {
       }
     }
     return partners;
+  }
+
+  public async topFactoryPairs(limit: any) {
+    const topPairs = [];
+    console.log("doing");
+
+    const pairsFound: any = await this.pairs();
+    return pairsFound ? pairsFound.slice(0, limit) : null;
+  }
+  public async allPairsLength() {
+    const length = await viemClient.readContract({
+      address: contracts.Uniswap.UniswapV2Factory,
+      abi: UniswapV2FactoryABI,
+      functionName: "allPairsLength",
+      args: [],
+    });
+    return length;
+  }
+  public async allPairs(index: any) {
+    const found = await viemClient.readContract({
+      address: contracts.Uniswap.UniswapV2Factory,
+      abi: UniswapV2FactoryABI,
+      functionName: "allPairs",
+      args: [String(index)],
+    });
+
+    return found;
+  }
+
+  public async pairs() {
+    try {
+      const found = await viemClient.readContract({
+        address: contracts.Uniswap.UniswapV2Factory,
+        abi: UniswapV2FactoryABI,
+        functionName: "pairs",
+        args: [],
+      });
+
+      return found;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   //read should het all its info and stuff not through frontend frontend should be clean

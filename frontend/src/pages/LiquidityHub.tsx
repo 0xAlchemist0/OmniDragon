@@ -1,12 +1,15 @@
+import { useWallets } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
+import TokenInTokenOut from "../components/TokenInTokenOut";
+import { getPairsInfo } from "../lib/dexscreener-handler";
 import { useTxService } from "../state/TxServiceProvider";
-
 function LiquidityHub() {
   const [tokenA, setTokenA] = useState(null);
   const [tokenB, setTokenB] = useState(null);
   const [selection, setSelection] = useState(0);
   const { reader, writer }: any = useTxService();
   const [topPairs, setTopPairs] = useState(null);
+  const { wallets } = useWallets();
   const options = [
     { option: "Swap" },
     { option: "Add Liquidity" },
@@ -14,12 +17,17 @@ function LiquidityHub() {
   ];
 
   useEffect(() => {
-    getSomePairs(12);
-  }, []);
+    console.log("Reader Props :", reader);
+    console.log("Writer Props: ", writer);
+    getSomePairs(20);
+  }, [wallets, reader, writer]);
 
   async function getSomePairs(limit: any) {
-    const pairsFound = await reader.allPairs(limit);
-    setTopPairs(pairsFound);
+    const swapXPairs: any = await reader.topFactoryPairs(limit);
+    console.log(swapXPairs);
+    const PairsInfo: any = await getPairsInfo(swapXPairs, reader);
+    setTopPairs(PairsInfo);
+    // setTopPairs(pairsFound);
   }
 
   function LiquidityAdd() {
@@ -31,16 +39,17 @@ function LiquidityHub() {
   }
   function LiquiditySwap() {
     return (
-      <span className="flex justify-between">
-        <h1>hello</h1>
-        <h1>hello</h1>
-      </span>
+      <div>
+        <div className="mt-5">
+          <TokenInTokenOut pairs={topPairs} />
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="p-3 w-[90%] m-auto">
-      <span className="border flex gap-4 text-white p-3 text-sm">
+    <div className="p-3 w-[90%] md:w-[600px] m-auto">
+      <span className=" flex gap-4 text-white p-3 text-sm">
         {options.map((item: any, index: any) => {
           return (
             <button
@@ -55,7 +64,7 @@ function LiquidityHub() {
           );
         })}
       </span>
-      <div className="bg-gray-800 border-gray-600 p-3 m-auto  rounded-md text-white">
+      <div className="bg-gray-900 border-gray-600 p-5 m-auto  rounded-md text-white">
         {selection == 0 && <LiquiditySwap />}
         {selection == 1 && <LiquidityAdd />}
         {selection == 0 && <LiquidityPairCreate />}

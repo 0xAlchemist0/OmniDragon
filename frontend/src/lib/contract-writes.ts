@@ -21,11 +21,19 @@ export class Write {
   }
 
   public async initializeWalletClient() {
-    this.walletClient = createWalletClient({
-      account: this.wallet,
-      chain: this.currChain,
-      transport: custom(this.provider),
-    });
+    console.log("wallet:", this.wallet);
+    console.log("currChain:", this.currChain);
+    console.log("provider:", this.provider);
+
+    try {
+      this.walletClient = createWalletClient({
+        account: this.wallet,
+        chain: this.currChain,
+        transport: custom(this.provider),
+      });
+    } catch (error) {
+      console.log("errorrrrE", error);
+    }
   }
   public async updateChain(newChain: any) {
     this.walletClient.switchChaim(newChain);
@@ -95,10 +103,10 @@ export class Write {
         function: "createPair",
         args: [tokenA, tokenB, pool],
       });
+      return response;
     } catch (error) {
       console.log(error);
     }
-    return null;
   }
 
   public async submitTransaction(args: any) {

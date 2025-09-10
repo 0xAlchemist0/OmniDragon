@@ -11,6 +11,7 @@ const contracts: any = {
   },
   Uniswap: {
     UniswapV2Factory: "0x05c1be79d3aC21Cc4B727eeD58C9B2fF757F5663",
+    UniswapV2Router: "0xF5F7231073b3B41c04BA655e1a7438b1a7b29c27",
   },
   Pool: {
     UniswapV2LP: "0x33503bc86f2808151a6e083e67d7d97a66dfec11",

@@ -1,5 +1,6 @@
 const endpoints = {
   findPools: "https://api.dexscreener.com/tokens/v1/",
+  findToken: "https://api.dexscreener.com/latest/dex/pairs/",
 };
 
 export async function getTokensInfo(tokensList: any, reader: any) {
@@ -17,6 +18,36 @@ export async function getTokensInfo(tokensList: any, reader: any) {
   }
   return partnersInfo;
 }
+
+//name change
+
+export async function getPairsInfo(pairsList: any, reader: any) {
+  const chain = await reader.getChainName();
+  const pairsInfo = [];
+
+  for (let i = 0; i < pairsList.length; i++) {
+    const pairInfo = await searchByPair(pairsList[i], chain);
+    console.log(typeof pairInfo);
+    if (pairInfo && pairInfo["pairs"] !== null) {
+      console.log(pairInfo);
+      pairsInfo.push(pairInfo["pairs"][0]);
+    }
+  }
+  return pairsInfo;
+}
+
+async function searchByPair(pairAddress: any, chain: string) {
+  try {
+    const infoRequest = await fetch(
+      endpoints.findToken + String(chain).toLowerCase() + `/${pairAddress}`
+    );
+    const info = await infoRequest.json();
+    return info;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getToken(tokenAddress: string, chain: string) {
   try {
     const infoRequest = await fetch(
