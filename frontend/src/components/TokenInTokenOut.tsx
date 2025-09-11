@@ -1,21 +1,22 @@
-import { TokenETH } from "@web3icons/react";
 import { useEffect, useState } from "react";
 import { CiWallet } from "react-icons/ci";
 import { FaArrowDown } from "react-icons/fa";
-import { MdKeyboardArrowDown } from "react-icons/md";
+import { IoIosArrowDown } from "react-icons/io";
 import TokenModal from "./TokenModal";
 
 function TokenInTokenOut({ pairs }: any) {
-  const [activate, setActivate] = useState(false);
-  const [tokenIn, setTokenIn] = useState("ETH");
-  const [tokenOut, setTokenOut] = useState("ETH");
+  const [activateIn, setActivateIn] = useState(false);
+  const [activateOut, setActivateOut] = useState(false);
 
-  useEffect(() => {
-    console.log("In:", tokenIn);
-    console.log("Out:", tokenOut);
-  }, [tokenIn, tokenOut]);
+  const [tokenIn, setTokenIn] = useState(null);
+  const [tokenOut, setTokenOut] = useState(null);
+  const [tokens, setTokens] = useState({
+    in: null,
+    out: null,
+  });
+  useEffect(() => {}, [tokenIn, tokenOut]);
 
-  function TokenSelector() {
+  function TokenSelector({ tokenType, activate, setActivate }: any) {
     return (
       <div>
         <span className="flex justify-between text-xs mb-2 w-95 md:w-[100%]  m-auto">
@@ -27,19 +28,40 @@ function TokenInTokenOut({ pairs }: any) {
           </span>
         </span>
         <div className="border rounded-xl flex justify-between border-gray-800 bg-gray-900 p-3">
-          <div className="border rounded-xl font-bold h-10 mt-auto mb-auto p-2.5 flex gap-2 text-sm bg-gray-800 border border-gray-600">
-            <div className="flex gap-2">
-              <h1 className="">
-                <TokenETH variant="branded" size="20" className="mb-2" />
-              </h1>{" "}
-              <h1 className="">ETH</h1>
-            </div>
-            <MdKeyboardArrowDown className="mt-1 " />
+          <div>
+            <TokenModal
+              activate={activate}
+              setActivate={setActivate}
+              pairs={pairs}
+              setTokenIn={setTokenIn}
+              setTokenOut={setTokenOut}
+              tokenType={tokenType}
+              tokens={tokens}
+              setTokens={setTokens}
+            >
+              <div className="border flex gap-2 p-1 w-20  rounded-md border-gray-700 bg-gray-800  ">
+                <span className="m-auto flex gap-2  overflow-hidden">
+                  <img
+                    src={
+                      tokens[tokenType]?.info?.imageUrl ||
+                      "https://cdn-icons-png.flaticon.com/512/14446/14446160.png"
+                    }
+                    alt=""
+                    className="size-4 mt-0.5 rounded-full border"
+                  />
+
+                  <h1 className="mt-1 text-[10px] text-white font-bold">
+                    {tokens[tokenType]?.baseToken?.name || "ETH"}
+                  </h1>
+                  <IoIosArrowDown className="text-gray-600 mt-1.5" />
+                </span>
+              </div>
+            </TokenModal>
           </div>
           <div className="  text-gray-600">
             <input
               type="text"
-              className="w-10  w-20 text-xl text-right"
+              className="  w-20 text-xl text-right"
               placeholder="0"
             />
             <h1 className="text-right">~$0.00</h1>
@@ -62,27 +84,27 @@ function TokenInTokenOut({ pairs }: any) {
   return (
     <div>
       <div className="grid grid-rows-1 gap-3">
-        <TokenSelector />
+        <TokenSelector
+          tokenType="in"
+          activate={activateOut}
+          setActivate={setActivateOut}
+        />
         <div className="m-auto">
           <div className="border p-1 rounded-full bg-gray-800 text-gray-600">
             <FaArrowDown />
           </div>
         </div>
-        <TokenSelector />
+        <TokenSelector
+          tokenType="out"
+          activate={activateIn}
+          setActivate={setActivateIn}
+        />
       </div>
 
       <div className="mt-5">
         <SubmitTXBTN />
       </div>
-      <div>
-        <TokenModal
-          activate={activate}
-          setActivate={setActivate}
-          pairs={pairs}
-          setTokenIn={setTokenIn}
-          setTokenOut={setTokenOut}
-        />
-      </div>
+      <div></div>
     </div>
   );
 }

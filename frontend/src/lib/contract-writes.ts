@@ -43,6 +43,8 @@ export class Write {
     this.readInstance = new Read(this.account, this.currChain, this.provider);
   }
 
+  public async swap(amount0Out, amount1Out, to, data) {}
+
   // /approve before calling functions
   //call approval to all check if user is approved brfore
 

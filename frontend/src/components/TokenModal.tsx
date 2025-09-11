@@ -2,13 +2,13 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { useEffect } from "react";
-
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 450,
+  width: 470,
   bgcolor: "#111827",
   border: "2px solid #000",
   borderRadius: "15px",
@@ -22,42 +22,80 @@ export default function TokenModal({
   pairs,
   setTokenIn,
   setTokenOut,
+  tokenType,
+  tokens,
+  setTokens,
+  children,
 }: any) {
   const handleOpen = () => setActivate(true);
   const handleClose = () => setActivate(false);
-  useEffect(() => {
-    console.log(pairs);
-  }, [pairs]);
 
+  const handleSelection = (selection: any) => {
+    console.log(tokenType);
+    setTokens((prev: any) => ({
+      ...prev,
+      [tokenType]: selection,
+    }));
+  };
+  useEffect(() => {}, [pairs]);
+
+  useEffect(() => {}, [tokenType]);
   function MapPairs() {
-    console.log("Length: ", pairs);
     return (
-      <>
+      <div className="overflow-hidden">
         {pairs ? (
-          <div className="overflow-auto">
+          <div className="h-90 overflow-y-auto grid grid-flow-row gap-2">
             {pairs.map((item: any, key: any) => {
               const images = item["info"];
-              console.log(images);
-              return (
-                <div key={key} className="border ">
-                  <div>
-                    <h1>{item["baseToken"].name}</h1>
-                    {images && (
-                      <img src={images.imageUrl} className="size-10" />
-                    )}
-                  </div>
-                </div>
+              const formattedPrice = parseFloat(item["priceUsd"]).toPrecision(
+                3
               );
+              if (images) {
+                return (
+                  <button
+                    key={key}
+                    className={`border w-95 m-auto border-gray-700 rounded-md flex justify-between p-2 ${(key =
+                      0 && "mt-")}`}
+                    style={{ scrollbarWidth: "none" }}
+                    onClick={() => {
+                      handleSelection(item);
+                      setActivate(false);
+                    }}
+                  >
+                    <div className="flex gap-2 p-2 text-sm">
+                      {images && (
+                        <img
+                          src={images.imageUrl}
+                          className="size-8 border rounded-full"
+                        />
+                      )}
+                      <h1 className="mt-1.5 text-md text-gray-200 font-bold">
+                        {item["baseToken"].name}
+                      </h1>
+                      <RiVerifiedBadgeFill className="text-blue-500 mt-2" />
+                    </div>
+                    <div className="">
+                      <h1 className="text-[11px] mt-3 text-white">
+                        ${formattedPrice}
+                      </h1>
+
+                      <h1 className="text-[10px] ">
+                        ${parseFloat(formattedPrice).toFixed(3)}
+                      </h1>
+                    </div>
+                  </button>
+                );
+              }
             })}
           </div>
         ) : null}
-      </>
+      </div>
     );
   }
 
   return (
     <div>
-      <Button onClick={handleOpen}>Open modal</Button>
+      <Button onClick={handleOpen}>{children}</Button>
       <Modal
         open={activate}
         onClose={handleClose}
@@ -65,19 +103,21 @@ export default function TokenModal({
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <div className="flex justify-between">
-            <h1>Select Token</h1>
-            <h1>X</h1>
-          </div>
-          <div className="mt-2">
-            <input
-              type="text"
-              className="border w-full rounded-md p-2 border-gray-700"
-              placeholder="Enter token or pair address"
-            />
-          </div>
-          <div className="mt-2 grid grid-flow-row gap-2">
-            <MapPairs />
+          <div className="overflow-y-auto">
+            <div className="flex justify-between">
+              <h1>Select Token</h1>
+              <h1>X</h1>
+            </div>
+            <div className="mt-2">
+              <input
+                type="text"
+                className="border w-full rounded-md p-2 border-gray-700"
+                placeholder="Enter token or pair address"
+              />
+            </div>
+            <div className="mt-2 grid grid-flow-row gap-2">
+              <MapPairs />
+            </div>
           </div>
         </Box>
       </Modal>

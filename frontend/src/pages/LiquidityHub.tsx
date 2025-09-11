@@ -19,7 +19,7 @@ function LiquidityHub() {
   useEffect(() => {
     console.log("Reader Props :", reader);
     console.log("Writer Props: ", writer);
-    getSomePairs(20);
+    getSomePairs(100);
   }, [wallets, reader, writer]);
 
   async function getSomePairs(limit: any) {
