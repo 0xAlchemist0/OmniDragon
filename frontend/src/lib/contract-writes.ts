@@ -1,5 +1,6 @@
 import { createWalletClient, custom } from "viem";
 import UniswapV2FactoryABI from "../utils/abi/UniswapV2FactoryABI";
+import UniswapV2RouterABI from "../utils/abi/UniswapV2RouterABI";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
 import { Read } from "./contract-reads";
@@ -43,7 +44,30 @@ export class Write {
     this.readInstance = new Read(this.account, this.currChain, this.provider);
   }
 
-  public async swap(amount0Out, amount1Out, to, data) {}
+  public async swapExactTokensforTokens(
+    amountIn: any,
+    amountOutMin: any,
+    routes: any,
+    deadline: any
+  ) {}
+
+  public async swap(amountIn: any, amountOut: any, to: any, data: any) {
+    try {
+      const response: any = await this.submitTransaction({
+        address: contracts.Uniswap.UniswapV2Router,
+        abi: UniswapV2RouterABI,
+        functionName: "SwapExactTokensForTokens",
+        args: [amountIn, amountOut, to, data],
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  public async getDeadline() {
+    const deadline = Math.floor(Date.now() / 1000) + 60 * 20;
+    return deadline;
+  }
 
   // /approve before calling functions
   //call approval to all check if user is approved brfore
@@ -92,6 +116,20 @@ export class Write {
       });
 
       return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  public async getAmoutOut(amountIn: any, tokenIn: any, tokenOut: any) {
+    try {
+      //returns an array index 0 is amount of tokenout u get (the one your buying), index 1 is if pool is sttable or not important for swapping
+      const quote = await this.submitTransaction({
+        address: contracts.Uniswap.UniswapV2Router,
+        abi: UniswapV2RouterABI,
+        function: "getAmountOut",
+        args: [amountIn, tokenIn, tokenOut],
+      });
     } catch (error) {
       console.log(error);
     }

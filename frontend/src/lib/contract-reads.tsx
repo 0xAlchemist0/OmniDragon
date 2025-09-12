@@ -3,6 +3,7 @@ import { viemClient } from "../utils/ViemClient";
 import { DRAGONGAUGEREGISTRYAbi } from "../utils/abi/DRAGONGAUGEREGISTRYAbi";
 import ERC20ABI from "../utils/abi/ERC20ABI";
 import UniswapV2FactoryABI from "../utils/abi/UniswapV2FactoryABI";
+import UniswapV2RouterABI from "../utils/abi/UniswapV2RouterABI";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
 import { findChain } from "./chainFinder";
@@ -98,6 +99,21 @@ export class Read {
     });
 
     return votingPower;
+  }
+
+  //returns array index 0 amount to recive of wht ur buying , index 1 if pool is stable or not we need these for route param in swap
+  public async getAmounOut(amountIn: any, tokenIn: any, tokenOut: any) {
+    try {
+      const result = await viemClient.readContract({
+        address: contracts.Uniswap.UniswapV2Router,
+        abi: UniswapV2RouterABI,
+        functionName: "getAmountOut",
+        args: [amountIn, tokenIn, tokenOut],
+      });
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   public async balanceOfnew(tokenAddress: any) {

@@ -8,13 +8,25 @@ function TokenInTokenOut({ pairs }: any) {
   const [activateIn, setActivateIn] = useState(false);
   const [activateOut, setActivateOut] = useState(false);
 
-  const [tokenIn, setTokenIn] = useState(null);
-  const [tokenOut, setTokenOut] = useState(null);
+  const [tokenIn, setTokenIn] = useState({ amount: null });
+  const [tokenOut, setTokenOut] = useState({ amount: null });
   const [tokens, setTokens] = useState({
     in: null,
     out: null,
   });
+  const [inAmount, setInAmount] = useState("");
+
+  const [outAmount, setOutAmount] = useState("");
   useEffect(() => {}, [tokenIn, tokenOut]);
+
+  const handleInput = (tokenType: any, input: any) => {
+    console.log("input: ", input);
+    if (tokenType === "in") {
+      setInAmount(input);
+    } else {
+      setOutAmount(input);
+    }
+  };
 
   function TokenSelector({ tokenType, activate, setActivate }: any) {
     return (
@@ -61,8 +73,12 @@ function TokenInTokenOut({ pairs }: any) {
           <div className="  text-gray-600">
             <input
               type="text"
-              className="  w-20 text-xl text-right"
+              className="  w-20 text-xl text-right text-white"
               placeholder="0"
+              value={tokenType === "in" ? inAmount : outAmount}
+              onChange={(e) => {
+                handleInput(tokenType, e.target.value);
+              }}
             />
             <h1 className="text-right">~$0.00</h1>
           </div>
