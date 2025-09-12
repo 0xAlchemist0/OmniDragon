@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { CiWallet } from "react-icons/ci";
 import { FaArrowDown } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
+import { useTxService } from "../state/TxServiceProvider";
 import TokenModal from "./TokenModal";
 
 function TokenInTokenOut({ pairs }: any) {
   const [activateIn, setActivateIn] = useState(false);
   const [activateOut, setActivateOut] = useState(false);
-
+  const { reader, writer } = useTxService();
   const [tokenIn, setTokenIn] = useState({ amount: null });
   const [tokenOut, setTokenOut] = useState({ amount: null });
   const [tokens, setTokens] = useState({
@@ -17,7 +18,20 @@ function TokenInTokenOut({ pairs }: any) {
   const [inAmount, setInAmount] = useState("");
 
   const [outAmount, setOutAmount] = useState("");
-  useEffect(() => {}, [tokenIn, tokenOut]);
+  const [quote, setQuote] = useState(null);
+  useEffect(() => {
+    console.log(tokens);
+  }, [tokens]);
+
+  useEffect(() => {
+    const parsed = parseInt(inAmount);
+    const obtainQuote = async () => {
+      const result = await reader.getOutAmount(inAmount, tokenIn);
+    };
+    if (parsed) {
+      // const resultQuote = await;
+    }
+  }, [inAmount]);
 
   const handleInput = (tokenType: any, input: any) => {
     console.log("input: ", input);
