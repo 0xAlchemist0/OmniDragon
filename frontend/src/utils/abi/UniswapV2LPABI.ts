@@ -1,4 +1,4 @@
-const UniswapV2RouterABI = [
+const UniswapV2LP = [
   {
     inputs: [
       { internalType: "address", name: "_factory", type: "address" },
@@ -498,4 +498,5 @@ const UniswapV2RouterABI = [
   },
   { stateMutability: "payable", type: "receive" },
 ];
-export default UniswapV2RouterABI;
+
+export default UniswapV2LP;

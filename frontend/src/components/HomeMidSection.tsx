@@ -2,7 +2,7 @@ function HomeMidSection() {
   function Card(props: any) {
     const { title, content }: any = props;
     return (
-      <div className="border border-gray-800  rounded-xl bg-[#0f172afa] p-10">
+      <div className="border border-gray-800  md:m-auto rounded-xl md:w-[70%] bg-[#0f172afa] p-10">
         <h1 className="text-xl font-bold">{title}</h1>
         <h1 className="mt-3 text-lg text-gray-400 font-light">{content}</h1>
       </div>
@@ -13,7 +13,7 @@ function HomeMidSection() {
       <h1 className="text-3xl font-bold text-white text-center mt-10 ">
         Built for the future of defi
       </h1>
-      <div className="grid grid-flow-row gap-5 mt-10">
+      <div className="mt-5 grid grid-flow-row md:grid-cols-3 justify-center w-full md:justify-center gap-5  mt-10">
         <Card
           title={"Cross-Chain Architechture"}
           content={

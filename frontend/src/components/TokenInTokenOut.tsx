@@ -26,12 +26,23 @@ function TokenInTokenOut({ pairs }: any) {
   useEffect(() => {
     const parsed = parseInt(inAmount);
     const obtainQuote = async () => {
-      const result = await reader.getOutAmount(inAmount, tokenIn);
+      const result = await reader.getAmountOut(
+        inAmount,
+        tokens["in"].baseToken.address,
+        tokens["out"].baseToken.address
+      );
+      return result;
     };
-    if (parsed) {
-      // const resultQuote = await;
+    if (tokens) {
+      if (tokens["in"] && tokens["out"]) {
+        throw new Error("NO tokens to proceed with quote!");
+      }
     }
-  }, [inAmount]);
+    if (parsed && tokens.in && tokens.out) {
+      const resultQuote: any = obtainQuote();
+      setQuote(resultQuote);
+    }
+  }, [inAmount, tokens]);
 
   const handleInput = (tokenType: any, input: any) => {
     console.log("input: ", input);
@@ -89,7 +100,13 @@ function TokenInTokenOut({ pairs }: any) {
               type="text"
               className="  w-20 text-xl text-right text-white"
               placeholder="0"
-              value={tokenType === "in" ? inAmount : outAmount}
+              value={
+                tokenType === "in"
+                  ? inAmount
+                  : quote
+                  ? String(Number(quote[0]))
+                  : "0"
+              }
               onChange={(e) => {
                 handleInput(tokenType, e.target.value);
               }}
@@ -101,10 +118,15 @@ function TokenInTokenOut({ pairs }: any) {
     );
   }
 
-  function SubmitTXBTN() {
+  function SubmitTXBTN({ action }: any) {
     return (
       <div>
-        <button className="border font-bold text-sm w-full p-2 rounded-md bg-gray-800 h-12 border-gray-600">
+        <button
+          className="border font-bold text-sm w-full p-2 rounded-md bg-gray-800 h-12 border-gray-600"
+          onClick={() => {
+            action();
+          }}
+        >
           Swap
         </button>
       </div>
@@ -132,7 +154,7 @@ function TokenInTokenOut({ pairs }: any) {
       </div>
 
       <div className="mt-5">
-        <SubmitTXBTN />
+        <SubmitTXBTN action={writer.swapExactTokensforTokens} />
       </div>
       <div></div>
     </div>

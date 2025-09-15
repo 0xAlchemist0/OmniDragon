@@ -44,15 +44,15 @@ export class Write {
     this.readInstance = new Read(this.account, this.currChain, this.provider);
   }
 
-  public async swapExactTokensforTokens(
+  public async SwapExactTokensForTokens(
     amountIn: any,
-    amountOutMin: any,
-    routes: any,
-    deadline: any
-  ) {}
-
-  public async swap(amountIn: any, amountOut: any, to: any, data: any) {
+    amountOut: any,
+    to: any,
+    data: any
+  ) {
     try {
+      if (!amountIn || !amountOut || !to || !data)
+        throw new Error("Missing inputs");
       const response: any = await this.submitTransaction({
         address: contracts.Uniswap.UniswapV2Router,
         abi: UniswapV2RouterABI,

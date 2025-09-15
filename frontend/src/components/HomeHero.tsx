@@ -9,7 +9,7 @@ function HomeHero() {
     );
   }
   return (
-    <div className="border  border-gray-800 rounded-lg text-center p-10 text-white">
+    <div className="border  border-gray-800 rounded-lg text-center md:w-[40%] md:m-auto p-10 text-white">
       <h1 className=" text-4xl font-bold bg-gradient-to-r from-[#e2ca2f] via-white to-[#db5656] bg-clip-text text-transparent">
         Red Dragon
       </h1>

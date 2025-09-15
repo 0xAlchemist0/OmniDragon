@@ -101,15 +101,52 @@ export class Read {
     return votingPower;
   }
 
+  public async isPair(tokenA: any, tokenB: any, stable: any) {
+    const state = stable || [true, false];
+    let result = await this.pairFor(tokenA, tokenB, state[0]);
+    if (result) {
+      return result;
+    } else {
+      result = await this.pairFor(tokenA, tokenB, state[1]);
+      if (result) {
+        return result;
+      } else {
+        return false;
+      }
+    }
+
+    //ru tilll we find whats stable or not
+  }
+  //verfies poool id it s stable or not
+  public async pairFor(tokenA: any, tokenB: any, stable: any) {
+    const pair: any = await viemClient.readContract({
+      address: contracts.Uniswap.UniswapV2Router,
+      abi: UniswapV2RouterABI,
+      functionName: "pairFor",
+      args: [tokenA, tokenB, stable],
+    });
+
+    return pair;
+  }
+
   //returns array index 0 amount to recive of wht ur buying , index 1 if pool is stable or not we need these for route param in swap
-  public async getAmounOut(amountIn: any, tokenIn: any, tokenOut: any) {
+  public async getAmountOut(amountIn: any, tokenIn: any, tokenOut: any) {
+    console.log("params: ", {
+      amountIn,
+      tokenIn,
+      tokenOut,
+    });
     try {
+      //verify the pool exists before trading
+      const isPair = await this.isPair(tokenIn, tokenOut, null);
+      if (!isPair) throw new Error("Pair Not found for this token combination");
       const result = await viemClient.readContract({
         address: contracts.Uniswap.UniswapV2Router,
         abi: UniswapV2RouterABI,
         functionName: "getAmountOut",
         args: [amountIn, tokenIn, tokenOut],
       });
+      console.log(result);
       return result;
     } catch (error) {
       console.log(error);
