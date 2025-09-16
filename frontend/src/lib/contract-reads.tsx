@@ -185,13 +185,15 @@ export class Read {
     }
   }
 
-  public async balanceOfnew(tokenAddress: any) {
+  public async balanceOfToken(tokenAddress: any) {
     const balance: any = await viemClient.readContract({
       address: tokenAddress,
       abi: ERC20ABI,
       functionName: "balanceOf",
       args: [this.wallet],
     });
+    console.log("Balance for ", tokenAddress, " ", formatUnits(balance, 18));
+    return parseFloat(formatUnits(balance, 18)).toFixed(2);
   }
 
   public async balanceOf(allower: any, spender: any, amount: any, abi: any) {

@@ -1,4 +1,5 @@
 import { createWalletClient, custom } from "viem";
+import ERC20ABI from "../utils/abi/ERC20ABI";
 import UniswapV2FactoryABI from "../utils/abi/UniswapV2FactoryABI";
 import UniswapV2RouterABI from "../utils/abi/UniswapV2RouterABI";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
@@ -46,23 +47,27 @@ export class Write {
 
   public async SwapExactTokensForTokens(
     amountIn: any,
-    amountOut: any,
-    to: any,
-    data: any
+    amountOutMin: any,
+    to: any
   ) {
     try {
       if (!amountIn || !amountOut || !to || !data)
         throw new Error("Missing inputs");
+
+      const deadline: any = this.getDeadline();
       const response: any = await this.submitTransaction({
         address: contracts.Uniswap.UniswapV2Router,
         abi: UniswapV2RouterABI,
         functionName: "SwapExactTokensForTokens",
-        args: [amountIn, amountOut, to, data],
+        args: [amountIn, amountOutMin, routes, to, deadline],
       });
+      return { status: "Transaction sucessful" };
     } catch (error) {
       console.log(error);
     }
   }
+
+  public async getRoute() {}
 
   public async getDeadline() {
     const deadline = Math.floor(Date.now() / 1000) + 60 * 20;
@@ -72,23 +77,23 @@ export class Write {
   // /approve before calling functions
   //call approval to all check if user is approved brfore
 
+  //remembr lock still passes in old param so fix 09-16-2025
   public async approveTokens(
     spender: any,
     value: any,
     //allower is where the contract which we call approve
-    allower: any,
-    allowerAbi: any
+    allower: any
   ) {
     const isApproved = await this.readInstance.isApproved(
       this.wallet,
       spender,
-      allowerAbi,
+      ERC20ABI,
       value
     );
     if (!isApproved) {
       const response = await this.submitTransaction({
         address: allower,
-        abi: allowerAbi,
+        abi: ERC20ABI,
         functionName: "approve",
         args: [spender, "1000000000000000000000000000000"],
       });

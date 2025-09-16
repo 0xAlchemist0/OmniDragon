@@ -82,7 +82,7 @@ export default function TokenModal({
     return (
       <div className="overflow-hidden">
         {searchResults !== null ? (
-          <div className="h-90 overflow-y-auto grid grid-flow-row gap-2">
+          <div className="h-40 overflow-y-auto grid grid-flow-row gap-2">
             <button
               className={`border w-95 m-auto border-gray-700 rounded-md flex justify-between p-2 `}
               style={{ scrollbarWidth: "none" }}
@@ -92,17 +92,18 @@ export default function TokenModal({
               }}
             >
               <div className="flex gap-2 p-2 text-sm">
-                {searchResults.info && (
+                {searchResults && searchResults?.info && (
                   <img
                     src={
-                      searchResults?.info?.imageUrl ||
-                      "https://media.tenor.com/SsTnMMMQdkQAAAAe/confusion-emoji.png"
+                      searchResults
+                        ? searchResults?.info?.imageUrl
+                        : "https://media.tenor.com/SsTnMMMQdkQAAAAe/confusion-emoji.png"
                     }
                     className="size-8 border rounded-full"
                   />
                 )}
                 <h1 className="mt-1.5 text-md text-gray-200 font-bold">
-                  {searchResults?.baseToken.name}
+                  {searchResults?.baseToken?.name}
                 </h1>
                 <RiVerifiedBadgeFill className="text-blue-500 mt-2" />
               </div>
@@ -194,11 +195,15 @@ export default function TokenModal({
                 className="border w-full rounded-md p-2 border-gray-700"
                 placeholder="Enter token or pair address"
                 onChange={(e) => {
-                  setInput(e.target.value);
+                  setInput(e?.target?.value);
                 }}
               />
             </div>
-            <div className="mt-2 grid grid-flow-row gap-2">
+            <div
+              className={`${
+                searchResults ? "mt-2" : null
+              } grid grid-flow-row gap-2`}
+            >
               <MapPairs />
             </div>
           </div>

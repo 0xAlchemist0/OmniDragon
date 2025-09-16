@@ -4,6 +4,7 @@ import { FaArrowDown } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { useTxService } from "../state/TxServiceProvider";
 import TokenModal from "./TokenModal";
+import TxConfirm from "./TxConfirm";
 
 function TokenInTokenOut({ pairs }: any) {
   interface Token {
@@ -16,17 +17,41 @@ function TokenInTokenOut({ pairs }: any) {
   const [tokenIn, setTokenIn] = useState({ amount: null });
   const [tokenOut, setTokenOut] = useState({ amount: null });
   const [verified, setVerified] = useState(true);
+  const [balances, setBalances] = useState({ in: 0, out: 0 });
   const [tokens, setTokens] = useState<Token | null>({
     in: null,
     out: null,
   });
   const [inAmount, setInAmount] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const [outAmount, setOutAmount] = useState("");
   const [quote, setQuote] = useState(null);
   useEffect(() => {
-    console.log(tokens);
+    if (tokens) {
+      if (tokens.in && tokens.out) {
+        const getBalances = async () => {
+          const balanceIn = await reader.balanceOfToken(
+            tokens.in.baseToken.address
+          );
+          const balanceOut = await reader.balanceOfToken(
+            tokens?.out.baseToken.address
+          );
+
+          setBalances({ in: balanceIn, out: balanceOut });
+        };
+        getBalances();
+      }
+    }
   }, [tokens]);
+
+  useEffect(() => {
+    //removes and shows confirmation
+    if (showConfirmation) {
+      setActivateIn(false);
+      setActivateOut(false);
+    }
+  }, [showConfirmation]);
 
   useEffect(() => {
     const parsed = parseInt(inAmount);
@@ -53,6 +78,14 @@ function TokenInTokenOut({ pairs }: any) {
     }
   }, [inAmount, tokens]);
 
+  const handleTxConfirmation = () => {
+    if (tokens) {
+      if (tokens.in && tokens.out && tokenIn && tokenOut && quote) {
+        setShowConfirmation(true);
+      }
+    }
+  };
+
   const handleInput = (tokenType: any, input: any) => {
     console.log("input: ", input);
     if (tokenType === "in") {
@@ -67,11 +100,11 @@ function TokenInTokenOut({ pairs }: any) {
       const priceUsd: any = tokens[tokenType]?.priceUsd;
       if (tokenType === "in") {
         if (quote && priceUsd) {
-          return Number(inAmount) * parseFloat(priceUsd);
+          return parseFloat(Number(inAmount) * parseFloat(priceUsd)).toFixed(2);
         }
       } else {
         if (priceUsd && quote) {
-          return parseFloat(priceUsd) * Number(quote[0]);
+          return parseFloat(parseFloat(priceUsd) * Number(quote[0])).toFixed(2);
         }
       }
     }
@@ -82,7 +115,10 @@ function TokenInTokenOut({ pairs }: any) {
           <span className="flex gap-2">
             <CiWallet className="text-gray-500 text-sm " />
 
-            <h1>{"0.00 ETH"}</h1>
+            <h1>
+              {balances[tokenType]}
+              {tokens[tokenType] ? tokens[tokenType]?.baseToken.symbol : ""}
+            </h1>
           </span>
         </span>
         <div className="border rounded-xl flex justify-between border-gray-800 bg-gray-900 p-3">
@@ -112,7 +148,7 @@ function TokenInTokenOut({ pairs }: any) {
                   <h1 className="mt-1 text-[10px] text-white font-bold text-nowrap">
                     {tokens[tokenType]?.baseToken?.name || "ETH"}
                   </h1>
-                  <IoIosArrowDown className="text-gray-600 mt-1.5" />
+                  <IoIosArrowDown className="text-gray-600 mt-1.5 " />
                 </span>
               </div>
             </TokenModal>
@@ -120,7 +156,7 @@ function TokenInTokenOut({ pairs }: any) {
           <div className="  text-gray-600">
             <input
               type="text"
-              className="  w-20 text-xl text-right text-white"
+              className="  w-20 text-xl text-right  w-full text-white outline-0"
               placeholder="0"
               value={
                 tokenType === "in"
@@ -152,7 +188,7 @@ function TokenInTokenOut({ pairs }: any) {
           className="border font-bold text-sm w-full p-2 rounded-md bg-gray-800 h-12 border-gray-600"
           onClick={() => {
             if (verified) {
-              action();
+              handleTxConfirmation();
             }
           }}
         >
@@ -165,15 +201,28 @@ function TokenInTokenOut({ pairs }: any) {
   return (
     <div>
       <div className="grid grid-rows-1 gap-3">
+        <TxConfirm
+          tokenIn={tokens?.in}
+          tokenOut={tokens?.out}
+          setShowConfirmation={setShowConfirmation}
+          showConfirmation={showConfirmation}
+        />
         <TokenSelector
           tokenType="in"
           activate={activateIn}
           setActivate={setActivateIn}
         />
-        <div className="m-auto">
-          <div className="border p-1 rounded-full bg-gray-800 text-gray-600">
-            <FaArrowDown />
-          </div>
+        <div className="m-auto ">
+          <button
+            className="border p-1 rounded-full bg-gray-800 text-gray-600 "
+            onClick={() => {
+              if (tokens?.in && tokens?.out) {
+                setTokens({ in: tokens.out, out: tokens.in });
+              }
+            }}
+          >
+            <FaArrowDown className="h" />
+          </button>
         </div>
         <TokenSelector
           tokenType="out"
