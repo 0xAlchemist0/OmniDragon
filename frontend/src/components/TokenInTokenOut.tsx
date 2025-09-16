@@ -134,22 +134,24 @@ function TokenInTokenOut({ pairs }: any) {
               setTokens={setTokens}
               setVerified={setVerified}
             >
-              <div className="border flex gap-2 p-1 w-20  rounded-md border-gray-700 bg-gray-800  ">
-                <span className="m-auto flex gap-2  overflow-hidden">
-                  <img
-                    src={
-                      tokens[tokenType]?.info?.imageUrl ??
-                      "https://media.tenor.com/SsTnMMMQdkQAAAAe/confusion-emoji.png"
-                    }
-                    alt=""
-                    className="size-4 mt-0.5 rounded-full border"
-                  />
+              <div className="border   gap-2 p-1 w-25   rounded-md border-gray-700 bg-gray-800  ">
+                <div className=" flex justify-between   ">
+                  <div className="flex gap-2">
+                    <img
+                      src={
+                        tokens[tokenType]?.info?.imageUrl ??
+                        "https://media.tenor.com/SsTnMMMQdkQAAAAe/confusion-emoji.png"
+                      }
+                      alt=""
+                      className="size-4 mt-0.5 rounded-full border"
+                    />
 
-                  <h1 className="mt-1 text-[10px] text-white font-bold text-nowrap">
-                    {tokens[tokenType]?.baseToken?.name || "ETH"}
-                  </h1>
-                  <IoIosArrowDown className="text-gray-600 mt-1.5 " />
-                </span>
+                    <h1 className="mt-1 text-[10px] text-white font-bold text-nowrap">
+                      {tokens[tokenType]?.baseToken?.symbol || "ETH"}
+                    </h1>
+                  </div>
+                  <IoIosArrowDown className="text-gray-600 mt-1.5 text-right  " />
+                </div>
               </div>
             </TokenModal>
           </div>
@@ -204,6 +206,9 @@ function TokenInTokenOut({ pairs }: any) {
         <TxConfirm
           tokenIn={tokens?.in}
           tokenOut={tokens?.out}
+          inAmount={inAmount}
+          outAmount={outAmount}
+          quote={quote}
           setShowConfirmation={setShowConfirmation}
           showConfirmation={showConfirmation}
         />

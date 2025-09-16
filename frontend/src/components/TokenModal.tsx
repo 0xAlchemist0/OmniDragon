@@ -189,10 +189,10 @@ export default function TokenModal({
               <h1>Select Token</h1>
               <h1>X</h1>
             </div>
-            <div className="mt-2">
+            <div className="mt-2 flex justify-center mb-2">
               <input
                 type="text"
-                className="border w-full rounded-md p-2 border-gray-700"
+                className="border w-99 rounded-md p-2 border-gray-700"
                 placeholder="Enter token or pair address"
                 onChange={(e) => {
                   setInput(e?.target?.value);

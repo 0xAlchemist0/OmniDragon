@@ -73,21 +73,24 @@ export class Read {
   //Approvsl before tx
   //always check this to make sure u can spend tokens
   public async isApproved(
-    owner: any,
+    tokenAddress: any,
     spender: any,
-    spenderAbi: any,
     amountToTransact: string
   ) {
-    const currentAllowance: any = await viemClient.readContract({
-      address: spender,
-      abi: spenderAbi,
-      functionName: "allowance",
-      args: [owner, spender],
-    });
+    try {
+      const currentAllowance: any = await viemClient.readContract({
+        address: tokenAddress,
+        abi: ERC20ABI,
+        functionName: "allowance",
+        args: [this.wallet, spender],
+      });
 
-    const isApproved = currentAllowance >= amountToTransact ? true : false;
-
-    return isApproved;
+      const isApproved = currentAllowance >= amountToTransact ? true : false;
+      console.log("is approved? for  :", tokenAddress, " :", isApproved);
+      return isApproved;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   public async calculateVotingPower(amount: any, duration: any) {

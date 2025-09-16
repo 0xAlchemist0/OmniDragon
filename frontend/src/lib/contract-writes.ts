@@ -79,20 +79,21 @@ export class Write {
 
   //remembr lock still passes in old param so fix 09-16-2025
   public async approveTokens(
+    tokenAddress: any,
     spender: any,
-    value: any,
-    //allower is where the contract which we call approve
-    allower: any
+    amountToTransact: any
   ) {
+    console.log("Token Address: ", spender);
+    console.log("mount to swap in :", amountToTransact);
     const isApproved = await this.readInstance.isApproved(
-      this.wallet,
+      tokenAddress,
       spender,
-      ERC20ABI,
-      value
+      amountToTransact
     );
     if (!isApproved) {
-      const response = await this.submitTransaction({
-        address: allower,
+      console.log("writing approval");
+      const response: any = await this.submitTransaction({
+        address: tokenAddress,
         abi: ERC20ABI,
         functionName: "approve",
         args: [spender, "1000000000000000000000000000000"],
