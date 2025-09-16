@@ -1,6 +1,7 @@
 const endpoints = {
   findPools: "https://api.dexscreener.com/tokens/v1/",
   findToken: "https://api.dexscreener.com/latest/dex/pairs/",
+  searchQuery: "https://api.dexscreener.com/latest/dex/search",
 };
 
 export async function getTokensInfo(tokensList: any, reader: any) {
@@ -17,6 +18,33 @@ export async function getTokensInfo(tokensList: any, reader: any) {
     }
   }
   return partnersInfo;
+}
+
+export async function searchDexscreener(searchItem: string, chainName: string) {
+  try {
+    const request = await fetch(endpoints.searchQuery + `?q=${searchItem}`);
+    const response = await request.json();
+
+    const filtered = filterByChain(response.pairs, chainName);
+    const best = await discoverBestPair(filtered);
+    console.log("Best found: ", best);
+    return best;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export function filterByChain(pairs: any[], chainName: string) {
+  const foundOnChain = [];
+  for (const pair in pairs) {
+    const currentChain = pairs[pair].chainId;
+    console.log(currentChain);
+    if (currentChain === chainName.toLowerCase()) {
+      console.log("chainFOund: ", pairs[pair]);
+      foundOnChain.push(pairs[pair]);
+    }
+  }
+  return foundOnChain;
 }
 
 //name change
@@ -36,7 +64,9 @@ export async function getPairsInfo(pairsList: any, reader: any) {
   return pairsInfo;
 }
 
-async function searchByPair(pairAddress: any, chain: string) {
+export async function filterByDex(found: any[], dexId: string) {}
+
+export async function searchByPair(pairAddress: any, chain: string) {
   try {
     const infoRequest = await fetch(
       endpoints.findToken + String(chain).toLowerCase() + `/${pairAddress}`
@@ -48,7 +78,7 @@ async function searchByPair(pairAddress: any, chain: string) {
   }
 }
 
-async function getToken(tokenAddress: string, chain: string) {
+export async function getToken(tokenAddress: string, chain: string) {
   try {
     const infoRequest = await fetch(
       endpoints.findPools + chain + `/${tokenAddress}`

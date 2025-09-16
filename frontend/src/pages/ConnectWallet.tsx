@@ -1,10 +1,11 @@
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 //redirects when wallet is connected
 function ConnectWallet({ route }: any) {
   const { user, ready, authenticated, login }: any = usePrivy();
+  const { wallets } = useWallets();
   const navigate: any = useNavigate();
   console.log("Route right now: ", route);
   useEffect(() => {

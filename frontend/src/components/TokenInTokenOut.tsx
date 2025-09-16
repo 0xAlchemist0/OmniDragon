@@ -6,12 +6,17 @@ import { useTxService } from "../state/TxServiceProvider";
 import TokenModal from "./TokenModal";
 
 function TokenInTokenOut({ pairs }: any) {
+  interface Token {
+    in?: { baseToken: { address: string } } | null;
+    out?: { baseToken: { address: string } } | null;
+  }
   const [activateIn, setActivateIn] = useState(false);
   const [activateOut, setActivateOut] = useState(false);
   const { reader, writer } = useTxService();
   const [tokenIn, setTokenIn] = useState({ amount: null });
   const [tokenOut, setTokenOut] = useState({ amount: null });
-  const [tokens, setTokens] = useState({
+  const [verified, setVerified] = useState(true);
+  const [tokens, setTokens] = useState<Token | null>({
     in: null,
     out: null,
   });
@@ -25,22 +30,26 @@ function TokenInTokenOut({ pairs }: any) {
 
   useEffect(() => {
     const parsed = parseInt(inAmount);
+    //when u throw errror on frontend website stops working
     const obtainQuote = async () => {
+      await reader.getMainetBalance();
       const result = await reader.getAmountOut(
         inAmount,
-        tokens["in"].baseToken.address,
-        tokens["out"].baseToken.address
+        tokens?.in?.baseToken.address,
+        tokens?.out?.baseToken.address,
+        reader
       );
+      console.log("result quote: ", result);
+
+      setQuote(result);
       return result;
     };
-    if (tokens) {
-      if (tokens["in"] && tokens["out"]) {
-        throw new Error("NO tokens to proceed with quote!");
-      }
-    }
-    if (parsed && tokens.in && tokens.out) {
-      const resultQuote: any = obtainQuote();
-      setQuote(resultQuote);
+    if (!tokens?.in || !tokens?.out || parsed) {
+      console.log("getting quote ");
+
+      obtainQuote();
+    } else {
+      console.log("chekc failed ");
     }
   }, [inAmount, tokens]);
 
@@ -54,6 +63,18 @@ function TokenInTokenOut({ pairs }: any) {
   };
 
   function TokenSelector({ tokenType, activate, setActivate }: any) {
+    function getUSD() {
+      const priceUsd: any = tokens[tokenType]?.priceUsd;
+      if (tokenType === "in") {
+        if (quote && priceUsd) {
+          return Number(inAmount) * parseFloat(priceUsd);
+        }
+      } else {
+        if (priceUsd && quote) {
+          return parseFloat(priceUsd) * Number(quote[0]);
+        }
+      }
+    }
     return (
       <div>
         <span className="flex justify-between text-xs mb-2 w-95 md:w-[100%]  m-auto">
@@ -75,19 +96,20 @@ function TokenInTokenOut({ pairs }: any) {
               tokenType={tokenType}
               tokens={tokens}
               setTokens={setTokens}
+              setVerified={setVerified}
             >
               <div className="border flex gap-2 p-1 w-20  rounded-md border-gray-700 bg-gray-800  ">
                 <span className="m-auto flex gap-2  overflow-hidden">
                   <img
                     src={
-                      tokens[tokenType]?.info?.imageUrl ||
-                      "https://cdn-icons-png.flaticon.com/512/14446/14446160.png"
+                      tokens[tokenType]?.info?.imageUrl ??
+                      "https://media.tenor.com/SsTnMMMQdkQAAAAe/confusion-emoji.png"
                     }
                     alt=""
                     className="size-4 mt-0.5 rounded-full border"
                   />
 
-                  <h1 className="mt-1 text-[10px] text-white font-bold">
+                  <h1 className="mt-1 text-[10px] text-white font-bold text-nowrap">
                     {tokens[tokenType]?.baseToken?.name || "ETH"}
                   </h1>
                   <IoIosArrowDown className="text-gray-600 mt-1.5" />
@@ -104,14 +126,14 @@ function TokenInTokenOut({ pairs }: any) {
                 tokenType === "in"
                   ? inAmount
                   : quote
-                  ? String(Number(quote[0]))
-                  : "0"
+                  ? String(Number(Number(quote[0])))
+                  : null
               }
               onChange={(e) => {
                 handleInput(tokenType, e.target.value);
               }}
             />
-            <h1 className="text-right">~$0.00</h1>
+            <h1 className="text-right">~${getUSD()}</h1>
           </div>
         </div>
       </div>
@@ -121,10 +143,17 @@ function TokenInTokenOut({ pairs }: any) {
   function SubmitTXBTN({ action }: any) {
     return (
       <div>
+        {!verified && (
+          <h1 className="text-red-500 font-mono mb-5 text-xs text-center">
+            Pair Not found or insufficient liquidity
+          </h1>
+        )}
         <button
           className="border font-bold text-sm w-full p-2 rounded-md bg-gray-800 h-12 border-gray-600"
           onClick={() => {
-            action();
+            if (verified) {
+              action();
+            }
           }}
         >
           Swap
@@ -138,8 +167,8 @@ function TokenInTokenOut({ pairs }: any) {
       <div className="grid grid-rows-1 gap-3">
         <TokenSelector
           tokenType="in"
-          activate={activateOut}
-          setActivate={setActivateOut}
+          activate={activateIn}
+          setActivate={setActivateIn}
         />
         <div className="m-auto">
           <div className="border p-1 rounded-full bg-gray-800 text-gray-600">
@@ -148,8 +177,8 @@ function TokenInTokenOut({ pairs }: any) {
         </div>
         <TokenSelector
           tokenType="out"
-          activate={activateIn}
-          setActivate={setActivateIn}
+          activate={activateOut}
+          setActivate={setActivateOut}
         />
       </div>
 

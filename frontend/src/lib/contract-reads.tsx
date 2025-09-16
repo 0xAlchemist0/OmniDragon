@@ -1,4 +1,4 @@
-import { createPublicClient, formatUnits, http } from "viem";
+import { createPublicClient, formatEther, formatUnits, http } from "viem";
 import { viemClient } from "../utils/ViemClient";
 import { DRAGONGAUGEREGISTRYAbi } from "../utils/abi/DRAGONGAUGEREGISTRYAbi";
 import ERC20ABI from "../utils/abi/ERC20ABI";
@@ -8,7 +8,7 @@ import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
 import { findChain } from "./chainFinder";
 import { findChainName } from "./chainMap";
-import { getTokensInfo } from "./dexscreener-handler";
+import { getPairsInfo, getTokensInfo } from "./dexscreener-handler";
 //check approval before tx in read
 
 //class makes things easier
@@ -101,21 +101,38 @@ export class Read {
     return votingPower;
   }
 
-  public async isPair(tokenA: any, tokenB: any, stable: any) {
-    const state = stable || [true, false];
-    let result = await this.pairFor(tokenA, tokenB, state[0]);
-    if (result) {
-      return result;
-    } else {
-      result = await this.pairFor(tokenA, tokenB, state[1]);
-      if (result) {
-        return result;
-      } else {
-        return false;
-      }
-    }
+  public async isPair(tokenA: any, tokenB: any, read: Read) {
+    try {
+      const sorted: any = await this.sortTokens(tokenA, tokenB);
+      const state: any = [true, false];
+      if (sorted && sorted) {
+        let pairOne = await this.pairFor(sorted[0], sorted[1], state[0]);
+        let pairTwo = await this.pairFor(sorted[0], sorted[1], state[1]);
+        let result = await getPairsInfo([pairOne], read);
+        let resulttwo = await getPairsInfo([pairTwo], read);
 
+        console.log("result one: ", result.length);
+
+        if (result.length >= 1 || resulttwo.length >= 1) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    } catch (error) {
+      return null;
+    }
     //ru tilll we find whats stable or not
+  }
+
+  public async sortTokens(tokenA: any, tokenB: any) {
+    const sorted = await viemClient.readContract({
+      address: contracts.Uniswap.UniswapV2Router,
+      abi: UniswapV2RouterABI,
+      functionName: "sortTokens",
+      args: [tokenA, tokenB],
+    });
+    return sorted;
   }
   //verfies poool id it s stable or not
   public async pairFor(tokenA: any, tokenB: any, stable: any) {
@@ -130,7 +147,12 @@ export class Read {
   }
 
   //returns array index 0 amount to recive of wht ur buying , index 1 if pool is stable or not we need these for route param in swap
-  public async getAmountOut(amountIn: any, tokenIn: any, tokenOut: any) {
+  public async getAmountOut(
+    amountIn: any,
+    tokenIn: any,
+    tokenOut: any,
+    reader: any
+  ) {
     console.log("params: ", {
       amountIn,
       tokenIn,
@@ -138,16 +160,26 @@ export class Read {
     });
     try {
       //verify the pool exists before trading
-      const isPair = await this.isPair(tokenIn, tokenOut, null);
-      if (!isPair) throw new Error("Pair Not found for this token combination");
+      const isPair = await this.isPair(tokenIn, tokenOut, reader);
+      if (!isPair) return false;
       const result = await viemClient.readContract({
         address: contracts.Uniswap.UniswapV2Router,
         abi: UniswapV2RouterABI,
         functionName: "getAmountOut",
         args: [amountIn, tokenIn, tokenOut],
       });
-      console.log(result);
+      console.log("quote: ", result);
       return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  public async getMainetBalance() {
+    try {
+      const balance = await viemClient.getBalance({ address: this.wallet });
+      console.log("BALANCE ETH: ", formatEther(balance));
+      return formatEther(balance);
     } catch (error) {
       console.log(error);
     }

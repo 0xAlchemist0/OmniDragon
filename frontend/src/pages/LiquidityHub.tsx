@@ -19,12 +19,11 @@ function LiquidityHub() {
   useEffect(() => {
     console.log("Reader Props :", reader);
     console.log("Writer Props: ", writer);
-    getSomePairs(100);
+    getSomePairs(14);
   }, [wallets, reader, writer]);
 
   async function getSomePairs(limit: any) {
     const swapXPairs: any = await reader.topFactoryPairs(limit);
-    console.log(swapXPairs);
     const PairsInfo: any = await getPairsInfo(swapXPairs, reader);
     setTopPairs(PairsInfo);
     // setTopPairs(pairsFound);
