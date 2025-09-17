@@ -11,6 +11,8 @@ function TxConfirm({
   quote,
   setShowConfirmation,
   showConfirmation,
+  slippage,
+  deadline,
 }: any) {
   const { reader, writer } = useTxService();
   const style = {
@@ -47,6 +49,7 @@ function TxConfirm({
     }
   }
 
+  //verifes spending cap
   async function verifyApproval() {
     const approvalsNeeded = [];
     const isInApproved = await writer.approveTokens(
@@ -60,12 +63,15 @@ function TxConfirm({
     }
   }
 
+  //excecutes swap
   async function excectuteTX() {
     const reuslt = await writer.swapExactTokensForTokens(
       String(inAmount),
       String(quote[0]),
       tokenIn.baseToken.address,
-      tokenOut.baseToken.address
+      tokenOut.baseToken.address,
+      slippage,
+      deadline
     );
   }
 

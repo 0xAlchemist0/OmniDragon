@@ -1,4 +1,4 @@
-import { createWalletClient, custom } from "viem";
+import { createWalletClient, custom, parseUnits } from "viem";
 import ERC20ABI from "../utils/abi/ERC20ABI";
 import UniswapV2FactoryABI from "../utils/abi/UniswapV2FactoryABI";
 import UniswapV2RouterABI from "../utils/abi/UniswapV2RouterABI";
@@ -49,7 +49,9 @@ export class Write {
     amountIn: any,
     amountOutMin: any,
     from: any,
-    to: any
+    to: any,
+    slippage: any,
+    deadline: any
   ) {
     console.log({
       amountIn,
@@ -62,26 +64,46 @@ export class Write {
       if (!amountIn || !amountOutMin || !to || !from)
         throw new Error("Missing inputs");
 
-      const deadline: any = await this.getDeadline();
-      const routes = [{ from: from, to: to, stable: true }];
-      const slippageApplied = 0;
-      const response: any = await this.submitTransaction({
+      const slipageApplied = this.applySlippage(amountIn, slippage);
+      const deadlineFinal: any = await this.getDeadline(slippage);
+      console.log("Applied:", slipageApplied);
+      const routes = [{ from: from, to: to, stable: false }];
+      let params = {
         address: contracts.Uniswap.UniswapV2Router,
         abi: UniswapV2RouterABI,
         functionName: "swapExactTokensForTokens",
-        args: [amountIn, amountOutMin, routes, this.wallet, deadline],
-        gas: 100000n,
+        args: [
+          parseUnits(String(amountIn), 18),
+          slipageApplied,
+          routes,
+          this.wallet,
+          deadlineFinal,
+        ],
+      };
+      const gasEstimate = await this.calculateGas(params);
+
+      const response: any = await this.submitTransaction({
+        ...params,
+        gas: gasEstimate + 50000n,
       });
       return { status: "Transaction sucessful" };
     } catch (error) {
       console.log(error);
     }
   }
-
+  public applySlippage(amountOut: bigint, slippagePercent: number) {
+    // Convert slippage percent to BigInt factor
+    // Example: 0.5% → 9950 / 10000
+    const factor = BigInt(10000) - BigInt(Math.floor(slippagePercent * 100));
+    const minAmount = (amountOut * factor) / 10000n; // all BigInt math
+    return minAmount;
+  }
   public async getRoute() {}
 
-  public async getDeadline() {
-    const deadline = Math.floor(Date.now() / 1000) + 60 * 20;
+  public async getDeadline(suggestedDeadline: any) {
+    if (suggestedDeadline === "0")
+      return BigInt(Math.floor(Date.now() / 1000) + 60 * 20);
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 60 * 20);
     return deadline;
   }
 
@@ -150,6 +172,11 @@ export class Write {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  public async calculateGas(params: any) {
+    const gas = await this.readInstance.estimateContractTotalGas(params);
+    return gas;
   }
 
   public async createPair(tokenA: any, tokenB: any, pool: any) {

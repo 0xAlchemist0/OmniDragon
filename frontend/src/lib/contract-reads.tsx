@@ -52,6 +52,15 @@ export class Read {
     });
   }
 
+  public async estimateContractTotalGas(params: any) {
+    try {
+      const gas: any = await this.viemClient.estimateContractGas(params);
+      return gas;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   //updates automatically pass chain id boom goes the function
   public async updateChain(chainId: any) {
     const newChain: any = findChain(chainId);

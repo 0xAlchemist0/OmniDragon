@@ -26,11 +26,11 @@ function TokenInTokenOut({ pairs }: any) {
   });
   const [inAmount, setInAmount] = useState("");
   // minutes so zero means deadline to swap is now
-  const [deadline, setDeadLine] = useState(0);
+  const [deadline, setDeadLine] = useState("0");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [outAmount, setOutAmount] = useState("");
   const [quote, setQuote] = useState(null);
-  const [slippage, setSlippage] = useState(0.5);
+  const [slippage, setSlippage] = useState("0.12");
   useEffect(() => {
     const getDefault = async () => {
       const chainName = await reader.getChainName();
@@ -227,6 +227,8 @@ function TokenInTokenOut({ pairs }: any) {
           quote={quote}
           setShowConfirmation={setShowConfirmation}
           showConfirmation={showConfirmation}
+          slippage={slippage}
+          deadline={deadline}
         />
         <TokenSelector
           tokenType="in"
@@ -297,20 +299,20 @@ function TokenInTokenOut({ pairs }: any) {
                 <span className="border border-gray-600 p-1 flex justify-between rounded-full gap-2">
                   <button
                     className={`border-0 rounded-full w-10 text-xs text-white font-bold ${
-                      slippage === 0.5 ? "bg-orange-500" : null
+                      slippage === "0.05" ? "bg-orange-500" : null
                     }`}
                     onClick={() => {
-                      setSlippage(0.5);
+                      setSlippage("0.05");
                     }}
                   >
                     <h1 className="mt-0.5 ms-0.5">0.5%</h1>
                   </button>
                   <button
                     className={`border-0 rounded-full w-10 text-xs text-white font-bold ${
-                      slippage === 1 ? "bg-orange-500" : null
+                      slippage === "0.01" ? "bg-orange-500" : null
                     }`}
                     onClick={() => {
-                      setSlippage(1);
+                      setSlippage("0.01");
                     }}
                   >
                     <h1 className="mt-0.5 ms-0.5">1%</h1>
@@ -320,7 +322,7 @@ function TokenInTokenOut({ pairs }: any) {
                       type="text"
                       className="w-15 rounded-full"
                       onClick={() => {
-                        setSlippage(0);
+                        setSlippage("0");
                       }}
                     />
                   </span>{" "}
@@ -332,20 +334,20 @@ function TokenInTokenOut({ pairs }: any) {
                 <button className="border border-gray-600 p-1 flex justify-between rounded-full gap-2">
                   <button
                     className={`border-0 rounded-full w-10 text-xs text-white font-bold ${
-                      deadline === 0 ? "bg-orange-500" : null
+                      deadline === "0" ? "bg-orange-500" : null
                     }`}
                     onClick={() => {
-                      setDeadLine(0);
+                      setDeadLine("0");
                     }}
                   >
                     <h1 className="mt-0.5 ms-0.5">Now</h1>
                   </button>
                   <span className="border-0 bg-gray-800  rounded-full w-15">
                     <input
-                      type="number"
+                      type="text"
                       className="w-15 rounded-full"
                       onClick={() => {
-                        setDeadLine(-1);
+                        setDeadLine("-1");
                       }}
                       value={deadline}
                       onChange={(e) => {
