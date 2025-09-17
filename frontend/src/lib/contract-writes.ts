@@ -51,23 +51,33 @@ export class Write {
     from: any,
     to: any,
     slippage: any,
-    deadline: any
+    deadline: any,
+    //just added pass in on other file fix search first
+    stable: any
   ) {
-    console.log({
-      amountIn,
-      amountOutMin,
-      from,
-      to,
-    });
-    console.log(this.wallet);
     try {
       if (!amountIn || !amountOutMin || !to || !from)
         throw new Error("Missing inputs");
 
-      const slipageApplied = this.applySlippage(amountIn, slippage);
+      const slipageApplied = this.applySlippage(amountOutMin, slippage);
       const deadlineFinal: any = await this.getDeadline(slippage);
+      console.log("Amount in: ", amountIn, " Type: ", typeof amountIn);
+      console.log(
+        "Amount out min: ",
+        amountOutMin,
+        " Type: ",
+        typeof amountOutMin
+      );
+      console.log("from in: ", from, " Type: ", typeof from);
+      console.log("to: ", to, " Type: ", typeof to);
+      console.log("Slipage: ", slippage, " Type: ", typeof slippage);
+      console.log("deadline: ", deadline, " Type: ", typeof deadline);
+      console.log("My wallet: ", this.wallet);
+      console.log("slippage applied: ", slipageApplied);
+      console.log("deadline found : ", deadline);
+
       console.log("Applied:", slipageApplied);
-      const routes = [{ from: from, to: to, stable: false }];
+      const routes = [{ from: from, to: to, stable: true }];
       let params = {
         address: contracts.Uniswap.UniswapV2Router,
         abi: UniswapV2RouterABI,
@@ -91,13 +101,19 @@ export class Write {
       console.log(error);
     }
   }
-  public applySlippage(amountOut: bigint, slippagePercent: number) {
-    // Convert slippage percent to BigInt factor
-    // Example: 0.5% → 9950 / 10000
-    const factor = BigInt(10000) - BigInt(Math.floor(slippagePercent * 100));
-    const minAmount = (amountOut * factor) / 10000n; // all BigInt math
-    return minAmount;
+  public applySlippage(amountOut: string, slippagePercent: string) {
+    // Convert token amount to wei
+    const expected = parseUnits(amountOut, 18);
+
+    // Convert "0.12" (12%) into basis points → 1200
+    const bps = BigInt(Math.floor(parseFloat(slippagePercent) * 10000));
+
+    // Apply slippage correctly
+    const amountOutMin = (expected * (10000n - bps)) / 10000n;
+
+    return amountOutMin; // BigInt
   }
+
   public async getRoute() {}
 
   public async getDeadline(suggestedDeadline: any) {

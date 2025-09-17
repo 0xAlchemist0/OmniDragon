@@ -1,4 +1,4 @@
-import { Box, Button, Modal, Typography } from "@mui/material";
+import { Box, Modal, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { CiWallet } from "react-icons/ci";
 import { FaArrowDown, FaSlidersH } from "react-icons/fa";
@@ -214,11 +214,11 @@ function TokenInTokenOut({ pairs }: any) {
   }
 
   return (
-    <div>
+    <div className="">
+      <div className="flex justify-end mb-2">
+        <SettingsModal />
+      </div>
       <div className="grid grid-rows-1 gap-3">
-        <div className="flex justify-end">
-          <SettingsModal />
-        </div>
         <TxConfirm
           tokenIn={tokens?.in}
           tokenOut={tokens?.out}
@@ -280,9 +280,7 @@ function TokenInTokenOut({ pairs }: any) {
 
     return (
       <div>
-        <Button onClick={handleOpen}>
-          <FaSlidersH />
-        </Button>
+        <FaSlidersH onClick={handleOpen} className="text-gray-700" />
         <Modal
           open={open}
           onClose={handleClose}

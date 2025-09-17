@@ -8,7 +8,11 @@ import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
 import { findChain } from "./chainFinder";
 import { findChainName } from "./chainMap";
-import { getPairsInfo, getTokensInfo } from "./dexscreener-handler";
+import {
+  getPairsInfo,
+  getTokensInfo,
+  searchByPair,
+} from "./dexscreener-handler";
 //check approval before tx in read
 
 //class makes things easier
@@ -50,6 +54,23 @@ export class Read {
       chain: this.chainConfig,
       transport: http(),
     });
+  }
+
+  //wait check how we verify pair first find function that does this as well
+  public async checkPairStableness(tokenA: any, tokenB: any) {
+    const sortedPair = await this.sortTokens(tokenA, tokenB);
+    //array returne sorted
+    const stableList = [true, false];
+    let pairResult = await this.pairFor(tokenA, tokenB, stableList[0]);
+    const chainName = await this.getChainName();
+    let dexscreenerRes = await searchByPair(pairResult, chainName);
+
+    if (dexscreenerRes) {
+      return stableList[0];
+    } else {
+      pairResult = await this.pairFor(tokenA, tokenB, stableList[1]);
+      dexscreenerRes = await searchByPair(pairResult, chainName);
+    }
   }
 
   public async estimateContractTotalGas(params: any) {

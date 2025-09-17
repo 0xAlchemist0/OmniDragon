@@ -1,8 +1,8 @@
 import { Box, Modal } from "@mui/material";
 import { useEffect, useState } from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useTxService } from "../state/TxServiceProvider";
 import contracts from "../utils/contracts";
-
 function TxConfirm({
   tokenIn,
   tokenOut,
@@ -29,6 +29,7 @@ function TxConfirm({
   };
 
   const [isApproves, setIsApproved] = useState(false);
+  const [load, setLoad] = useState(false);
   const handleClose = () => {
     setShowConfirmation(false);
   };
@@ -65,6 +66,7 @@ function TxConfirm({
 
   //excecutes swap
   async function excectuteTX() {
+    setLoad(true);
     const reuslt = await writer.swapExactTokensForTokens(
       String(inAmount),
       String(quote[0]),
@@ -73,6 +75,7 @@ function TxConfirm({
       slippage,
       deadline
     );
+    setLoad(false);
   }
 
   function TokenCard({ info, type }: any) {
@@ -124,7 +127,11 @@ function TxConfirm({
                 excectuteTX();
               }}
             >
-              Approve and Swap
+              {load ? (
+                <AiOutlineLoading3Quarters className="animate-spin m-auto text-xl text-gray-600" />
+              ) : (
+                "Approve and Swap"
+              )}
             </button>
           </div>
         </Box>

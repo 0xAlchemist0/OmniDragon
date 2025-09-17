@@ -94,6 +94,7 @@ export async function searchByPair(pairAddress: any, chain: string) {
     return info;
   } catch (error) {
     console.log(error);
+    return null;
   }
 }
 
