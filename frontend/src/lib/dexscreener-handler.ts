@@ -4,6 +4,10 @@ const endpoints = {
   searchQuery: "https://api.dexscreener.com/latest/dex/search",
 };
 
+const defaultPairsByChain: any = {
+  sonic: "0x33503BC86f2808151A6e083e67D7D97a66dfEc11",
+};
+
 export async function getTokensInfo(tokensList: any, reader: any) {
   const chain = await reader.getChainName();
   const partnersInfo = [];
@@ -62,6 +66,21 @@ export async function getPairsInfo(pairsList: any, reader: any) {
     }
   }
   return pairsInfo;
+}
+
+export async function getDefaultPairs(chainName: any) {
+  let result;
+  if (chainName.toLowerCase() === "sonic") {
+    result = await searchByPair(defaultPairsByChain.sonic, chainName);
+    const { pairs } = result;
+    const { baseToken, quoteToken }: any = pairs[0];
+    const inToken = await getToken(baseToken.address, chainName);
+    const outToken = await getToken(quoteToken.address, chainName);
+
+    return { in: inToken, out: outToken };
+  }
+
+  return result;
 }
 
 export async function filterByDex(found: any[], dexId: string) {}

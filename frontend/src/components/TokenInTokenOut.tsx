@@ -1,7 +1,9 @@
+import { Box, Button, Modal, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { CiWallet } from "react-icons/ci";
-import { FaArrowDown } from "react-icons/fa";
+import { FaArrowDown, FaSlidersH } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
+import { getDefaultPairs } from "../lib/dexscreener-handler";
 import { useTxService } from "../state/TxServiceProvider";
 import TokenModal from "./TokenModal";
 import TxConfirm from "./TxConfirm";
@@ -23,10 +25,21 @@ function TokenInTokenOut({ pairs }: any) {
     out: null,
   });
   const [inAmount, setInAmount] = useState("");
+  // minutes so zero means deadline to swap is now
+  const [deadline, setDeadLine] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
-
   const [outAmount, setOutAmount] = useState("");
   const [quote, setQuote] = useState(null);
+  const [slippage, setSlippage] = useState(0.5);
+  useEffect(() => {
+    const getDefault = async () => {
+      const chainName = await reader.getChainName();
+      const result: any = await getDefaultPairs(chainName);
+      console.log("result for deafults: ", result);
+      setTokens(result);
+    };
+    getDefault();
+  }, []);
   useEffect(() => {
     if (tokens) {
       if (tokens.in && tokens.out) {
@@ -203,6 +216,9 @@ function TokenInTokenOut({ pairs }: any) {
   return (
     <div>
       <div className="grid grid-rows-1 gap-3">
+        <div className="flex justify-end">
+          <SettingsModal />
+        </div>
         <TxConfirm
           tokenIn={tokens?.in}
           tokenOut={tokens?.out}
@@ -242,6 +258,114 @@ function TokenInTokenOut({ pairs }: any) {
       <div></div>
     </div>
   );
+
+  function SettingsModal() {
+    const style = {
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "70%",
+      bgcolor: "#111827",
+      border: "2px solid #000",
+      borderRadius: "15px",
+      boxShadow: 24,
+      p: 4,
+    };
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    return (
+      <div>
+        <Button onClick={handleOpen}>
+          <FaSlidersH />
+        </Button>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Swap Settings
+            </Typography>
+            <div className="grid grid-flow-row">
+              <div className="flex justify-between mt-3">
+                <h1 className="text-sm mt-1.5">Set Slippage</h1>
+                <span className="border border-gray-600 p-1 flex justify-between rounded-full gap-2">
+                  <button
+                    className={`border-0 rounded-full w-10 text-xs text-white font-bold ${
+                      slippage === 0.5 ? "bg-orange-500" : null
+                    }`}
+                    onClick={() => {
+                      setSlippage(0.5);
+                    }}
+                  >
+                    <h1 className="mt-0.5 ms-0.5">0.5%</h1>
+                  </button>
+                  <button
+                    className={`border-0 rounded-full w-10 text-xs text-white font-bold ${
+                      slippage === 1 ? "bg-orange-500" : null
+                    }`}
+                    onClick={() => {
+                      setSlippage(1);
+                    }}
+                  >
+                    <h1 className="mt-0.5 ms-0.5">1%</h1>
+                  </button>
+                  <span className="border-0 bg-gray-800  rounded-full w-15">
+                    <input
+                      type="text"
+                      className="w-15 rounded-full"
+                      onClick={() => {
+                        setSlippage(0);
+                      }}
+                    />
+                  </span>{" "}
+                </span>
+              </div>
+              <div className="flex justify-between mt-3">
+                {/* ?input calculate din minutes */}
+                <h1 className="text-sm mt-1.5 text-xs">Deadline Minutes</h1>
+                <button className="border border-gray-600 p-1 flex justify-between rounded-full gap-2">
+                  <button
+                    className={`border-0 rounded-full w-10 text-xs text-white font-bold ${
+                      deadline === 0 ? "bg-orange-500" : null
+                    }`}
+                    onClick={() => {
+                      setDeadLine(0);
+                    }}
+                  >
+                    <h1 className="mt-0.5 ms-0.5">Now</h1>
+                  </button>
+                  <span className="border-0 bg-gray-800  rounded-full w-15">
+                    <input
+                      type="number"
+                      className="w-15 rounded-full"
+                      onClick={() => {
+                        setDeadLine(-1);
+                      }}
+                      value={deadline}
+                      onChange={(e) => {
+                        setDeadLine(e.target.value);
+                      }}
+                    />
+                  </span>{" "}
+                </button>
+              </div>
+              <div className="mt-5">
+                <button className="border w-full p-1 rounded-md border-gray-600 bg-gray-700 text-white ">
+                  Apply Changes
+                </button>
+              </div>
+            </div>
+          </Box>
+        </Modal>
+      </div>
+    );
+  }
 }
 
 export default TokenInTokenOut;

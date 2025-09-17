@@ -45,21 +45,32 @@ export class Write {
     this.readInstance = new Read(this.account, this.currChain, this.provider);
   }
 
-  public async SwapExactTokensForTokens(
+  public async swapExactTokensForTokens(
     amountIn: any,
     amountOutMin: any,
+    from: any,
     to: any
   ) {
+    console.log({
+      amountIn,
+      amountOutMin,
+      from,
+      to,
+    });
+    console.log(this.wallet);
     try {
-      if (!amountIn || !amountOut || !to || !data)
+      if (!amountIn || !amountOutMin || !to || !from)
         throw new Error("Missing inputs");
 
-      const deadline: any = this.getDeadline();
+      const deadline: any = await this.getDeadline();
+      const routes = [{ from: from, to: to, stable: true }];
+      const slippageApplied = 0;
       const response: any = await this.submitTransaction({
         address: contracts.Uniswap.UniswapV2Router,
         abi: UniswapV2RouterABI,
-        functionName: "SwapExactTokensForTokens",
-        args: [amountIn, amountOutMin, routes, to, deadline],
+        functionName: "swapExactTokensForTokens",
+        args: [amountIn, amountOutMin, routes, this.wallet, deadline],
+        gas: 100000n,
       });
       return { status: "Transaction sucessful" };
     } catch (error) {

@@ -56,7 +56,17 @@ function TxConfirm({
     );
     if (isInApproved) {
       setIsApproved(true);
+      excectuteTX();
     }
+  }
+
+  async function excectuteTX() {
+    const reuslt = await writer.swapExactTokensForTokens(
+      String(inAmount),
+      String(quote[0]),
+      tokenIn.baseToken.address,
+      tokenOut.baseToken.address
+    );
   }
 
   function TokenCard({ info, type }: any) {
@@ -105,10 +115,10 @@ function TxConfirm({
             <button
               className="text-center border w-full p-3 rounded-lg border-gray-600 bg-gray-800 text-white font-semibold"
               onClick={async () => {
-                verifyApproval();
+                excectuteTX();
               }}
             >
-              {isApproves ? "Approve Spending" : "Confirm Swap"}
+              Approve and Swap
             </button>
           </div>
         </Box>
