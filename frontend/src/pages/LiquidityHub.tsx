@@ -1,7 +1,8 @@
 import { useWallets } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
+import CreatePair from "../components/CreatePair";
 import TokenInTokenOut from "../components/TokenInTokenOut";
-import { getPairsInfo } from "../lib/dexscreener-handler";
+import { getPairsInfo, searchDexscreener } from "../lib/dexscreener-handler";
 import { useTxService } from "../state/TxServiceProvider";
 function LiquidityHub() {
   const [tokenA, setTokenA] = useState(null);
@@ -9,6 +10,8 @@ function LiquidityHub() {
   const [selection, setSelection] = useState(0);
   const { reader, writer }: any = useTxService();
   const [topPairs, setTopPairs] = useState(null);
+  const [searchResults, setSearchResults] = useState(null);
+  const [helperInput, setHelperInput] = useState(null);
   const { wallets } = useWallets();
   const options = [
     { option: "Swap" },
@@ -17,10 +20,25 @@ function LiquidityHub() {
   ];
 
   useEffect(() => {
-    console.log("Reader Props :", reader);
-    console.log("Writer Props: ", writer);
     getSomePairs(14);
   }, [wallets, reader, writer]);
+
+  useEffect(() => {
+    const searchPair = async () => {
+      const chainName = await reader.getChainName;
+      if (helperInput) {
+        const searchResults: any = await searchDexscreener(
+          helperInput,
+          chainName
+        );
+        setSearchResults(searchResults);
+      }
+    };
+
+    if (helperInput) {
+      searchPair();
+    }
+  }, [helperInput]);
 
   async function getSomePairs(limit: any) {
     const swapXPairs: any = await reader.topFactoryPairs(limit);
@@ -34,12 +52,23 @@ function LiquidityHub() {
   }
 
   function LiquidityPairCreate() {
-    return <></>;
+    return (
+      <div>
+        <div className="mt-5">
+          <CreatePair
+            pairs={topPairs}
+            input={helperInput}
+            setInput={setHelperInput}
+          />
+        </div>
+      </div>
+    );
   }
   function LiquiditySwap() {
     return (
       <div>
         <div className="mt-5">
+          {/* echange component  */}
           <TokenInTokenOut pairs={topPairs} />
         </div>
       </div>
@@ -55,6 +84,7 @@ function LiquidityHub() {
               className="hover:text-gray-600"
               key={index}
               onClick={() => {
+                console.log("current tab index: ", index);
                 setSelection(index);
               }}
             >
@@ -66,8 +96,13 @@ function LiquidityHub() {
       <div className="bg-gray-900 border-gray-600 p-5 m-auto  rounded-md text-white">
         {selection == 0 && <LiquiditySwap />}
         {selection == 1 && <LiquidityAdd />}
-        {selection == 0 && <LiquidityPairCreate />}
       </div>
+
+      {selection === 2 ? (
+        <div className="bg-gray-900 border-gray-600 p-5 m-auto  rounded-md text-white">
+          {selection == 2 && <LiquidityPairCreate />}
+        </div>
+      ) : null}
     </div>
   );
 }

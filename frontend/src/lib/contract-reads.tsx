@@ -8,11 +8,7 @@ import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
 import { findChain } from "./chainFinder";
 import { findChainName } from "./chainMap";
-import {
-  getPairsInfo,
-  getTokensInfo,
-  searchByPair,
-} from "./dexscreener-handler";
+import { getPairsInfo, getTokensInfo } from "./dexscreener-handler";
 //check approval before tx in read
 
 //class makes things easier
@@ -56,30 +52,40 @@ export class Read {
     });
   }
 
+  //flow change
   //wait check how we verify pair first find function that does this as well
-  public async checkPairStableness(tokenA: any, tokenB: any) {
-    const sortedPair = await this.sortTokens(tokenA, tokenB);
-    //array returne sorted
-    const stableList = [true, false];
-    let pairResult = await this.pairFor(tokenA, tokenB, stableList[0]);
-    const chainName = await this.getChainName();
-    let dexscreenerRes = await searchByPair(pairResult, chainName);
-
-    if (dexscreenerRes) {
-      return stableList[0];
-    } else {
-      pairResult = await this.pairFor(tokenA, tokenB, stableList[1]);
-      dexscreenerRes = await searchByPair(pairResult, chainName);
+  public async checkPairStableness(tokenIn: any, tokenOut: any, reader: any) {
+    let result = {};
+    if (!tokenIn || !tokenOut || !reader) {
+      throw new Error("Mising Params");
     }
+
+    //array returne sorted
+    const amountSimulated = "2000";
+    const simulatedQuote: any = await this.getAmountOut(
+      amountSimulated,
+      tokenIn,
+      tokenOut,
+      reader
+    );
+
+    if (simulatedQuote && simulatedQuote.length >= 2 && simulatedQuote[1]) {
+      return simulatedQuote[1];
+    } else {
+      console.log("Cant find pairs tableness");
+      return null;
+    }
+  }
+  public async simulateContract(params: any) {
+    const simulation = await this.viemClient.simulateContract(params);
+    console.log(simulation);
   }
 
   public async estimateContractTotalGas(params: any) {
     try {
       const gas: any = await this.viemClient.estimateContractGas(params);
       return gas;
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   //updates automatically pass chain id boom goes the function
@@ -116,11 +122,8 @@ export class Read {
       });
 
       const isApproved = currentAllowance >= amountToTransact ? true : false;
-      console.log("is approved? for  :", tokenAddress, " :", isApproved);
       return isApproved;
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   public async calculateVotingPower(amount: any, duration: any) {
@@ -143,8 +146,6 @@ export class Read {
         let pairTwo = await this.pairFor(sorted[0], sorted[1], state[1]);
         let result = await getPairsInfo([pairOne], read);
         let resulttwo = await getPairsInfo([pairTwo], read);
-
-        console.log("result one: ", result.length);
 
         if (result.length >= 1 || resulttwo.length >= 1) {
           return true;
@@ -178,6 +179,9 @@ export class Read {
 
     return pair;
   }
+  //for stbale explanation:
+  // If true → it’s a stable pool (uses the stable-swap curve).
+  // If false → it’s a volatile pool (uses the constant product curve).
 
   //returns array index 0 amount to recive of wht ur buying , index 1 if pool is stable or not we need these for route param in swap
   public async getAmountOut(
@@ -186,11 +190,6 @@ export class Read {
     tokenOut: any,
     reader: any
   ) {
-    console.log("params: ", {
-      amountIn,
-      tokenIn,
-      tokenOut,
-    });
     try {
       //verify the pool exists before trading
       const isPair = await this.isPair(tokenIn, tokenOut, reader);
@@ -201,18 +200,29 @@ export class Read {
         functionName: "getAmountOut",
         args: [amountIn, tokenIn, tokenOut],
       });
-      console.log("quote: ", result);
+
+      //index 0 quote expected amount without slippage, index1 is pool stable or not to complete this trae important for swapping,
       return result;
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   public async getMainetBalance() {
     try {
       const balance = await viemClient.getBalance({ address: this.wallet });
-      console.log("BALANCE ETH: ", formatEther(balance));
       return formatEther(balance);
+    } catch (error) {}
+  }
+
+  //we need to get reervers to calculate slippage
+  public async getReserves(tokenA: any, tokenB: any, stable: any) {
+    try {
+      const response = await this.viemClient.readContract({
+        address: contracts.Uniswap.UniswapV2Router,
+        abi: UniswapV2RouterABI,
+        functionName: "getReserves",
+        args: [tokenA, tokenB, stable],
+      });
+      //returns array , index 0 reserveA (token a reserve balance of tokenA in the pool), reserveB(tokenB reserve balance of tokenb in the pool)
     } catch (error) {
       console.log(error);
     }
@@ -225,7 +235,6 @@ export class Read {
       functionName: "balanceOf",
       args: [this.wallet],
     });
-    console.log("Balance for ", tokenAddress, " ", formatUnits(balance, 18));
     return parseFloat(formatUnits(balance, 18)).toFixed(2);
   }
 
@@ -291,8 +300,6 @@ export class Read {
 
   public async topFactoryPairs(limit: any) {
     const topPairs = [];
-    console.log("doing");
-
     const pairsFound: any = await this.pairs();
     return pairsFound ? pairsFound.slice(0, limit) : null;
   }
@@ -326,15 +333,12 @@ export class Read {
       });
 
       return found;
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   //read should het all its info and stuff not through frontend frontend should be clean
 
   public async partnerList(index: any) {
-    console.log("index: ", index);
     try {
       const partner = await viemClient.readContract({
         address: "0x698402021A594515F5a379F6C4E77d3E1F452777",
@@ -344,7 +348,6 @@ export class Read {
       });
       return partner;
     } catch (error) {
-      console.log("EDDKMDDMKDMKDMKDKM ", error);
       return "stop";
     }
   }

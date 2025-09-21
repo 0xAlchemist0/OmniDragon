@@ -31,20 +31,15 @@ export async function searchDexscreener(searchItem: string, chainName: string) {
 
     const filtered = filterByChain(response.pairs, chainName);
     const best = await discoverBestPair(filtered);
-    console.log("Best found: ", best);
     return best;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 }
 
 export function filterByChain(pairs: any[], chainName: string) {
   const foundOnChain = [];
   for (const pair in pairs) {
     const currentChain = pairs[pair].chainId;
-    console.log(currentChain);
     if (currentChain === chainName.toLowerCase()) {
-      console.log("chainFOund: ", pairs[pair]);
       foundOnChain.push(pairs[pair]);
     }
   }
@@ -59,9 +54,7 @@ export async function getPairsInfo(pairsList: any, reader: any) {
 
   for (let i = 0; i < pairsList.length; i++) {
     const pairInfo = await searchByPair(pairsList[i], chain);
-    console.log(typeof pairInfo);
     if (pairInfo && pairInfo["pairs"] !== null) {
-      console.log(pairInfo);
       pairsInfo.push(pairInfo["pairs"][0]);
     }
   }
@@ -93,7 +86,6 @@ export async function searchByPair(pairAddress: any, chain: string) {
     const info = await infoRequest.json();
     return info;
   } catch (error) {
-    console.log(error);
     return null;
   }
 }

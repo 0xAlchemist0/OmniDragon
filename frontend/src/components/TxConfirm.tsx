@@ -13,6 +13,7 @@ function TxConfirm({
   showConfirmation,
   slippage,
   deadline,
+  stable,
 }: any) {
   const { reader, writer } = useTxService();
   const style = {
@@ -67,13 +68,21 @@ function TxConfirm({
   //excecutes swap
   async function excectuteTX() {
     setLoad(true);
+    const stable = await reader.checkPairStableness(
+      tokenIn.baseToken.address,
+      tokenOut.baseToken.address
+    );
+    console.log("IS the pair stable?: ", stable);
     const reuslt = await writer.swapExactTokensForTokens(
       String(inAmount),
       String(quote[0]),
       tokenIn.baseToken.address,
       tokenOut.baseToken.address,
       slippage,
-      deadline
+      deadline,
+      stable,
+      tokenIn.baseToken.address,
+      tokenOut.baseToken.address
     );
     setLoad(false);
   }
@@ -124,7 +133,7 @@ function TxConfirm({
             <button
               className="text-center border w-full p-3 rounded-lg border-gray-600 bg-gray-800 text-white font-semibold"
               onClick={async () => {
-                excectuteTX();
+                verifyApproval();
               }}
             >
               {load ? (

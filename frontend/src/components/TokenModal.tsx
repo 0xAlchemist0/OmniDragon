@@ -28,6 +28,7 @@ export default function TokenModal({
   tokens,
   setTokens,
   setVerified,
+  setStable,
   children,
 }: any) {
   const handleOpen = () => setActivate(true);
@@ -36,6 +37,8 @@ export default function TokenModal({
   const [input, setInput] = useState(null);
 
   const { reader }: any = useTxService();
+
+  useEffect(() => {}, []);
 
   const handleSelection = (selection: any) => {
     setTokens((prev: any) => ({
@@ -68,7 +71,6 @@ export default function TokenModal({
         tokens.out.baseToken.address,
         reader
       );
-      console.log("is pair found? : ", result);
       if (result) setVerified(true);
       else setVerified(false);
     };

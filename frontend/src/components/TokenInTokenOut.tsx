@@ -31,11 +31,11 @@ function TokenInTokenOut({ pairs }: any) {
   const [outAmount, setOutAmount] = useState("");
   const [quote, setQuote] = useState(null);
   const [slippage, setSlippage] = useState("0.12");
+  const [stable, setStable] = useState(null);
   useEffect(() => {
     const getDefault = async () => {
       const chainName = await reader.getChainName();
       const result: any = await getDefaultPairs(chainName);
-      console.log("result for deafults: ", result);
       setTokens(result);
     };
     getDefault();
@@ -77,19 +77,16 @@ function TokenInTokenOut({ pairs }: any) {
         tokens?.out?.baseToken.address,
         reader
       );
-      console.log("result quote: ", result);
-
       setQuote(result);
       return result;
     };
     if (!tokens?.in || !tokens?.out || parsed) {
-      console.log("getting quote ");
-
       obtainQuote();
     } else {
-      console.log("chekc failed ");
     }
   }, [inAmount, tokens]);
+
+  useEffect(() => {}, [inAmount, outAmount, tokens]);
 
   const handleTxConfirmation = () => {
     if (tokens) {
@@ -100,7 +97,6 @@ function TokenInTokenOut({ pairs }: any) {
   };
 
   const handleInput = (tokenType: any, input: any) => {
-    console.log("input: ", input);
     if (tokenType === "in") {
       setInAmount(input);
     } else {
@@ -146,6 +142,7 @@ function TokenInTokenOut({ pairs }: any) {
               tokens={tokens}
               setTokens={setTokens}
               setVerified={setVerified}
+              setStable={setStable}
             >
               <div className="border   gap-2 p-1 w-25   rounded-md border-gray-700 bg-gray-800  ">
                 <div className=" flex justify-between   ">
@@ -229,6 +226,7 @@ function TokenInTokenOut({ pairs }: any) {
           showConfirmation={showConfirmation}
           slippage={slippage}
           deadline={deadline}
+          stable={stable}
         />
         <TokenSelector
           tokenType="in"
