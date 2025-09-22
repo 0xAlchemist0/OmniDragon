@@ -86,7 +86,13 @@ function TokenInTokenOut({ pairs }: any) {
     }
   }, [inAmount, tokens]);
 
-  useEffect(() => {}, [inAmount, outAmount, tokens]);
+  useEffect(() => {
+    if (tokens && tokens.in && tokens.out) {
+      const findStablemness = async () => {
+        const simulatedQuote = await this.getAmountOut();
+      };
+    }
+  }, [inAmount, outAmount, tokens]);
 
   const handleTxConfirmation = () => {
     if (tokens) {

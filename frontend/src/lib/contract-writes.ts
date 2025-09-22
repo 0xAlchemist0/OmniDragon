@@ -174,13 +174,13 @@ export class Write {
     return gas;
   }
 
-  public async createPair(tokenA: any, tokenB: any, pool: any) {
+  public async createPair(tokenA: any, tokenB: any, stable: any) {
     try {
       const response = await this.submitTransaction({
         address: contracts.Uniswap.UniswapV2Factory,
         abi: UniswapV2FactoryABI,
         function: "createPair",
-        args: [tokenA, tokenB, pool],
+        args: [tokenA, tokenB, stable],
       });
       return response;
     } catch (error) {}

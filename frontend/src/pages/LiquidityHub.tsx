@@ -13,11 +13,7 @@ function LiquidityHub() {
   const [searchResults, setSearchResults] = useState(null);
   const [helperInput, setHelperInput] = useState(null);
   const { wallets } = useWallets();
-  const options = [
-    { option: "Swap" },
-    { option: "Add Liquidity" },
-    { option: "Create Pair" },
-  ];
+  const options = [{ option: "Swap" }, { option: "Create Pair" }];
 
   useEffect(() => {
     getSomePairs(14);
@@ -59,6 +55,7 @@ function LiquidityHub() {
             pairs={topPairs}
             input={helperInput}
             setInput={setHelperInput}
+            searchResults={searchResults}
           />
         </div>
       </div>
@@ -93,14 +90,14 @@ function LiquidityHub() {
           );
         })}
       </span>
-      <div className="bg-gray-900 border-gray-600 p-5 m-auto  rounded-md text-white">
-        {selection == 0 && <LiquiditySwap />}
-        {selection == 1 && <LiquidityAdd />}
-      </div>
-
-      {selection === 2 ? (
+      {selection === 0 && (
         <div className="bg-gray-900 border-gray-600 p-5 m-auto  rounded-md text-white">
-          {selection == 2 && <LiquidityPairCreate />}
+          {selection == 0 && <LiquiditySwap />}
+        </div>
+      )}
+      {selection === 1 ? (
+        <div className="bg-gray-900 border-gray-600 p-1  m-auto  rounded-md text-white">
+          {selection == 1 && <LiquidityPairCreate />}
         </div>
       ) : null}
     </div>

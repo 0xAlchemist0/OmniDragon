@@ -137,6 +137,34 @@ export class Read {
     return votingPower;
   }
 
+  //uses getPair to return a verifiable pair
+  public async doesPairExist(
+    tokenA: any,
+    tokenB: any,
+    stable: any,
+    reader: any
+  ) {
+    try {
+      const sortedPairs = await this.sortTokens(tokenA, tokenB);
+      const result = await viemClient.readContract({
+        address: contracts.Uniswap.UniswapV2FactoryABI,
+        abi: UniswapV2FactoryABI,
+        functionName: "getPair",
+        args: [tokenA, tokenB, stable],
+      });
+
+      const searchResult = await getPairsInfo([result], reader);
+      if (searchResult) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+      console.log(error);
+    }
+  }
+
   public async isPair(tokenA: any, tokenB: any, read: Read) {
     try {
       const sorted: any = await this.sortTokens(tokenA, tokenB);
