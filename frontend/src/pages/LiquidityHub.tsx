@@ -20,13 +20,16 @@ function LiquidityHub() {
   }, [wallets, reader, writer]);
 
   useEffect(() => {
+    console.log("input change detected ");
     const searchPair = async () => {
       const chainName = await reader.getChainName;
       if (helperInput) {
+        console.log(helperInput);
         const searchResults: any = await searchDexscreener(
           helperInput,
           chainName
         );
+        console.log("result", searchResults);
         setSearchResults(searchResults);
       }
     };

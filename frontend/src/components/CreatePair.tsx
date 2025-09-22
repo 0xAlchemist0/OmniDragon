@@ -1,4 +1,4 @@
-import { Box, Modal } from "@mui/material";
+import { Box, Modal, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { useTxService } from "../state/TxServiceProvider";
@@ -22,11 +22,14 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
     //             ></TokenModal>
   };
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [stepTwo, setStepTwo] = useState(false);
   const { reader, writer } = useTxService();
   const [exists, setExists] = useState();
-  function ModalPart({ isBase }: any) {
+  const [inputOne, setInputOne] = useState("");
+  const [inputTwo, setInputTwo] = useState("");
+
+  function ModalPart({ isBase, open, setOpen }: any) {
     const style = {
       position: "absolute",
       top: "40%",
@@ -39,6 +42,10 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
       boxShadow: 24,
       p: 4,
     };
+
+    useEffect(() => {
+      console.log("Searched: ", searchResults);
+    }, [searchResults]);
 
     async function excectueTx() {
       if ((pairedToken && isStable) || isStable === false) {
@@ -72,17 +79,30 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    useEffect(() => {
+      const parsedInputOne = parseFloat(inputOne);
+      const parsedInputTwo = parseFloat(inputTwo);
+
+      if (parsedInputOne && parsedInputTwo) {
+        getPriceOutput();
+      }
+    }, [inputOne, inputTwo]);
+    const [priceOutpu, setPriceOutputs] = useState();
+    function getPriceOutput() {}
+
     return (
       <div>
         <button
-          onClick={handleOpen}
+          onClick={!isBase ? handleOpen : undefined}
           className="border flex justify-between p-2  rounded-md bg-gray-800 border-gray-700 w-full "
         >
           <div className="flex gap-2 ">
             <img
               src={
                 pairedToken && isBase === false
-                  ? pairedToken.info.imageUrl
+                  ? pairedToken.info
+                    ? pairedToken.info.imageUrl
+                    : null
                   : "https://docs.omnidragon.io/img/logo.svg"
               }
               alt=""
@@ -98,7 +118,7 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
           </div>
         </button>
         <Modal
-          open={open}
+          open={isBase ? open : false}
           onClose={handleClose}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
@@ -106,7 +126,7 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
           <Box sx={style}>
             <div className="flex justify-between">
               <h1 className="text-lg font-bold">Select a asset</h1>
-              <h1>X</h1>
+              <h1 className="font-bold">X</h1>
             </div>
             <div className="border bg-gray-800 border-gray-800 mt-2 rounded-full p-2">
               <input
@@ -115,9 +135,7 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
                 placeholder="Search Token"
                 onChange={(e) => {
                   //closes after a single input
-                  if (!isBase) {
-                    setInput(e.target.value);
-                  }
+                  setInput(e.target.value);
                 }}
               />
             </div>
@@ -180,6 +198,7 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
       }
     }
   }
+
   function SubmitTxBtn() {
     return (
       <button
@@ -192,70 +211,190 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
       </button>
     );
   }
+  function ConfirmPairCreation() {
+    return (
+      <Modal
+        open={showConfirmation}
+        onClose={() => {
+          setShowConfirmation(false);
+        }}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Text in a modal
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography>
+        </Box>
+      </Modal>
+    );
+  }
+
+  function reset() {
+    setPairedToken(null);
+    setIsstable(null);
+    setStepTwo(false);
+  }
+
+  function StepTwo() {
+    return (
+      <div className="p-1">
+        <div className="grid grid-cols-6 border p-2">
+          <div className="col-span-4 border flex gap-2 ">
+            <h1>DGN / {pairedToken ? pairedToken.baseToken.symbol : null}</h1>
+          </div>
+          <div className="col-span-2"></div>
+        </div>
+        <div className="border p-2"></div>
+        <div className="">
+          <h1>Deposit Tokens</h1>
+          <h1 className="text-xs">
+            Specify the token amounts for your liquidity contribution.
+          </h1>
+        </div>
+        <div className="grid grid-rows-1 gap-2  mt-2">
+          <div className=" border rounded-lg bg-gray-800 border-gray-900 p-4 grid grid-cols-2">
+            <div className="grid grid-rows-1  justify-start ">
+              <input
+                type="text"
+                className="outline-none text-2xl"
+                placeholder="0"
+                onChange={(e) => {
+                  setInputOne(e.target.value);
+                }}
+              />
+              <span className="flex gap-2 text-xs ">
+                <h1 className="text-gray-700">$20,000</h1>
+              </span>
+            </div>
+            <div className="grid grid-rows-1  justify-end">
+              <h1 className="text-right">Dragon</h1>
+              <h1 className="text-gray-500 font-bold text-sm ">12,400.9</h1>
+            </div>
+          </div>{" "}
+          <div className="  rounded-lg bg-gray-800 border-gray-900 p-4 grid grid-cols-2 ">
+            <div className="grid grid-rows-1  justify-start ">
+              <input
+                type="text"
+                className="outline-none text-2xl"
+                placeholder="0"
+                onChange={(e) => {
+                  setInputTwo(e.target.value);
+                }}
+              />
+              <h1 className="text-gray-500 text-xs">$20450</h1>
+            </div>
+            <div className="grid grid-rows-1  justify-end ">
+              <div className="flex gap-2">
+                <img
+                  src={pairedToken && pairedToken.info.imageUrl}
+                  alt=""
+                  className="size-7"
+                />
+                <h1 className="text-right mt-1 font-bold">
+                  {pairedToken && pairedToken.baseToken.symbol}
+                </h1>
+              </div>
+              <h1 className="font-bold text-sm text-right mt-1 text-gray-400">
+                0.23494
+              </h1>
+            </div>
+          </div>{" "}
+          <div className="">
+            <button className="border w-100 font-bold rounded-lg bg-gray-800 hover:bg-gray-800/80 border-gray-800 p-2">
+              Create & Add Liquidity
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="p-2  ">
-      <div className="mb-1 p-3">
-        <h1 className="text-gray-100">Select Pair </h1>
-        <h1 className="text-[10px] text-gray-400">
-          Choose the tokens you want to provide liquidity for. You can select
-          tokens on all supported networks.
-        </h1>
-      </div>
-      <div>
-        <div className="grid grid-rows-1 md:grid-cols-2 gap-3 p-3">
+      {stepTwo === false ? (
+        <>
+          <div className="mb-1 p-3">
+            <h1 className="text-gray-100">Select Pair </h1>
+            <h1 className="text-[10px] text-gray-400">
+              Choose the tokens you want to provide liquidity for. You can
+              select tokens on all supported networks.
+            </h1>
+          </div>
           <div>
-            <h1 className="text-sm mb-2">Base Token</h1>
-            <ModalPart isBase={true} />
-          </div>{" "}
-          <div className="text-white text-center relative mt-3 md:hidden">
-            +
+            <div className="grid grid-rows-1 md:grid-cols-2 gap-3 p-3">
+              <div>
+                <h1 className="text-sm mb-2">Base Token</h1>
+                <ModalPart isBase={true} open={open} setOpen={setOpen} />
+              </div>{" "}
+              <div className="text-white text-center relative mt-3 md:hidden">
+                +
+              </div>
+              <div className="">
+                <h1 className="text-sm mb-2">Paired Token</h1>
+                <ModalPart isBase={false} open={open} setOpen={setOpen} />
+              </div>
+            </div>
           </div>
-          <div className="">
-            <h1 className="text-sm mb-2">Paired Token</h1>
-            <ModalPart isBase={false} />
+          <div className="mt-3 p-3">
+            <h1>Stable Tiers</h1>
+            <h1 className="text-[10px] text-gray-400">
+              Each token pair can only have one stable pool and one volatile
+              pool, so if a pair already exists, a new one cannot be created.
+            </h1>
+            <div className="mt-2 grid grid-flow-col p-5 gap-2 text-xs">
+              <button
+                className={`border p-5 text-left hover:bg-gray-800/80 ${
+                  isStable === true && "bg-gray-800"
+                } rounded-md border-gray-600 ${
+                  isStable === true && "bg-gray-300"
+                }`}
+                onClick={() => {
+                  setIsstable(true);
+                }}
+              >
+                <h1>Stable</h1>
+                <h1 className="text-[10px] whitespace-nowrap mt-1">1% Fee</h1>
+              </button>
+              <button
+                className={`border p-5 text-left hover:bg-gray-800/80 ${
+                  isStable === false && "bg-gray-800"
+                } rounded-md border-gray-600 ${
+                  isStable === false && "bg-gray-300"
+                }`}
+                onClick={() => {
+                  setIsstable(false);
+                }}
+              >
+                <h1>Not Stable</h1>
+                <h1 className="text-[10px] whitespace-nowrap mt-1">10% Fee</h1>
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
-      <div className="mt-3 p-3">
-        <h1>Stable Tiers</h1>
-        <h1 className="text-[10px] text-gray-400">
-          Each token pair can only have one stable pool and one volatile pool,
-          so if a pair already exists, a new one cannot be created.
-        </h1>
-        <div className="mt-2 grid grid-flow-col p-5 gap-2 text-xs">
-          <button
-            className={`border p-5 text-left hover:bg-gray-800/80 ${
-              isStable === true && "bg-gray-800"
-            } rounded-md border-gray-600 ${isStable === true && "bg-gray-300"}`}
-            onClick={() => {
-              setIsstable(true);
-            }}
-          >
-            <h1>Stable</h1>
-            <h1 className="text-[10px] whitespace-nowrap mt-1">1% Fee</h1>
-          </button>
-          <button
-            className={`border p-5 text-left hover:bg-gray-800/80 ${
-              isStable === false && "bg-gray-800"
-            } rounded-md border-gray-600 ${
-              isStable === false && "bg-gray-300"
-            }`}
-            onClick={() => {
-              setIsstable(false);
-            }}
-          >
-            <h1>Not Stable</h1>
-            <h1 className="text-[10px] whitespace-nowrap mt-1">10% Fee</h1>
-          </button>
-        </div>
-      </div>
-      {exists && (
-        <div className="text-red-700">Token Combination Already Exists</div>
-      )}
+          {exists && (
+            <div className="text-red-700">Token Combination Already Exists</div>
+          )}
 
-      <div className=" mb-1">
-        <SubmitTxBtn />
-      </div>
+          <div className=" mb-1">
+            <button
+              disabled={!pairedToken && isStable === null}
+              className={`border p-2 mt-2 text-white hover:bg-gray-800/80 ${
+                pairedToken || (isStable !== null && "hover:border-gray/80")
+              } w-full border-gray-700  bg-gray-800 rounded-md clear-start`}
+              onClick={() => {
+                console.log("clicked");
+                setStepTwo(true);
+              }}
+            >
+              {!pairedToken || isStable === null ? "Mising Params" : "Continue"}
+            </button>
+          </div>
+        </>
+      ) : (
+        <StepTwo />
+      )}
     </div>
   );
 }

@@ -137,6 +137,28 @@ export class Read {
     return votingPower;
   }
 
+  public async getReserves(tokenA: any, tokenB: any, stable: any) {
+    try {
+      const reserveResult = await this.viemClient({
+        address: contracts.Uniswap.UniswapV2Router,
+        abi: UniswapV2RouterABI,
+        funcitonName: "getReserves",
+        args: [tokenA, tokenB, stable],
+      });
+
+      if (reserveResult) {
+        //returns reserve a and b
+        //returns the current price of the pool
+        return reserveResult[0] / reserveResult[1];
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.log("pair not found!");
+      return null;
+    }
+  }
+
   //uses getPair to return a verifiable pair
   public async doesPairExist(
     tokenA: any,
