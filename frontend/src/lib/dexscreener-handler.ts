@@ -61,15 +61,25 @@ export async function getPairsInfo(pairsList: any, reader: any) {
   return pairsInfo;
 }
 
+export async function getDefaultToken(chainName: any, reader: any) {
+  let tokenInfo = null;
+  if (String(chainName).toLowerCase() === "sonic") {
+    tokenInfo = await getTokensInfo(
+      ["0xA04BC7140c26fc9BB1F36B1A604C7A5a88fb0E70"],
+      reader
+    );
+    console.log(tokenInfo);
+  }
+}
+
 export async function getDefaultPairs(chainName: any) {
   let result;
-  if (chainName.toLowerCase() === "sonic") {
+  if (String(chainName).toLowerCase() === "sonic") {
     result = await searchByPair(defaultPairsByChain.sonic, chainName);
     const { pairs } = result;
     const { baseToken, quoteToken }: any = pairs[0];
     const inToken = await getToken(baseToken.address, chainName);
     const outToken = await getToken(quoteToken.address, chainName);
-
     return { in: inToken, out: outToken };
   }
 

@@ -1,6 +1,7 @@
 import { Box, Modal, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
+import { getDefaultToken } from "../lib/dexscreener-handler";
 import { useTxService } from "../state/TxServiceProvider";
 import contracts from "../utils/contracts";
 function CreatePair({ pairs, input, setInput, searchResults }: any) {
@@ -46,6 +47,16 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
     useEffect(() => {
       console.log("Searched: ", searchResults);
     }, [searchResults]);
+    useEffect(() => {
+      getDefault();
+    }, [reader, writer]);
+    async function getDefault() {
+      const defaultResult = await getDefaultToken(
+        reader.getChainName(),
+        reader
+      );
+      console.log("default pairs: ", defaultResult);
+    }
 
     async function excectueTx() {
       if ((pairedToken && isStable) || isStable === false) {
@@ -83,12 +94,15 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
       const parsedInputOne = parseFloat(inputOne);
       const parsedInputTwo = parseFloat(inputTwo);
 
-      if (parsedInputOne && parsedInputTwo) {
-        getPriceOutput();
+      if (parsedInputOne) {
+        getPriceOutput(input, price);
+      } else if (parsedInputTwo) {
       }
     }, [inputOne, inputTwo]);
-    const [priceOutpu, setPriceOutputs] = useState();
-    function getPriceOutput() {}
+    const [priceOutput, setPriceOutputs] = useState();
+    function getPriceOutput(amount: any, price: any) {
+      return amount;
+    }
 
     return (
       <div>
@@ -241,14 +255,33 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
 
   function StepTwo() {
     return (
-      <div className="p-1">
-        <div className="grid grid-cols-6 border p-2">
-          <div className="col-span-4 border flex gap-2 ">
+      <div className="p-3">
+        <div className="grid grid-cols-6  p-2">
+          <div className="col-span-4  flex gap-2 ">
+            <div className="flex gap-2">
+              <span className="flex">
+                <div className="relative size-7 rounded-full overflow-hidden">
+                  {/* Left Half */}
+                  <img
+                    src={pairedToken && pairedToken?.info.imageUrl}
+                    alt="tokenA"
+                    className="absolute inset-0 object-cover [clip-path:inset(0_50%_0_0)]"
+                  />
+                  {/* Right Half */}
+                  <img
+                    src={pairedToken && pairedToken?.info.imageUrl}
+                    alt="tokenB"
+                    className="absolute inset-0 object-cover [clip-path:inset(0_0_0_50%)]"
+                  />
+                </div>
+              </span>
+              <h1 className="text-right">Dragon</h1>
+            </div>
             <h1>DGN / {pairedToken ? pairedToken.baseToken.symbol : null}</h1>
           </div>
           <div className="col-span-2"></div>
         </div>
-        <div className="border p-2"></div>
+        <div className=" p-2"></div>
         <div className="">
           <h1>Deposit Tokens</h1>
           <h1 className="text-xs">
@@ -271,8 +304,17 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
               </span>
             </div>
             <div className="grid grid-rows-1  justify-end">
-              <h1 className="text-right">Dragon</h1>
-              <h1 className="text-gray-500 font-bold text-sm ">12,400.9</h1>
+              <span className="flex gap-2">
+                <img
+                  src={pairedToken && pairedToken.info.imageUrl}
+                  alt=""
+                  className="size-7"
+                />
+                <h1 className="text-right">Dragon</h1>
+              </span>
+              <h1 className="text-gray-500 font-bold text-sm text-right ">
+                12,400.9
+              </h1>
             </div>
           </div>{" "}
           <div className="  rounded-lg bg-gray-800 border-gray-900 p-4 grid grid-cols-2 ">
@@ -304,7 +346,7 @@ function CreatePair({ pairs, input, setInput, searchResults }: any) {
             </div>
           </div>{" "}
           <div className="">
-            <button className="border w-100 font-bold rounded-lg bg-gray-800 hover:bg-gray-800/80 border-gray-800 p-2">
+            <button className="border w-full font-bold rounded-lg bg-gray-800 hover:bg-gray-800/80 border-gray-800 p-2">
               Create & Add Liquidity
             </button>
           </div>

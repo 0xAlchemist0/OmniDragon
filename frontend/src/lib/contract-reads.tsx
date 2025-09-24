@@ -68,8 +68,8 @@ export class Read {
       tokenOut,
       reader
     );
-
-    if (simulatedQuote && simulatedQuote.length >= 2 && simulatedQuote[1]) {
+    console.log("Simulated quote: ", simulatedQuote);
+    if (simulatedQuote[0]) {
       return simulatedQuote[1];
     } else {
       console.log("Cant find pairs tableness");
@@ -261,21 +261,6 @@ export class Read {
       const balance = await viemClient.getBalance({ address: this.wallet });
       return formatEther(balance);
     } catch (error) {}
-  }
-
-  //we need to get reervers to calculate slippage
-  public async getReserves(tokenA: any, tokenB: any, stable: any) {
-    try {
-      const response = await this.viemClient.readContract({
-        address: contracts.Uniswap.UniswapV2Router,
-        abi: UniswapV2RouterABI,
-        functionName: "getReserves",
-        args: [tokenA, tokenB, stable],
-      });
-      //returns array , index 0 reserveA (token a reserve balance of tokenA in the pool), reserveB(tokenB reserve balance of tokenb in the pool)
-    } catch (error) {
-      console.log(error);
-    }
   }
 
   public async balanceOfToken(tokenAddress: any) {

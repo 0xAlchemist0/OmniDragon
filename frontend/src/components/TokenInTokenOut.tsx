@@ -77,6 +77,7 @@ function TokenInTokenOut({ pairs }: any) {
         tokens?.out?.baseToken.address,
         reader
       );
+
       setQuote(result);
       return result;
     };
@@ -130,13 +131,17 @@ function TokenInTokenOut({ pairs }: any) {
           <span className="flex gap-2">
             <CiWallet className="text-gray-500 text-sm " />
 
-            <h1>
+            <h1
+              onClick={() => {
+                setInAmount(String(balances[[tokenType]]));
+              }}
+            >
               {balances[tokenType]}
               {tokens[tokenType] ? tokens[tokenType]?.baseToken.symbol : ""}
             </h1>
           </span>
         </span>
-        <div className="border rounded-xl flex justify-between border-gray-800 bg-gray-900 p-3">
+        <div className="border rounded-xl flex justify-between border-gray-800 bg-gray-700 p-3">
           <div>
             <TokenModal
               activate={activate}
@@ -150,7 +155,7 @@ function TokenInTokenOut({ pairs }: any) {
               setVerified={setVerified}
               setStable={setStable}
             >
-              <div className="border   gap-2 p-1 w-25   rounded-md border-gray-700 bg-gray-800  ">
+              <div className="border   gap-2 p-1 w-25   rounded-md border-gray-700 bg-gray-500  ">
                 <div className=" flex justify-between   ">
                   <div className="flex gap-2">
                     <img

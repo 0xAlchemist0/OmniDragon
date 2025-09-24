@@ -70,7 +70,8 @@ function TxConfirm({
     setLoad(true);
     const stable = await reader.checkPairStableness(
       tokenIn.baseToken.address,
-      tokenOut.baseToken.address
+      tokenOut.baseToken.address,
+      reader
     );
     console.log("IS the pair stable?: ", stable);
     const reuslt = await writer.swapExactTokensForTokens(
@@ -80,9 +81,7 @@ function TxConfirm({
       tokenOut.baseToken.address,
       slippage,
       deadline,
-      stable,
-      tokenIn.baseToken.address,
-      tokenOut.baseToken.address
+      stable
     );
     setLoad(false);
   }

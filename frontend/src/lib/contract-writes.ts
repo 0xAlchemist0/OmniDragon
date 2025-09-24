@@ -1,4 +1,4 @@
-import { createWalletClient, custom } from "viem";
+import { createWalletClient, custom, parseUnits } from "viem";
 import ERC20ABI from "../utils/abi/ERC20ABI";
 import UniswapV2FactoryABI from "../utils/abi/UniswapV2FactoryABI";
 import UniswapV2RouterABI from "../utils/abi/UniswapV2RouterABI";
@@ -42,6 +42,12 @@ export class Write {
   // BigInt-safe slippage calculation
 
   // Swap function using BigInt everywhere
+  //   1.21
+  // contract-reads.tsx:75 Cant find pairs tableness
+  // TxConfirm.tsx:76 IS the pair stable?:  null
+  // contract-reads.tsx:75 Cant find pairs tableness
+  // contract-writes.ts:68 Is this pool stable at all:  null
+  // contract-writes.ts:90 Failed TX alert stableness  not fond!
   public async swapExactTokensForTokens(
     amountIn: any, // must be BigInt
     amountOutMin: any, // must be BigInt
@@ -65,6 +71,7 @@ export class Write {
         to,
         this.readInstance
       );
+      const finalDeadline = await this.getDeadline(deadline);
       console.log("Is this pool stable at all: ", isStable);
       const slippageApplied = await this.applySlippage(
         amountOutMin,
@@ -73,16 +80,28 @@ export class Write {
       //amountIN (tokens you are selling amount)
       //amountoutmin
       // Apply slippage safely
-      // const minOut = this.applySlippage(amountOutMin, slippagePercent);
 
       if (isStable || isStable === false) {
         // Call your router contract
-        const routes = [{ from, to, stable }];
+        const routes = [[from, to, stable]];
+        console.log("params: ", [
+          parseUnits(amountIn, 18),
+          parseUnits(slippageApplied, 18),
+          routes,
+          this.wallet,
+          finalDeadline,
+        ]);
         const response: any = await this.submitTransaction({
-          address: contracts.Uniswap.UniswapV2Router,
+          address: "0xF5F7231073b3B41c04BA655e1a7438b1a7b29c27",
           abi: UniswapV2RouterABI,
-          method: "swapExactTokensForTokens",
-          args: [amountIn, slippageApplied, routes, this.wallet, deadline],
+          functionName: "swapExactTokensForTokens",
+          args: [
+            parseUnits(amountIn, 18),
+            parseUnits(String(slippageApplied), 18),
+            routes,
+            this.wallet,
+            String(finalDeadline),
+          ],
         });
 
         return response;
@@ -99,8 +118,8 @@ export class Write {
 
   public async getDeadline(suggestedDeadline: any) {
     if (suggestedDeadline === "0")
-      return BigInt(Math.floor(Date.now() / 1000) + 60 * 20);
-    const deadline = BigInt(Math.floor(Date.now() / 1000) + 60 * 20);
+      return Math.floor(Date.now() / 1000) + 60 * 20;
+    const deadline = Math.floor(Date.now() / 1000) + 60 * 20;
     return deadline;
   }
 
