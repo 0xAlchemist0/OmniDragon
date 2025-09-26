@@ -14,6 +14,7 @@ function TxConfirm({
   slippage,
   deadline,
   stable,
+  setResponse,
 }: any) {
   const { reader, writer } = useTxService();
   const style = {
@@ -74,7 +75,7 @@ function TxConfirm({
       reader
     );
     console.log("IS the pair stable?: ", stable);
-    const reuslt = await writer.swapExactTokensForTokens(
+    const result = await writer.swapExactTokensForTokens(
       String(inAmount),
       String(quote[0]),
       tokenIn.baseToken.address,
@@ -84,6 +85,7 @@ function TxConfirm({
       stable
     );
     setLoad(false);
+    setResponse(result);
   }
 
   function TokenCard({ info, type }: any) {

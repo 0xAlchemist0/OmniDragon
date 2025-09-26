@@ -1,8 +1,9 @@
-import { Box, Modal, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, IconButton, Modal, Snackbar, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { CiWallet } from "react-icons/ci";
 import { FaArrowDown, FaSlidersH } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
+import { IoCloseCircleOutline } from "react-icons/io5";
 import { getDefaultPairs } from "../lib/dexscreener-handler";
 import { useTxService } from "../state/TxServiceProvider";
 import TokenModal from "./TokenModal";
@@ -25,6 +26,7 @@ function TokenInTokenOut({ pairs }: any) {
     out: null,
   });
   const [inAmount, setInAmount] = useState("");
+  const [response, setResponse] = useState(null);
   // minutes so zero means deadline to swap is now
   const [deadline, setDeadLine] = useState("0");
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -141,6 +143,7 @@ function TokenInTokenOut({ pairs }: any) {
             </h1>
           </span>
         </span>
+
         <div className="border rounded-xl flex justify-between border-gray-800 bg-gray-700 p-3">
           <div>
             <TokenModal
@@ -220,6 +223,22 @@ function TokenInTokenOut({ pairs }: any) {
       </div>
     );
   }
+  const action = (
+    <React.Fragment>
+      <a href="">txHash</a>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={() => {
+          setResponse(null);
+        }}
+      >
+        <IoCloseCircleOutline fontSize="small" />
+        sss
+      </IconButton>
+    </React.Fragment>
+  );
 
   return (
     <div className="">
@@ -238,11 +257,21 @@ function TokenInTokenOut({ pairs }: any) {
           slippage={slippage}
           deadline={deadline}
           stable={stable}
+          setResponse={setResponse}
         />
         <TokenSelector
           tokenType="in"
           activate={activateIn}
           setActivate={setActivateIn}
+        />
+        <Snackbar
+          open={response || false}
+          autoHideDuration={6000}
+          onClose={() => {
+            setResponse(null);
+          }}
+          message={response ? response.message : null}
+          action={action}
         />
         <div className="m-auto ">
           <button

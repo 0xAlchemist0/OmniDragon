@@ -8,6 +8,7 @@ import Gauges from "./pages/Gauges";
 import Home from "./pages/Home";
 import LiquidityHub from "./pages/LiquidityHub";
 import LockDex from "./pages/LockDex";
+import SwapPage from "./pages/new/SwapPage";
 
 function App() {
   const navigate = useNavigate();
@@ -36,6 +37,8 @@ function App() {
           <Route path="/lock" element={<LockDex />} />
           <Route path="/gauges" element={<Gauges />} />
           <Route path="/liquidity" element={<LiquidityHub />} />
+          <Route path="/new/liquidity" element={<SwapPage />} />
+
           <Route
             path="/connect"
             element={<ConnectWallet route={currentRoute} />}

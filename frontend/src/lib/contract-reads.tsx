@@ -333,6 +333,19 @@ export class Read {
     return partners;
   }
 
+  public async findBestPairs(
+    maximum: any,
+    minimum: any,
+    shouldFindBest: any,
+    reader: Read
+  ) {
+    const pairs = await this.pairs();
+    console.log("all pairs: ", pairs);
+    if (shouldFindBest) {
+      const result = await getPairsInfo(pairs, reader);
+    }
+  }
+
   public async topFactoryPairs(limit: any) {
     const topPairs = [];
     const pairsFound: any = await this.pairs();

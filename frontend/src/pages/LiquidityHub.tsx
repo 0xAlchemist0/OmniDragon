@@ -15,9 +15,13 @@ function LiquidityHub() {
   const { wallets } = useWallets();
   const options = [{ option: "Swap" }, { option: "Create Pair" }];
 
-  useEffect(() => {
-    getSomePairs(14);
-  }, [wallets, reader, writer]);
+  // useEffect(() => {
+  //   findPairs();
+  // }, [wallets, reader, writer]);
+
+  async function findPairs() {
+    const pairs = await reader.findBestPairs(0, 0, true, reader);
+  }
 
   useEffect(() => {
     console.log("input change detected ");

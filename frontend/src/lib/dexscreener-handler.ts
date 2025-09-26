@@ -51,7 +51,7 @@ export function filterByChain(pairs: any[], chainName: string) {
 export async function getPairsInfo(pairsList: any, reader: any) {
   const chain = await reader.getChainName();
   const pairsInfo = [];
-
+  let rounds = 1;
   for (let i = 0; i < pairsList.length; i++) {
     const pairInfo = await searchByPair(pairsList[i], chain);
     if (pairInfo && pairInfo["pairs"] !== null) {
@@ -69,6 +69,21 @@ export async function getDefaultToken(chainName: any, reader: any) {
       reader
     );
     console.log(tokenInfo);
+  }
+}
+
+export async function highliquidityPairs(
+  minumum: any,
+  maximum: any,
+  shouldFindBest: any,
+  pairs: any,
+  reader: any
+) {
+  console.log(`This is raw pairs: ${pairs}`);
+  if (shouldFindBest) {
+    const pairsInfo = await getPairsInfo(pairs, reader);
+    console.log("Pairs found for all: ");
+    console.log(pairsInfo);
   }
 }
 
