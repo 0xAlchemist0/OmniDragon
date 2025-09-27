@@ -255,6 +255,20 @@ export class Read {
       return result;
     } catch (error) {}
   }
+  public async tempBalanceOf(tokenAddress: any) {
+    try {
+      const balance = await viemClient.readContract({
+        address: tokenAddress,
+        abi: ERC20ABI,
+        functionName: "balanceOf",
+        args: [this.wallet],
+      });
+
+      return balance;
+    } catch (error) {
+      return null;
+    }
+  }
 
   public async getMainetBalance() {
     try {

@@ -16,11 +16,11 @@ function useBalances(address?: string) {
       const dragon = await getDragonBalance(account);
 
       const chain = user.chainId;
- 
+
       const chainId = chain.slice(chain.indexOf(":") + 1);
 
       const chainConfig = findChain(Number(chainId));
- 
+
       setBalances({
         dragon, // dragon balance
         provider, // use to sign txs
@@ -42,3 +42,22 @@ function useBalances(address?: string) {
 }
 
 export default useBalances;
+
+//new hoook work on it
+//import { useEffect } from "react";
+// import { useTxService } from "./TxServiceProvider";
+
+// function useBalances({ tokenAddresses }: any) {
+//   const { reader, writer } = useTxService();
+//   useEffect(() => {
+//     if (reader && writer) {
+//       getBalances();
+//     }
+//   }, [reader, writer]);
+//   async function getBalances() {
+//     // const balance = await reader.balanceOf();
+//   }
+// }
+
+// export default useBalances;
+// //

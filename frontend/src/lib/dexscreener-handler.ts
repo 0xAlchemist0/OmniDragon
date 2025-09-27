@@ -158,6 +158,31 @@ function getVolumeLiquidityRatio(info: any) {
   return (liquidity["usd"] + volume["h24"]) * 2;
 }
 
+export async function getPairsAll(reader: any) {
+  const chainName = await reader.getchainName().toLowerCase();
+  const dexFilter = chainName === "sonic" && "swapx";
+  //returns  top pairs on dexscreeenr for the specific dex
+  const resultPairs = await fetch(endpoints.searchQuery + `?q=${dexFilter}`);
+  console.log(resultPairs);
+}
+////
+
+async function formatPairs(pairs: any) {
+  const formattedPairs = [];
+  for (const pair in pairs) {
+    const { baseToken, priceUsd, info, liquidity }: any = pairs;
+    const { address, name }: any = baseToken;
+    formattedPairs.push({
+      name,
+      address,
+      image: info.imageUrl,
+      liquidity,
+      priceUsd,
+    });
+  }
+  return formattedPairs;
+}
+
 //i think we have to check that the best pair is actually paired to dragon it cant be paird to another token
 function unknownPairBody(chainName: any, tokenAddress: any) {
   const body = {
