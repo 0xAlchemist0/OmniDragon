@@ -7,12 +7,15 @@ function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
   const { reader, writer }: any = useTxService();
   const [quote, setQuote] = useState({
     quoteOut: null,
-    isstable: null,
-    usdIn: null,
-    usdOut: null,
+    isStable: null,
+    USD: {
+      in: null,
+      out: null,
+    },
   });
 
   useEffect(() => {
+    console.log("change");
     if (tokenIn && tokenOut && inAmount) {
       getQuote();
     }
@@ -22,22 +25,34 @@ function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
     const dexscreenrRes = await getTokensInfo([tokenIn, tokenOut], reader);
     const priceIn = dexscreenrRes[0].price;
     const priceOut = dexscreenrRes[1].price;
+    const isPair = await reader.isPair(tokenIn, tokenOut, reader);
+    let result: any;
+    if (isPair) {
+      result = await reader.getAmountOut(inAmount, tokenIn, tokenOut, reader);
+    }
 
-    const result: any = await reader.getAmountOut(
-      inAmount,
-      tokenIn,
-      tokenOut,
-      reader
-    );
     if (result[0]) {
-      const usdIn: any = getUSD(priceIn, inAmount);
-      const usdOut: any = getUSD(priceOut, result[0]);
+      const quoteOut: any = String(result[0]);
+      const isStable: any = result[1];
+
+      const usdIn: any = getUSD(inAmount, priceIn);
+      const usdOut: any = getUSD(quoteOut, priceOut);
       //index one quote , index2 pairsStableness
+      console.log({
+        quoteOut,
+        isStable,
+        USD: {
+          in: usdIn,
+          out: usdOut,
+        },
+      });
       setQuote({
-        quoteOut: result[0],
-        isstable: result[1],
-        usdIn,
-        usdOut,
+        quoteOut,
+        isStable,
+        USD: {
+          in: usdIn,
+          out: usdOut,
+        },
       });
     }
   }

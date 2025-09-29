@@ -18,7 +18,13 @@ const boxStyle = {
   backgroundColor: "rgb(15, 23, 42)",
 };
 
-export default function NewTokenModal({ pairs, children }: any) {
+export default function NewTokenModal({
+  pairs,
+  setter,
+  state,
+  type,
+  children,
+}: any) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -38,51 +44,28 @@ export default function NewTokenModal({ pairs, children }: any) {
   function FeaturedPairs({ image = null }: any) {
     return (
       <div className="grid grid-cols-5 mt-4 p-2">
-        <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
-          <img
-            src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
-            alt=""
-            className="size-7"
-          />
-          <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
-        </div>{" "}
-        <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
-          <img
-            src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
-            alt=""
-            className="size-7"
-          />
-          <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
-        </div>{" "}
-        <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
-          <img
-            src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
-            alt=""
-            className="size-7"
-          />
-          <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
-        </div>{" "}
-        <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
-          <img
-            src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
-            alt=""
-            className="size-7"
-          />
-          <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
-        </div>{" "}
-        <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
-          <img
-            src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
-            alt=""
-            className="size-7"
-          />
-          <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
-        </div>
+        {pairs &&
+          pairs.map((item: any, index: any) => {
+            if (index < 5) {
+              return (
+                <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
+                  <img
+                    src={item.image ? item.image : ""}
+                    alt=""
+                    className="size-7 m-auto"
+                  />
+                  <h1 className="text-xs font-semibold text-gray-400 mt-1">
+                    {item.symbol}
+                  </h1>
+                </div>
+              );
+            }
+          })}
       </div>
     );
   }
 
-  function Pairs() {
+  function Pairs({ handleClose }: any) {
     return (
       <div className="p-3 overflow-y-auto h-130">
         <span className="flex gap-2 ">
@@ -94,7 +77,15 @@ export default function NewTokenModal({ pairs, children }: any) {
             {pairs.map((item: any, index: any) => {
               console.log(item);
               return (
-                <button className="grid grid-cols-8  mt-3 w-full" key={index}>
+                <button
+                  className="grid grid-cols-8  mt-3 w-full p-2 hover:bg-slate-800/90"
+                  key={index}
+                  onClick={() => {
+                    console.log("type: ", state);
+                    setter({ ...state, [String(type)]: item });
+                    handleClose();
+                  }}
+                >
                   <span className="col-span-1 ">
                     <img
                       src={
@@ -149,7 +140,9 @@ export default function NewTokenModal({ pairs, children }: any) {
       >
         <Box sx={boxStyle}>
           <div>
-            <h1 className="p-2 font-bold">Select a Token</h1>
+            <h1 className="p-2 font-bold">
+              {state[type] ? state[type].symbol : "Select a Token"}
+            </h1>
 
             <div className="mt-2 border border-gray-600 grid grid-cols-8 p-2 rounded-full  bg-gray-800/60">
               <FaSearch className="text-gray-500 col-span-1 mt-[7px] ms-4 text-sm" />
@@ -171,7 +164,7 @@ export default function NewTokenModal({ pairs, children }: any) {
           {/* featured pairs found here */}
           <FeaturedPairs />
           {/* token pairs available go here */}
-          <Pairs />
+          <Pairs handleClose={handleClose} setter={setter} />
         </Box>
       </Modal>
     </div>

@@ -187,7 +187,7 @@ export class Read {
     }
   }
 
-  public async isPair(tokenA: any, tokenB: any, read: Read) {
+  public async isPair(tokenA: any, tokenB: any, read: any = null) {
     try {
       const sorted: any = await this.sortTokens(tokenA, tokenB);
       const state: any = [true, false];
