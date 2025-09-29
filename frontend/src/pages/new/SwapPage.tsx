@@ -5,6 +5,7 @@ import { HiArrowsUpDown } from "react-icons/hi2";
 import { IoIosArrowDown } from "react-icons/io";
 import { LuArrowDownUp } from "react-icons/lu";
 import useNewBalnces from "../../state/useNewBalances";
+import usePairs from "../../state/usePairs";
 import useSwapProvider from "../../state/useSwapProvider";
 import NewTokenModal from "./NewTokenModal";
 function SwapPage() {
@@ -19,8 +20,10 @@ function SwapPage() {
   );
   const [tokenCheckList, setTokenCheckList] = useState([]);
   const [inAmount, setInAmount] = useState<any | null>(0);
+  const [searchInput, setSearchInput] = useState("");
   const swapProvider = useSwapProvider(tokens.in, tokens.out, inAmount);
   const balances = useNewBalnces(tokenCheckList);
+  const pairs = usePairs(searchInput);
   function SwapSettings() {
     return (
       <div className="flex justify-between">
@@ -69,7 +72,7 @@ function SwapPage() {
             placeholder="0.00"
             className="text-2xl text-gray-300 font-bold outline-none w-60"
           />
-          <NewTokenModal>
+          <NewTokenModal pairs={pairs || []}>
             <span className={`${image && "flex"} text-xs font-light`}>
               Select token
             </span>

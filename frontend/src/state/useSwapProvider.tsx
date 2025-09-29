@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
-import { getPairsAll, getTokensInfo } from "../lib/dexscreener-handler";
+import { getTokensInfo } from "../lib/dexscreener-handler";
 import { useTxService } from "./TxServiceProvider";
 
 //only pass in address and amounts dont pass in entire object
-function useSwapProvider({
-  tokenIn = null,
-  tokenOut = null,
-  inAmount = null,
-}: any) {
+function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
   const { reader, writer }: any = useTxService();
   const [quote, setQuote] = useState({
     quoteOut: null,
@@ -16,16 +12,12 @@ function useSwapProvider({
     usdOut: null,
   });
 
-  const [pairs, setPairs] = useState([]);
   useEffect(() => {
     if (tokenIn && tokenOut && inAmount) {
       getQuote();
     }
   }, [tokenIn, tokenOut, inAmount]);
-  useEffect(() => {}, [reader, writer]);
-  async function getPairs() {
-    const result = await getPairsAll(reader);
-  }
+
   async function getQuote() {
     const dexscreenrRes = await getTokensInfo([tokenIn, tokenOut], reader);
     const priceIn = dexscreenrRes[0].price;

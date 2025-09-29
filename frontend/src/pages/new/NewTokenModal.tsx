@@ -7,7 +7,7 @@ import { IoIosArrowDown } from "react-icons/io";
 
 const boxStyle = {
   position: "absolute",
-  top: "25%",
+  top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 450,
@@ -18,91 +18,11 @@ const boxStyle = {
   backgroundColor: "rgb(15, 23, 42)",
 };
 
-function FeaturedPairs({ image = null }: any) {
-  return (
-    <div className="grid grid-cols-5 mt-4 p-2">
-      <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
-        <img
-          src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
-          alt=""
-          className="size-7"
-        />
-        <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
-      </div>{" "}
-      <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
-        <img
-          src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
-          alt=""
-          className="size-7"
-        />
-        <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
-      </div>{" "}
-      <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
-        <img
-          src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
-          alt=""
-          className="size-7"
-        />
-        <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
-      </div>{" "}
-      <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
-        <img
-          src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
-          alt=""
-          className="size-7"
-        />
-        <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
-      </div>{" "}
-      <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
-        <img
-          src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
-          alt=""
-          className="size-7"
-        />
-        <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
-      </div>
-    </div>
-  );
-}
-
-function Pairs({ pairs = null }) {
-  return (
-    <div className="p-3">
-      <span className="flex gap-2 ">
-        <FaCoins className="text-gray-600 mt-1" />
-        <h1 className="text-sm mt-1 font-bold">Your tokens</h1>
-      </span>
-      <button className="grid grid-cols-8  mt-3 w-full">
-        <span className="col-span-1 ">
-          <img
-            src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
-            alt=""
-            className="size-10 mx-auto mt-1 my-auto"
-          />
-        </span>
-        <span className="col-span-5  text-left ms-2 ">
-          <h1 className="font-semibold text-gray-400 text-lg">Base BNB</h1>
-          <h1 className="font-light text-gray-500 text-sm">BNB</h1>
-        </span>
-        <span className="col-span-2  text-right">
-          <h1 className="text-lg font-bold">$23,983</h1>
-
-          <h1 className="text-sm">23.45</h1>
-        </span>
-      </button>
-    </div>
-  );
-}
-
-export default function NewTokenModal({
-  children,
-  customStyle = null,
-  featuredPairs = null,
-}: any) {
+export default function NewTokenModal({ pairs, children }: any) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const style = customStyle || {
+  const style = {
     border: "1px solid",
     borderColor: "grey.800",
     p: 1,
@@ -114,6 +34,103 @@ export default function NewTokenModal({
     color: "white",
     cursor: "pointer",
   };
+
+  function FeaturedPairs({ image = null }: any) {
+    return (
+      <div className="grid grid-cols-5 mt-4 p-2">
+        <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
+          <img
+            src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
+            alt=""
+            className="size-7"
+          />
+          <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
+        </div>{" "}
+        <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
+          <img
+            src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
+            alt=""
+            className="size-7"
+          />
+          <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
+        </div>{" "}
+        <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
+          <img
+            src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
+            alt=""
+            className="size-7"
+          />
+          <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
+        </div>{" "}
+        <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
+          <img
+            src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
+            alt=""
+            className="size-7"
+          />
+          <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
+        </div>{" "}
+        <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
+          <img
+            src="https://images.seeklogo.com/logo-png/47/2/bnb-bnb-logo-png_seeklogo-476074.png"
+            alt=""
+            className="size-7"
+          />
+          <h1 className="text-sm text-gray-200 mt-1">BNB</h1>
+        </div>
+      </div>
+    );
+  }
+
+  function Pairs() {
+    return (
+      <div className="p-3 overflow-y-auto h-130">
+        <span className="flex gap-2 ">
+          <FaCoins className="text-gray-600 mt-1" />
+          <h1 className="text-sm mt-1 font-bold">Your tokens</h1>
+        </span>
+        {pairs && (
+          <>
+            {pairs.map((item: any, index: any) => {
+              console.log(item);
+              return (
+                <button className="grid grid-cols-8  mt-3 w-full" key={index}>
+                  <span className="col-span-1 ">
+                    <img
+                      src={
+                        item.image
+                          ? item.image
+                          : "https://media.tenor.com/SsTnMMMQdkQAAAAe/confusion-emoji.png"
+                      }
+                      alt=""
+                      className="size-10 mx-auto mt-1 my-auto rounded-full"
+                    />
+                  </span>
+                  <span className="col-span-5  text-left ms-2 ">
+                    <h1 className="font-semibold text-gray-400 text-lg">
+                      {item.name}
+                    </h1>
+                    <h1 className="font-light text-gray-500 text-sm">
+                      {item.symbol}
+                    </h1>
+                  </span>
+                  <span className="col-span-2  text-right">
+                    <h1 className="text-lg font-bold">$23,983</h1>
+
+                    <h1 className="text-sm">23.45</h1>
+                  </span>
+                </button>
+              );
+            })}
+          </>
+        )}
+      </div>
+    );
+  }
+
+  function getFeatured() {
+    //first pairs are feature d
+  }
 
   return (
     <div>
@@ -133,6 +150,7 @@ export default function NewTokenModal({
         <Box sx={boxStyle}>
           <div>
             <h1 className="p-2 font-bold">Select a Token</h1>
+
             <div className="mt-2 border border-gray-600 grid grid-cols-8 p-2 rounded-full  bg-gray-800/60">
               <FaSearch className="text-gray-500 col-span-1 mt-[7px] ms-4 text-sm" />
               <input

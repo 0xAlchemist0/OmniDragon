@@ -159,23 +159,32 @@ function getVolumeLiquidityRatio(info: any) {
 }
 
 export async function getPairsAll(reader: any) {
-  const chainName = await reader.getchainName().toLowerCase();
-  const dexFilter = chainName === "sonic" && "swapx";
+  const chainName = await reader.getChainName();
+  if (!chainName) throw new Error("No chain name found ");
+  const dexFilter =
+    String(chainName).toLowerCase() === "sonic" ? "swapx" : null;
+
   //returns  top pairs on dexscreeenr for the specific dex
-  const resultPairs = await fetch(endpoints.searchQuery + `?q=${dexFilter}`);
-  console.log(resultPairs);
+  const dexSearch = await fetch(endpoints.searchQuery + `?q=${dexFilter}`);
+  const searchRes = await dexSearch.json();
+  console.log(searchRes.pairs);
+
+  const filtered = await formatPairs(searchRes.pairs);
+  return filtered;
 }
 ////
 
 async function formatPairs(pairs: any) {
   const formattedPairs = [];
   for (const pair in pairs) {
-    const { baseToken, priceUsd, info, liquidity }: any = pairs;
-    const { address, name }: any = baseToken;
+    const { baseToken, priceUsd, info = null, liquidity }: any = pairs[pair];
+
+    //defalt foormat for all ppairs no ore slopy destructring
     formattedPairs.push({
-      name,
-      address,
-      image: info.imageUrl,
+      name: baseToken.name,
+      symbol: baseToken.symbol,
+      address: baseToken.address,
+      image: info ? info.imageUrl : null,
       liquidity,
       priceUsd,
     });
