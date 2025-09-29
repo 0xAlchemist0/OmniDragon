@@ -16,12 +16,16 @@ function SwapPage() {
     image?: string;
   };
   const [tokens, setTokens] = useState<{ in: Token | null; out: Token | null }>(
-    { in: null, out: null }
+    { in: { address: null }, out: { address: null } }
   );
   const [tokenCheckList, setTokenCheckList] = useState([]);
   const [amounts, setAmounts] = useState<any | null>(0);
-  const [searchInput, setSearchInput] = useState("");
-  const quoteProvider = useSwapProvider(tokens.in, tokens.out, amounts.in);
+  const [searchInput, setSearchInput] = useState<any | null>("");
+  const quoteProvider = useSwapProvider(
+    tokens.in.address,
+    tokens.out.address,
+    amounts.in
+  );
   const balances = useNewBalnces(tokenCheckList);
   const pairs = usePairs(searchInput);
   function SwapSettings() {
@@ -63,7 +67,14 @@ function SwapPage() {
     );
   }
 
-  function Selector({ image, setter, state, type }: any) {
+  function Selector({
+    image,
+    setter,
+    state,
+    type,
+    searchInput,
+    setSearchInput,
+  }: any) {
     return (
       <div className="mt-4 p-5 border rounded-lg border-gray-600 bg-gray-800/60 grid grid-rows-1 gap-1">
         <div className="flex justify-between">
@@ -71,37 +82,62 @@ function SwapPage() {
             type="text"
             placeholder="0.00"
             className="text-2xl text-gray-300 font-bold outline-none w-60"
+            value={
+              type === "in"
+                ? amounts[type]
+                : type === "out" && quoteProvider
+                ? quoteProvider.quoteOut
+                : "0.00"
+            }
+            onChange={(e) => {
+              setAmounts({ ...amounts, [type]: e.target.value });
+            }}
           />
+
           <NewTokenModal
             pairs={pairs || []}
             setter={setter}
             state={state}
             type={type}
+            setSearchInput={setSearchInput}
+            searchInput={searchInput}
           >
             <span
-              className={`${
-                state[type] && state[type].image !== null && "flex gap-1.5"
+              className={`
+                flex gap-1.5
               } text-sm font-stretch-normal font-semibold text-gray-400`}
             >
-              {state[type] && (
-                <img
-                  src={state[type] ? state[type].image : ""}
-                  alt=""
-                  className="size-5 rounded-full"
-                />
-              )}
-              <h1>{state[type] ? state[type].symbol : "Select a token"}</h1>
+              <img
+                src={
+                  state[type].image
+                    ? state[type].image
+                    : "https://media.tenor.com/SsTnMMMQdkQAAAAe/confusion-emoji.png"
+                }
+                alt=""
+                className="size-5 rounded-full"
+              />
+              <h1>
+                {state[type].symbol ? state[type].symbol : "Select a token"}
+              </h1>
             </span>
             <IoIosArrowDown className="mt-[-1.5px] text-gray-300 font-bold text-md" />
           </NewTokenModal>
         </div>
         <div className="flex justify-between">
           <h1 className="text-gray-600 mt-2">
-            ${quoteProvider.USD[type] ? quoteProvider.USD[type] : "~"}
+            ${quoteProvider ? quoteProvider.USD[type] : "~"}
           </h1>
           <span className="flex text-gray-600 mt-2.5 gap-2 ">
             <FaWallet className="mt-1" />
-            <h1>0.00</h1>
+            <button
+              onClick={() => {
+                if (state[type].balance) {
+                  setAmounts({ ...state, [type]: String(state[type].balance) });
+                }
+              }}
+            >
+              {state[type].balance ? state[type].balance : null}
+            </button>
           </span>
         </div>
       </div>
@@ -112,7 +148,14 @@ function SwapPage() {
     <div className="p-5 border w-[90%] m-auto mt-4 rounded-md bg-slate-900 border-slate-900">
       <SwapSettings />
       <div className="grid grid-flow-row ">
-        <Selector image={""} setter={setTokens} state={tokens} type={"in"} />
+        <Selector
+          image={""}
+          setter={setTokens}
+          state={tokens}
+          type={"in"}
+          setSearchInput={setSearchInput}
+          searchInput={searchInput}
+        />
         <button
           className="flex justify-center text-2xl font-bold text-gray-500 mt-3 hover:cursor-pointer"
           onClick={() => {
@@ -123,9 +166,20 @@ function SwapPage() {
         >
           <LuArrowDownUp />
         </button>
-        <Selector image={""} setter={setTokens} state={tokens} type={"out"} />
+        <Selector
+          image={""}
+          setter={setTokens}
+          state={tokens}
+          type={"out"}
+          setSearchInput={setSearchInput}
+          searchInput={searchInput}
+        />
       </div>
-
+      {quoteProvider.error !== undefined && (
+        <span className="text-center font-light">
+          <h1 className="mt-3">{quoteProvider.error}</h1>
+        </span>
+      )}
       <ExcecutionBTN />
     </div>
   );

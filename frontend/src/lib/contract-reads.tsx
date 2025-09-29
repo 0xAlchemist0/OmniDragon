@@ -253,7 +253,10 @@ export class Read {
 
       //index 0 quote expected amount without slippage, index1 is pool stable or not to complete this trae important for swapping,
       return result;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   }
   public async tempBalanceOf(tokenAddress: any) {
     try {

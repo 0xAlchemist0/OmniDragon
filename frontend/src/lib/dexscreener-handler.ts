@@ -1,3 +1,5 @@
+import { formatUnits } from "viem";
+
 const endpoints = {
   findPools: "https://api.dexscreener.com/tokens/v1/",
   findToken: "https://api.dexscreener.com/latest/dex/pairs/",
@@ -26,13 +28,16 @@ export async function getTokensInfo(tokensList: any, reader: any) {
 
 export async function searchDexscreener(searchItem: string, chainName: string) {
   try {
-    const request = await fetch(endpoints.searchQuery + `?q=${searchItem}`);
+    const request = await fetch(
+      endpoints.searchQuery + `?q=${searchItem.trim()}`
+    );
     const response = await request.json();
-
     const filtered = filterByChain(response.pairs, chainName);
-    const best = await discoverBestPair(filtered);
+    const best = discoverBestPair(filtered);
     return best;
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export function filterByChain(pairs: any[], chainName: string) {
@@ -68,7 +73,6 @@ export async function getDefaultToken(chainName: any, reader: any) {
       ["0xA04BC7140c26fc9BB1F36B1A604C7A5a88fb0E70"],
       reader
     );
-    console.log(tokenInfo);
   }
 }
 
@@ -79,11 +83,8 @@ export async function highliquidityPairs(
   pairs: any,
   reader: any
 ) {
-  console.log(`This is raw pairs: ${pairs}`);
   if (shouldFindBest) {
     const pairsInfo = await getPairsInfo(pairs, reader);
-    console.log("Pairs found for all: ");
-    console.log(pairsInfo);
   }
 }
 
@@ -138,24 +139,29 @@ export async function getToken(tokenAddress: string, chain: string) {
 
 function discoverBestPair(pairs: any) {
   let bestPair = null;
-  let bestRatio = 0;
+  let bestRatio = -Infinity;
   //fix its supposed to be in pair in pairs
   for (const pair in pairs) {
+    console.log(pairs[pair]);
     const pairRatio = getVolumeLiquidityRatio(pairs[pair]);
-
+    console.log(pairRatio);
     if (pairRatio > bestRatio) {
       bestRatio = pairRatio;
       bestPair = pairs[pair];
     }
   }
-
+  console.log("bestPair: ", bestPair);
   return bestPair;
 }
 
 function getVolumeLiquidityRatio(info: any) {
   const { liquidity, volume } = info;
 
-  return (liquidity["usd"] + volume["h24"]) * 2;
+  if (liquidity) {
+    return (liquidity["usd"] + volume["h24"]) * 2;
+  } else {
+    return 0;
+  }
 }
 
 export async function getPairsAll(reader: any) {
@@ -167,18 +173,18 @@ export async function getPairsAll(reader: any) {
   //returns  top pairs on dexscreeenr for the specific dex
   const dexSearch = await fetch(endpoints.searchQuery + `?q=${dexFilter}`);
   const searchRes = await dexSearch.json();
-  console.log(searchRes.pairs);
 
-  const filtered = await formatPairs(searchRes.pairs);
+  const filtered = await formatPairs(searchRes.pairs, reader);
   return filtered;
 }
 ////
 
-async function formatPairs(pairs: any) {
+export async function formatPairs(pairs: any, reader: any) {
   const formattedPairs = [];
   for (const pair in pairs) {
     const { baseToken, priceUsd, info = null, liquidity }: any = pairs[pair];
-
+    const balance = await reader.tempBalanceOf(baseToken.address);
+    console.log("balance: ");
     //defalt foormat for all ppairs no ore slopy destructring
     formattedPairs.push({
       name: baseToken.name,
@@ -187,6 +193,7 @@ async function formatPairs(pairs: any) {
       image: info ? info.imageUrl : null,
       liquidity,
       priceUsd,
+      balance: String(parseFloat(formatUnits(balance, 18)).toFixed(2)),
     });
   }
   return formattedPairs;

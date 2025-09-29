@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatUnits, parseUnits } from "viem";
 import { getTokensInfo } from "../lib/dexscreener-handler";
 import { useTxService } from "./TxServiceProvider";
 
@@ -12,6 +13,7 @@ function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
       in: null,
       out: null,
     },
+    error: undefined,
   });
 
   useEffect(() => {
@@ -20,45 +22,89 @@ function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
       getQuote();
     }
   }, [tokenIn, tokenOut, inAmount]);
+  useEffect(() => {
+    console.log("in updated: ", inAmount);
+
+    if (tokenIn && tokenOut && inAmount) {
+      getQuote();
+    }
+  }, [inAmount]);
 
   async function getQuote() {
     const dexscreenrRes = await getTokensInfo([tokenIn, tokenOut], reader);
-    const priceIn = dexscreenrRes[0].price;
-    const priceOut = dexscreenrRes[1].price;
+    console.log(dexscreenrRes[0]);
+    const priceIn = dexscreenrRes[0].priceUsd;
+    const priceOut = dexscreenrRes[1].priceUsd;
     const isPair = await reader.isPair(tokenIn, tokenOut, reader);
+    console.log(isPair);
     let result: any;
     if (isPair) {
-      result = await reader.getAmountOut(inAmount, tokenIn, tokenOut, reader);
-    }
+      result = await reader.getAmountOut(
+        parseUnits(inAmount, 18),
+        tokenIn,
+        tokenOut,
+        reader
+      );
+      if (result) {
+        const quoteOut: any = Number(formatUnits(result[0], 18)).toFixed(2);
+        console.log();
+        const isStable: any = result[1];
 
-    if (result[0]) {
-      const quoteOut: any = String(result[0]);
-      const isStable: any = result[1];
+        const usdIn: any = String(getUSD(Number(inAmount), Number(priceIn)));
+        const usdOut: any = String(getUSD(quoteOut, Number(priceOut)));
+        console.log(
+          String(inAmount),
+          tokenIn,
+          tokenOut,
+          priceIn,
+          priceOut,
+          usdIn,
+          usdOut
+        );
 
-      const usdIn: any = getUSD(inAmount, priceIn);
-      const usdOut: any = getUSD(quoteOut, priceOut);
-      //index one quote , index2 pairsStableness
-      console.log({
-        quoteOut,
-        isStable,
-        USD: {
-          in: usdIn,
-          out: usdOut,
-        },
-      });
-      setQuote({
-        quoteOut,
-        isStable,
-        USD: {
-          in: usdIn,
-          out: usdOut,
-        },
-      });
+        //index one quote , index2 pairsStableness
+        console.log({
+          quoteOut,
+          isStable,
+          USD: {
+            in: usdIn,
+            out: usdOut,
+          },
+        });
+        setQuote({
+          quoteOut,
+          isStable,
+          USD: {
+            in: usdIn,
+            out: usdOut,
+          },
+          error: undefined,
+        });
+      }
+      console.log(tokenIn, tokenOut, inAmount);
+      console.log(result);
+    } else {
+      setQuoteError();
     }
   }
 
+  function setQuoteError() {
+    setQuote({
+      quoteOut: null,
+      isStable: null,
+      USD: {
+        in: null,
+        out: null,
+      },
+      error: "Swap router not found!",
+    });
+  }
+  useEffect(() => {
+    console.log(quote);
+  }, [quote]);
   function getUSD(value: any, price: any) {
-    return Number(value) * price;
+    const result = value * price;
+    return result.toFixed(2);
   }
   return quote;
 }

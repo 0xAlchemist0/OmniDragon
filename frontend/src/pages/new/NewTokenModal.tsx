@@ -23,6 +23,8 @@ export default function NewTokenModal({
   setter,
   state,
   type,
+  setSearchInput,
+  searchInput,
   children,
 }: any) {
   const [open, setOpen] = React.useState(false);
@@ -44,11 +46,18 @@ export default function NewTokenModal({
   function FeaturedPairs({ image = null }: any) {
     return (
       <div className="grid grid-cols-5 mt-4 p-2">
-        {pairs &&
-          pairs.map((item: any, index: any) => {
+        {pairs.pairs &&
+          pairs.pairs.map((item: any, index: any) => {
             if (index < 5) {
               return (
-                <div className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600">
+                <div
+                  className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600"
+                  key={index}
+                  onClick={() => {
+                    setter({ ...state, [type]: item });
+                    handleClose();
+                  }}
+                >
                   <img
                     src={item.image ? item.image : ""}
                     alt=""
@@ -66,27 +75,58 @@ export default function NewTokenModal({
   }
 
   function Pairs({ handleClose }: any) {
+    console.log("reuslt: ", pairs.searchResults);
     return (
       <div className="p-3 overflow-y-auto h-130">
         <span className="flex gap-2 ">
           <FaCoins className="text-gray-600 mt-1" />
           <h1 className="text-sm mt-1 font-bold">Your tokens</h1>
         </span>
-        {pairs && (
-          <>
-            {pairs.map((item: any, index: any) => {
-              console.log(item);
-              return (
+        {pairs.searchResults ? (
+          <button
+            className="grid grid-cols-8 mt-3 w-full p-2 hover:bg-slate-800/90"
+            onClick={() => {
+              setter({ ...state, [String(type)]: pairs.searchResults });
+              handleClose();
+            }}
+          >
+            <span className="col-span-1">
+              <img
+                src={
+                  pairs.searchResults.image
+                    ? pairs.searchResults.image
+                    : "https://media.tenor.com/SsTnMMMQdkQAAAAe/confusion-emoji.png"
+                }
+                alt=""
+                className="size-10 mx-auto mt-1 my-auto rounded-full"
+              />
+            </span>
+            <span className="col-span-5 text-left ms-2">
+              <h1 className="font-semibold text-gray-400 text-lg">
+                {pairs.searchResults.name}
+              </h1>
+              <h1 className="font-light text-gray-500 text-sm">
+                {pairs.searchResults.symbol}
+              </h1>
+            </span>
+            <span className="col-span-2 text-right">
+              <h1 className="text-lg font-bold">$23,983</h1>
+              <h1 className="text-sm">23.45</h1>
+            </span>
+          </button>
+        ) : (
+          pairs.pairs && (
+            <>
+              {pairs.pairs.map((item: any, index: any) => (
                 <button
-                  className="grid grid-cols-8  mt-3 w-full p-2 hover:bg-slate-800/90"
+                  className="grid grid-cols-8 mt-3 w-full p-2 hover:bg-slate-800/90"
                   key={index}
                   onClick={() => {
-                    console.log("type: ", state);
                     setter({ ...state, [String(type)]: item });
                     handleClose();
                   }}
                 >
-                  <span className="col-span-1 ">
+                  <span className="col-span-1">
                     <img
                       src={
                         item.image
@@ -97,7 +137,7 @@ export default function NewTokenModal({
                       className="size-10 mx-auto mt-1 my-auto rounded-full"
                     />
                   </span>
-                  <span className="col-span-5  text-left ms-2 ">
+                  <span className="col-span-5 text-left ms-2">
                     <h1 className="font-semibold text-gray-400 text-lg">
                       {item.name}
                     </h1>
@@ -105,15 +145,14 @@ export default function NewTokenModal({
                       {item.symbol}
                     </h1>
                   </span>
-                  <span className="col-span-2  text-right">
+                  <span className="col-span-2 text-right">
                     <h1 className="text-lg font-bold">$23,983</h1>
-
                     <h1 className="text-sm">23.45</h1>
                   </span>
                 </button>
-              );
-            })}
-          </>
+              ))}
+            </>
+          )
         )}
       </div>
     );
@@ -134,7 +173,11 @@ export default function NewTokenModal({
       </Button>
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={() => {
+          handleClose();
+        }}
+        disableAutoFocus
+        disableEnforceFocus
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -150,6 +193,10 @@ export default function NewTokenModal({
                 type="text"
                 className=" col-span-6 p-1  outline-none font-bold text-sm"
                 placeholder="Enter a token"
+                value={searchInput[type] || ""}
+                onChange={(e) => {
+                  setSearchInput({ ...searchInput, [type]: e.target.value });
+                }}
               />
               <button className=" col-span-1 flex gap-2 flex justify-end">
                 <img
