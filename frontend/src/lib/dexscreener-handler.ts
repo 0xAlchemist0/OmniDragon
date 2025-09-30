@@ -168,7 +168,7 @@ export async function getPairsAll(reader: any) {
   const chainName = await reader.getChainName();
   if (!chainName) throw new Error("No chain name found ");
   const dexFilter =
-    String(chainName).toLowerCase() === "sonic" ? "swapx" : null;
+    String(chainName).toLowerCase() === "sonic" ? "shadow-exchange" : null;
 
   //returns  top pairs on dexscreeenr for the specific dex
   const dexSearch = await fetch(endpoints.searchQuery + `?q=${dexFilter}`);

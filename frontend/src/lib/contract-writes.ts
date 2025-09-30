@@ -54,11 +54,10 @@ export class Write {
     from: any,
     to: any,
     slippagePercent: any,
-    deadline: any,
     stable: any
   ) {
     try {
-      if (!amountIn || !amountOutMin || !to || !from) {
+      if (!amountIn || !amountOutMin || !to || !this.wallet) {
         throw new Error("Missing inputs");
       }
       this.getRead();
@@ -66,13 +65,7 @@ export class Write {
         throw new Error("Failed reader is not initialized!");
       }
 
-      const isStable: any = await this.readInstance.checkPairStableness(
-        from,
-        to,
-        this.readInstance
-      );
-      const finalDeadline = await this.getDeadline(deadline);
-      console.log("Is this pool stable at all: ", isStable);
+      const finalDeadline = await this.getDeadline("0");
       const slippageApplied = await this.applySlippage(
         amountOutMin,
         slippagePercent
@@ -81,12 +74,15 @@ export class Write {
       //amountoutmin
       // Apply slippage safely
 
-      if (isStable || isStable === false) {
+      if (stable || stable === false) {
         // Call your router contract
         const routes = [[from, to, stable]];
+        const decimals = await this.readInstance.getDecimals(to);
         console.log("params: ", [
-          parseUnits(amountIn, 18),
-          parseUnits(slippageApplied, 18),
+          amountIn,
+          amountOutMin,
+          slippageApplied,
+          decimals,
           routes,
           this.wallet,
           finalDeadline,
@@ -97,7 +93,7 @@ export class Write {
           functionName: "swapExactTokensForTokens",
           args: [
             parseUnits(amountIn, 18),
-            parseUnits(String(slippageApplied), 18),
+            parseUnits(String(slippageApplied), decimals),
             routes,
             this.wallet,
             String(finalDeadline),
@@ -127,7 +123,8 @@ export class Write {
   //call approval to all check if user is approved brfore
 
   public async applySlippage(amountOutMin: any, slippage: any) {
-    const result = parseFloat(amountOutMin) * (1 - parseFloat(slippage));
+    const parsedDecimal: any = parseFloat(slippage) / 100;
+    const result = parseFloat(amountOutMin) * (1 - parseFloat(parsedDecimal));
     return String(result);
   }
 

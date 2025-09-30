@@ -51,7 +51,7 @@ export default function NewTokenModal({
             if (index < 5) {
               return (
                 <div
-                  className="border m-auto px-4 py-1 rounded-md bg-gray-800/60 border-gray-600"
+                  className="border m-auto px-3 py-1 rounded-md bg-gray-800/60 border-gray-600"
                   key={index}
                   onClick={() => {
                     setter({ ...state, [type]: item });
@@ -61,9 +61,9 @@ export default function NewTokenModal({
                   <img
                     src={item.image ? item.image : ""}
                     alt=""
-                    className="size-7 m-auto"
+                    className="size-6 rounded-full m-auto"
                   />
-                  <h1 className="text-xs font-semibold text-gray-400 mt-1">
+                  <h1 className="text-[10px] font-semibold text-gray-400 mt-1">
                     {item.symbol}
                   </h1>
                 </div>
@@ -173,15 +173,16 @@ export default function NewTokenModal({
       </Button>
       <Modal
         open={open}
-        onClose={() => {
-          handleClose();
-        }}
         disableAutoFocus
         disableEnforceFocus
+        onClose={() => {
+          /* intentionally empty: ignore internal blur/focus */
+        }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        hideBackdrop={false}
       >
-        <Box sx={boxStyle}>
+        <Box sx={boxStyle} onClick={(e) => e.stopPropagation()}>
           <div>
             <h1 className="p-2 font-bold">
               {state[type] ? state[type].symbol : "Select a Token"}
@@ -195,7 +196,10 @@ export default function NewTokenModal({
                 placeholder="Enter a token"
                 value={searchInput[type] || ""}
                 onChange={(e) => {
-                  setSearchInput({ ...searchInput, [type]: e.target.value });
+                  setSearchInput((prev: any) => ({
+                    ...prev,
+                    [type]: e.target.value,
+                  }));
                 }}
               />
               <button className=" col-span-1 flex gap-2 flex justify-end">

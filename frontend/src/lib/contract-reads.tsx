@@ -106,6 +106,16 @@ export class Read {
     return request;
   }
 
+  public async getDecimals(tokenAddress: any) {
+    const decimals = await viemClient.readContract({
+      address: tokenAddress,
+      abi: ERC20ABI,
+      functionName: "decimals",
+      args: [],
+    });
+    return decimals;
+  }
+
   //Approvsl before tx
   //always check this to make sure u can spend tokens
   public async isApproved(

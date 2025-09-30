@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { formatUnits, parseUnits } from "viem";
 import { getTokensInfo } from "../lib/dexscreener-handler";
+import contracts from "../utils/contracts";
 import { useTxService } from "./TxServiceProvider";
 
 //only pass in address and amounts dont pass in entire object
@@ -9,11 +10,13 @@ function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
   const [quote, setQuote] = useState({
     quoteOut: null,
     isStable: null,
+    inAmount: null,
     USD: {
       in: null,
       out: null,
     },
     error: undefined,
+    isApproved: false,
   });
 
   useEffect(() => {
@@ -31,6 +34,12 @@ function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
   }, [inAmount]);
 
   async function getQuote() {
+    const isApproved = await reader.isApproved(
+      tokenIn,
+      contracts.Uniswap.UniswapV2Router,
+      parseUnits(inAmount, 18)
+    );
+    console.log("is approved?: ", isApproved);
     const dexscreenrRes = await getTokensInfo([tokenIn, tokenOut], reader);
     console.log(dexscreenrRes[0]);
     const priceIn = dexscreenrRes[0].priceUsd;
@@ -52,37 +61,21 @@ function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
 
         const usdIn: any = String(getUSD(Number(inAmount), Number(priceIn)));
         const usdOut: any = String(getUSD(quoteOut, Number(priceOut)));
-        console.log(
-          String(inAmount),
-          tokenIn,
-          tokenOut,
-          priceIn,
-          priceOut,
-          usdIn,
-          usdOut
-        );
 
         //index one quote , index2 pairsStableness
-        console.log({
-          quoteOut,
-          isStable,
-          USD: {
-            in: usdIn,
-            out: usdOut,
-          },
-        });
+
         setQuote({
           quoteOut,
           isStable,
+          inAmount,
           USD: {
             in: usdIn,
             out: usdOut,
           },
           error: undefined,
+          isApproved,
         });
       }
-      console.log(tokenIn, tokenOut, inAmount);
-      console.log(result);
     } else {
       setQuoteError();
     }
@@ -92,16 +85,19 @@ function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
     setQuote({
       quoteOut: null,
       isStable: null,
+      inAmount,
       USD: {
         in: null,
         out: null,
       },
       error: "Swap router not found!",
+      isAppoved: quote.isApproved,
     });
   }
   useEffect(() => {
     console.log(quote);
   }, [quote]);
+
   function getUSD(value: any, price: any) {
     const result = value * price;
     return result.toFixed(2);

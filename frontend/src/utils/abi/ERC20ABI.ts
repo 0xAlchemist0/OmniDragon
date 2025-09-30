@@ -29,6 +29,14 @@ const ERC20ABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    constant: true,
+    inputs: [],
+    name: "decimals",
+    outputs: [{ name: "", type: "uint8" }],
+    stateMutability: "view",
+    type: "function",
+  },
 ];
 
 export default ERC20ABI;
