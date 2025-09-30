@@ -10,8 +10,9 @@ const contracts: any = {
     veDRAGON: "0x69492C71d7A3caf0277E238D9D4305c6af930777",
   },
   Uniswap: {
+    // 0x05c1be79d3aC21Cc4B727eeD58C9B2fF757F5663
     UniswapV2Factory: "0x05c1be79d3aC21Cc4B727eeD58C9B2fF757F5663",
-    UniswapV2Router: "0xF5F7231073b3B41c04BA655e1a7438b1a7b29c27",
+    UniswapV2Router: "0x1D368773735ee1E678950B7A97bcA2CafB330CDc",
   },
   Pool: {
     UniswapV2LP: "0x33503bc86f2808151a6e083e67d7d97a66dfec11",

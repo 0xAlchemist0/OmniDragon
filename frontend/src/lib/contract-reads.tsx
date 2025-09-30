@@ -1,4 +1,10 @@
-import { createPublicClient, formatEther, formatUnits, http } from "viem";
+import {
+  createPublicClient,
+  formatEther,
+  formatUnits,
+  http,
+  parseUnits,
+} from "viem";
 import { viemClient } from "../utils/ViemClient";
 import { DRAGONGAUGEREGISTRYAbi } from "../utils/abi/DRAGONGAUGEREGISTRYAbi";
 import ERC20ABI from "../utils/abi/ERC20ABI";
@@ -197,16 +203,36 @@ export class Read {
     }
   }
 
+  public async getAmountsOut(from: any, to: any, stable: any, amountIn: any) {
+    try {
+      console.log(from, to, stable, parseUnits(amountIn, 18));
+      const routes = [[from, to, false]];
+      const reuslt = await viemClient.readContract({
+        address: contracts.Uniswap.UniswapV2Router,
+        abi: UniswapV2RouterABI,
+        functionName: "getAmountsOut",
+        args: [parseUnits(String(amountIn), 18), routes],
+      });
+      console.log("amountsout: ", reuslt);
+      return reuslt;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //something wrong here when getting the quote for shadow exchange remmebr we migrated from swapx to shadow
   public async isPair(tokenA: any, tokenB: any, read: any = null) {
     try {
       const sorted: any = await this.sortTokens(tokenA, tokenB);
+      console.log("sorted: ", sorted);
       const state: any = [true, false];
       if (sorted && sorted) {
         let pairOne = await this.pairFor(sorted[0], sorted[1], state[0]);
         let pairTwo = await this.pairFor(sorted[0], sorted[1], state[1]);
+
         let result = await getPairsInfo([pairOne], read);
         let resulttwo = await getPairsInfo([pairTwo], read);
-
+        console.log(resulttwo, pairTwo);
         if (result.length >= 1 || resulttwo.length >= 1) {
           return true;
         } else {
@@ -230,6 +256,7 @@ export class Read {
   }
   //verfies poool id it s stable or not
   public async pairFor(tokenA: any, tokenB: any, stable: any) {
+    console.log(tokenA, tokenB, stable);
     const pair: any = await viemClient.readContract({
       address: contracts.Uniswap.UniswapV2Router,
       abi: UniswapV2RouterABI,
@@ -254,12 +281,18 @@ export class Read {
       //verify the pool exists before trading
       const isPair = await this.isPair(tokenIn, tokenOut, reader);
       if (!isPair) return false;
+      const decimals: any = await this.getDecimals(tokenIn);
       const result = await viemClient.readContract({
         address: contracts.Uniswap.UniswapV2Router,
         abi: UniswapV2RouterABI,
         functionName: "getAmountOut",
-        args: [amountIn, tokenIn, tokenOut],
+        args: [
+          parseUnits(amountIn, decimals),
+          String(tokenIn),
+          String(tokenOut),
+        ],
       });
+      console.log(result);
 
       //index 0 quote expected amount without slippage, index1 is pool stable or not to complete this trae important for swapping,
       return result;

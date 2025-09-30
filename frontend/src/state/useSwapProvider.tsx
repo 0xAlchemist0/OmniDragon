@@ -23,16 +23,24 @@ function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
     console.log("change");
     if (tokenIn && tokenOut && inAmount) {
       getQuote();
+      // getQuote();
     }
   }, [tokenIn, tokenOut, inAmount]);
   useEffect(() => {
     console.log("in updated: ", inAmount);
 
     if (tokenIn && tokenOut && inAmount) {
-      getQuote();
+      test();
     }
   }, [inAmount]);
-
+  async function test() {
+    const amountsOut = await reader.getAmountsOut(
+      tokenIn,
+      tokenOut,
+      false,
+      inAmount
+    );
+  }
   async function getQuote() {
     const isApproved = await reader.isApproved(
       tokenIn,
@@ -45,15 +53,19 @@ function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
     const priceIn = dexscreenrRes[0].priceUsd;
     const priceOut = dexscreenrRes[1].priceUsd;
     const isPair = await reader.isPair(tokenIn, tokenOut, reader);
-    console.log(isPair);
+    console.log(tokenIn, tokenOut);
+    console.log("is it a pair: ", isPair);
+    console.log({
+      tokenIn,
+      tokenOut,
+      isstable: false,
+      inAmount,
+    });
+
     let result: any;
     if (isPair) {
-      result = await reader.getAmountOut(
-        parseUnits(inAmount, 18),
-        tokenIn,
-        tokenOut,
-        reader
-      );
+      result = await reader.getAmountOut(inAmount, tokenIn, tokenOut, reader);
+
       if (result) {
         const quoteOut: any = Number(formatUnits(result[0], 18)).toFixed(2);
         console.log();
