@@ -9,6 +9,9 @@ const contracts: any = {
     redDRAGON: "0x69320eb5b9161a34cb9cdd163419f826691a1777",
     veDRAGON: "0x69492C71d7A3caf0277E238D9D4305c6af930777",
   },
+  Odos: {
+    Router: "0xaC041Df48dF9791B0654f1Dbbf2CC8450C5f2e9D",
+  },
   Uniswap: {
     // 0x05c1be79d3aC21Cc4B727eeD58C9B2fF757F5663
     UniswapV2Factory: "0x05c1be79d3aC21Cc4B727eeD58C9B2fF757F5663",

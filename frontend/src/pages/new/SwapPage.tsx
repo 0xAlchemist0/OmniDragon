@@ -264,13 +264,9 @@ function SwapPage() {
         tokens={tokens}
         quote={quoteProvider}
         action={async () => {
-          const result = await writer.performSwap(
-            amounts.in, // must be BigInt
-            quoteProvider.quoteOut, // must be BigInt
-            tokens.in?.address,
-            tokens.out?.address,
-            slippage,
-            quoteProvider.isStable
+          const result: any = await writer.performSwap(
+            quoteProvider.assembledTX,
+            quoteProvider.isApproved
           );
           setTxResults(result);
           setConfirmTX(false);

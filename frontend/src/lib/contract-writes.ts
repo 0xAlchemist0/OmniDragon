@@ -48,71 +48,32 @@ export class Write {
   // contract-reads.tsx:75 Cant find pairs tableness
   // contract-writes.ts:68 Is this pool stable at all:  null
   // contract-writes.ts:90 Failed TX alert stableness  not fond!
-  public async performSwap(
-    amountIn: any,
-    amountOutMin: any,
-    from: any,
-    to: any,
-    slippagePercent: any,
-    stable: any
-  ) {
-    let response = null;
-    if (!amountIn || !amountOutMin || !to || !this.wallet) {
-      throw new Error("Missing inputs");
+  public async performSwap(assembledTransaction: any, isApproved: any) {
+    try {
+      console.log("swapping");
+      console.log(assembledTransaction);
+      // const data = decodeFunctionData({
+      //   abi: contracts.Odos.Router,
+      //   data: "0xfb8f41b2000000000000000000000000ac041df48df9791b0654f1dbbf2cc8450c5f2e9d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002c68af0bb140000', '0xfb8f41b2000000000000000000000000ac041df48df9791b0654f1dbbf2cc8450c5f2e9d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002c68af0bb140000",
+      // });
+      // console.log("decoded error", data);
+      const { inputTokens, transaction }: any = assembledTransaction;
+      const { to } = transaction;
+      const { tokenAddress } = inputTokens;
+      await this.approveTokens(
+        assembledTransaction.inputTokens[0].tokenAddress,
+        assembledTransaction.transaction.to
+      );
+
+      const tx = await this.walletClient.sendTransaction({
+        to: assembledTransaction.transaction.to,
+        value: assembledTransaction.transaction.value,
+        data: assembledTransaction.transaction.data,
+      });
+      const result = "";
+    } catch (error) {
+      console.log(error);
     }
-    this.getRead();
-    if (!this.readInstance) {
-      throw new Error("Failed reader is not initialized!");
-    }
-
-    const finalDeadline = await this.getDeadline("0");
-    const slippageApplied = await this.applySlippage(
-      amountOutMin,
-      slippagePercent
-    );
-    const routes = [{ from, to, stable }];
-    console.log("wallet: ", this.wallet);
-    await this.approveTokens(from, contracts.Uniswap.UniswapV2Router);
-    let args = {
-      address: contracts.Uniswap.UniswapV2Router,
-      abi: UniswapV2RouterABI,
-      functionName: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
-      args: [
-        parseUnits(amountIn, 18),
-        parseUnits(String(slippageApplied), 18),
-        routes,
-        this.wallet,
-        String(finalDeadline),
-      ],
-    };
-    console.log(
-      "amountIN",
-      amountIn,
-      "amount out:",
-      amountOutMin,
-      "slippage:",
-      slippageApplied
-    );
-    let chainName = await this.readInstance.getChainName();
-    chainName = String(chainName).toLowerCase();
-    console.log("chainName: ", chainName);
-    console.log("mainnet tokens: ", contracts.mainnet[String(chainName)]);
-    //if token has a fee we must use the tokensfees function
-    response = await this.swapExactTokensForTokens(args);
-
-    // if (from === contracts.mainnet[chainName]) {
-    //   args.functionName = "swapExactTokensForETH";
-
-    //   response = await this.swapExactTokensForEth(args);
-    // } else if (to === contracts.mainnet[chainName]) {
-    //   args.functionName = "swapExactTokensForETH";
-    //   response = await this.swapExactTokensForEth(args);
-    // } else {
-    //   args.functionName = "swapExactTokensForTokens";
-    //   response = await this.swapExactTokensForTokens(args);
-    // }
-
-    return response;
   }
 
   public async swapExactTokensForTokens(args: any) {
@@ -160,7 +121,7 @@ export class Write {
 
   //remembr lock still passes in old param so fix 09-16-2025
   public async approveTokens(tokenAddress: any, spender: any) {
-    const response: any = await this.submitTransaction({
+    await this.submitTransaction({
       address: tokenAddress,
       abi: ERC20ABI,
       functionName: "approve",
