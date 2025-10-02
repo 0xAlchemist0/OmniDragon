@@ -48,65 +48,95 @@ export class Write {
   // contract-reads.tsx:75 Cant find pairs tableness
   // contract-writes.ts:68 Is this pool stable at all:  null
   // contract-writes.ts:90 Failed TX alert stableness  not fond!
-  public async swapExactTokensForTokens(
-    amountIn: any, // must be BigInt
-    amountOutMin: any, // must be BigInt
+  public async performSwap(
+    amountIn: any,
+    amountOutMin: any,
     from: any,
     to: any,
     slippagePercent: any,
     stable: any
   ) {
+    let response = null;
+    if (!amountIn || !amountOutMin || !to || !this.wallet) {
+      throw new Error("Missing inputs");
+    }
+    this.getRead();
+    if (!this.readInstance) {
+      throw new Error("Failed reader is not initialized!");
+    }
+
+    const finalDeadline = await this.getDeadline("0");
+    const slippageApplied = await this.applySlippage(
+      amountOutMin,
+      slippagePercent
+    );
+    const routes = [{ from, to, stable }];
+    console.log("wallet: ", this.wallet);
+    await this.approveTokens(from, contracts.Uniswap.UniswapV2Router);
+    let args = {
+      address: contracts.Uniswap.UniswapV2Router,
+      abi: UniswapV2RouterABI,
+      functionName: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
+      args: [
+        parseUnits(amountIn, 18),
+        parseUnits(String(slippageApplied), 18),
+        routes,
+        this.wallet,
+        String(finalDeadline),
+      ],
+    };
+    console.log(
+      "amountIN",
+      amountIn,
+      "amount out:",
+      amountOutMin,
+      "slippage:",
+      slippageApplied
+    );
+    let chainName = await this.readInstance.getChainName();
+    chainName = String(chainName).toLowerCase();
+    console.log("chainName: ", chainName);
+    console.log("mainnet tokens: ", contracts.mainnet[String(chainName)]);
+    //if token has a fee we must use the tokensfees function
+    response = await this.swapExactTokensForTokens(args);
+
+    // if (from === contracts.mainnet[chainName]) {
+    //   args.functionName = "swapExactTokensForETH";
+
+    //   response = await this.swapExactTokensForEth(args);
+    // } else if (to === contracts.mainnet[chainName]) {
+    //   args.functionName = "swapExactTokensForETH";
+    //   response = await this.swapExactTokensForEth(args);
+    // } else {
+    //   args.functionName = "swapExactTokensForTokens";
+    //   response = await this.swapExactTokensForTokens(args);
+    // }
+
+    return response;
+  }
+
+  public async swapExactTokensForTokens(args: any) {
+    console.log(args);
     try {
-      if (!amountIn || !amountOutMin || !to || !this.wallet) {
-        throw new Error("Missing inputs");
-      }
-      this.getRead();
-      if (!this.readInstance) {
-        throw new Error("Failed reader is not initialized!");
-      }
+      //should fix should be in steps and seperate click approve spending then swp pops up
 
-      const finalDeadline = await this.getDeadline("0");
-      const slippageApplied = await this.applySlippage(
-        amountOutMin,
-        slippagePercent
-      );
-      //amountIN (tokens you are selling amount)
-      //amountoutmin
-      // Apply slippage safely
+      const simulation = await this.readInstance.simulateTX(args);
+      const response: any = await this.submitTransaction(args);
 
-      if (stable || stable === false) {
-        // Call your router contract
-        const routes = [[from, to, stable]];
-        const decimals = await this.readInstance.getDecimals(to);
-        console.log("params: ", [
-          amountIn,
-          amountOutMin,
-          slippageApplied,
-          decimals,
-          routes,
-          this.wallet,
-          finalDeadline,
-        ]);
-        const response: any = await this.submitTransaction({
-          address: "0xF5F7231073b3B41c04BA655e1a7438b1a7b29c27",
-          abi: UniswapV2RouterABI,
-          functionName: "swapExactTokensForTokens",
-          args: [
-            parseUnits(amountIn, 18),
-            parseUnits(String(slippageApplied), decimals),
-            routes,
-            this.wallet,
-            String(finalDeadline),
-          ],
-        });
-
-        return response;
-      } else {
-        console.log("Failed TX alert stableness  not fond!");
-      }
+      return response;
     } catch (err) {
       console.error("Swap failed:", err);
       throw err;
+    }
+  }
+
+  public async swapExactTokensForEth(args: any) {
+    console.log(args);
+    try {
+      const simResult = await this.readInstance.simulateTX(args);
+      const result = await this.submitTransaction(args);
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -129,27 +159,13 @@ export class Write {
   }
 
   //remembr lock still passes in old param so fix 09-16-2025
-  public async approveTokens(
-    tokenAddress: any,
-    spender: any,
-    amountToTransact: any
-  ) {
-    const isApproved = await this.readInstance.isApproved(
-      tokenAddress,
-      spender,
-      amountToTransact
-    );
-    if (!isApproved) {
-      const response: any = await this.submitTransaction({
-        address: tokenAddress,
-        abi: ERC20ABI,
-        functionName: "approve",
-        args: [spender, "1000000000000000000000000000000"],
-      });
-
-      return true;
-    }
-    return true;
+  public async approveTokens(tokenAddress: any, spender: any) {
+    const response: any = await this.submitTransaction({
+      address: tokenAddress,
+      abi: ERC20ABI,
+      functionName: "approve",
+      args: [spender, parseUnits("2000000000000000000000000000000000", 18)],
+    });
   }
 
   //updaters used in use effect hooks

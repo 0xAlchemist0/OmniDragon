@@ -32,11 +32,12 @@ function SwapPage() {
   const quoteProvider = useSwapProvider(
     tokens.in.address,
     tokens.out.address,
-    amounts.in
+    amounts.in,
+    slippage
   );
   const [txResults, setTxResults] = useState(null);
   const balances = useNewBalnces(tokenCheckList);
-  const pairs = usePairs(searchInput);
+  const pairs = usePairs(searchInput, setTokens);
   function SwapSettings() {
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -263,7 +264,7 @@ function SwapPage() {
         tokens={tokens}
         quote={quoteProvider}
         action={async () => {
-          const result = await writer.swapExactTokensForTokens(
+          const result = await writer.performSwap(
             amounts.in, // must be BigInt
             quoteProvider.quoteOut, // must be BigInt
             tokens.in?.address,
@@ -284,7 +285,9 @@ function SwapPage() {
         onClose={() => {
           setTxResults(null);
         }}
-        message={txResults !== null ? txResults.message : "Error"}
+        message={
+          txResults && txResults.message !== null ? txResults.message : "Error"
+        }
         action={action}
       />
       <SwapSettings />

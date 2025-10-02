@@ -37,6 +37,10 @@ export class Read {
     this.wallet = newWallet;
   }
 
+  public getWallet() {
+    return this.wallet;
+  }
+
   public async getChainId() {
     return await this.viemClient.getChainId();
   }
@@ -105,11 +109,15 @@ export class Read {
   }
 
   public async simulateTX(args: any) {
-    const { request }: any = await this.viemClient.simulateContract({
-      account: this.wallet,
-      ...args,
-    });
-    return request;
+    try {
+      const { request }: any = await this.viemClient.simulateContract({
+        account: this.wallet,
+        ...args,
+      });
+      return request;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   public async getDecimals(tokenAddress: any) {

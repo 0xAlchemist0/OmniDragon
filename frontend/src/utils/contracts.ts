@@ -49,6 +49,10 @@ const contracts: any = {
     GOOD: "0xb5a43c1C8B346B9C6FD8E4Afb8871c940B36e279",
     ffDRAGON: "0x40f531123bce8962d9cea52a3b150023bef488ed",
   },
+
+  mainnet: {
+    sonic: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+  },
 };
 
 export default contracts;
@@ -62,3 +66,4 @@ export default contracts;
 // VRF
 // JackpotVault
 // Multisig Wallet  (temporary to be replaced by veDRAGONRevenueDistributor)
+///since shadow routes after completing swap do the way to find the best routes based on the tree dexes

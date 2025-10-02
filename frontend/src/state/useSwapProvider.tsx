@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
-import { formatUnits, parseUnits } from "viem";
-import { getTokensInfo } from "../lib/dexscreener-handler";
+import { formatUnits } from "viem";
+import { getTokenPrice } from "../lib/dexscreener-handler";
+import { generateQuote } from "../lib/odos-handler";
 import contracts from "../utils/contracts";
 import { useTxService } from "./TxServiceProvider";
 
 //only pass in address and amounts dont pass in entire object
-function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
+function useSwapProvider(
+  tokenIn: any,
+  tokenOut: any,
+  inAmount: any,
+  slippage: any
+) {
   const { reader, writer }: any = useTxService();
   const [quote, setQuote] = useState({
     quoteOut: null,
@@ -17,80 +23,120 @@ function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
     },
     error: undefined,
     isApproved: false,
+    rawQuote: null,
   });
 
   useEffect(() => {
-    console.log("change");
     if (tokenIn && tokenOut && inAmount) {
-      getQuote();
-      // getQuote();
+      getTest();
+      // tempQuote();
     }
   }, [tokenIn, tokenOut, inAmount]);
-  useEffect(() => {
-    console.log("in updated: ", inAmount);
 
-    if (tokenIn && tokenOut && inAmount) {
-      test();
-    }
-  }, [inAmount]);
-  async function test() {
-    const amountsOut = await reader.getAmountsOut(
+  async function getTest() {
+    const result: any = await generateQuote(
       tokenIn,
       tokenOut,
-      false,
-      inAmount
-    );
-  }
-  async function getQuote() {
-    const isApproved = await reader.isApproved(
-      tokenIn,
-      contracts.Uniswap.UniswapV2Router,
-      parseUnits(inAmount, 18)
-    );
-    console.log("is approved?: ", isApproved);
-    const dexscreenrRes = await getTokensInfo([tokenIn, tokenOut], reader);
-    console.log(dexscreenrRes[0]);
-    const priceIn = dexscreenrRes[0].priceUsd;
-    const priceOut = dexscreenrRes[1].priceUsd;
-    const isPair = await reader.isPair(tokenIn, tokenOut, reader);
-    console.log(tokenIn, tokenOut);
-    console.log("is it a pair: ", isPair);
-    console.log({
-      tokenIn,
-      tokenOut,
-      isstable: false,
       inAmount,
+      slippage,
+      reader
+    );
+    console.log(result);
+    const usdValues: any = getUSDValues(result.quotes, result.prices);
+    console.log(usdValues);
+    //fix code and find a way to remove is stable without bugs
+    setQuote({
+      quoteOut: result.quotes[1],
+      isStable: true,
+      inAmount,
+      USD: {
+        in: usdValues[0],
+        out: usdValues[1],
+      },
+      error: undefined,
+      isApproved: true,
     });
+    {
+      //reuslt we get we now gotta format and
+      // "quotes": [
+      //     "10.890519074714155008",
+      //     "400"
+      // ],
+      // "prices": [
+      //     0.2845,
+      //     10.44
+      // ]
+    }
+  }
 
-    let result: any;
+  async function tempQuote() {
+    const isApproved = await verifyApproval();
+    console.log("is approved: ,", isApproved);
+    const isPair: any = await reader.isPair(tokenIn, tokenOut, reader);
+    console.log("isPairs: ", isPair);
+    const prices = await getTokenPrice([tokenIn, tokenOut], reader);
+    let result = null;
     if (isPair) {
-      result = await reader.getAmountOut(inAmount, tokenIn, tokenOut, reader);
+      const isStable = await reader.isPairStable(tokenIn, tokenOut, reader);
+      console.log("isPair stable? : ", isPair);
+      result = await reader.getAmountsOut(
+        tokenIn,
+        tokenOut,
+        isStable,
+        inAmount
+      );
 
       if (result) {
-        const quoteOut: any = Number(formatUnits(result[0], 18)).toFixed(2);
-        console.log();
-        const isStable: any = result[1];
-
-        const usdIn: any = String(getUSD(Number(inAmount), Number(priceIn)));
-        const usdOut: any = String(getUSD(quoteOut, Number(priceOut)));
-
-        //index one quote , index2 pairsStableness
-
+        result[0] = formatUnits(result[0], 18);
+        result[1] = formatUnits(result[1], 18);
+        //index zeroo value of token in in usd
+        //index one value for tokenout in usd
+        const usdValues: any = getUSDValues([inAmount, result[1]], prices);
         setQuote({
-          quoteOut,
+          quoteOut: String(parseFloat(result[1]).toFixed(2)),
           isStable,
           inAmount,
           USD: {
-            in: usdIn,
-            out: usdOut,
+            in: usdValues[0],
+            out: usdValues[1],
           },
           error: undefined,
           isApproved,
+          rawQuote: null,
+        });
+      } else {
+        setQuote({
+          quoteOut: null,
+          isStable: null,
+          inAmount: null,
+          USD: {
+            in: null,
+            out: null,
+          },
+          error: "Pair not available to trade",
+          isApproved,
+          rawQuote: null,
         });
       }
-    } else {
-      setQuoteError();
     }
+  }
+
+  function getUSDValues(values: any, prices: any) {
+    const usdValues = [];
+    for (const value in values) {
+      const valueUSD = parseFloat(values[value]) * parseFloat(prices[value]);
+
+      usdValues.push(valueUSD.toFixed(2));
+    }
+    return usdValues;
+  }
+  async function verifyApproval() {
+    const isAppoved = await reader.isApproved(
+      tokenIn,
+      contracts.Uniswap.UniSwapV2Router,
+      "1000000000000000000000000000000"
+    );
+    return isAppoved;
   }
 
   function setQuoteError() {
@@ -103,12 +149,11 @@ function useSwapProvider(tokenIn: any, tokenOut: any, inAmount: any) {
         out: null,
       },
       error: "Swap router not found!",
-      isAppoved: quote.isApproved,
+      isAppoved: false,
+      rawQuote: null,
     });
   }
-  useEffect(() => {
-    console.log(quote);
-  }, [quote]);
+  useEffect(() => {}, [quote]);
 
   function getUSD(value: any, price: any) {
     const result = value * price;

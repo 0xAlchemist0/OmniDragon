@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
 import {
   formatPairs,
+  getDefaultPair,
   getPairsAll,
   searchDexscreener,
 } from "../lib/dexscreener-handler";
 import { useTxService } from "./TxServiceProvider";
 
-function usePairs(searchInput: any) {
+function usePairs(searchInput: any, setTokens: any) {
   const { reader, writer } = useTxService();
   const [pairs, setPairs] = useState([]);
   const [searchResults, setSearchResults] = useState<any | null>(null);
   const [temp, setTemp] = useState([]);
   useEffect(() => {
     if (reader) {
+      getDefault();
+
       getPairs();
     }
   }, [reader]);
@@ -39,6 +42,15 @@ function usePairs(searchInput: any) {
   useEffect(() => {
     setSearchResults(null);
   }, []);
+
+  async function getDefault() {
+    const result: any = await getDefaultPair(reader);
+    console.log(result, "result");
+    setTokens({
+      in: result[0],
+      out: result[1],
+    });
+  }
 
   async function searchToken(type: "in" | "out") {
     const chainName: any = await reader.getChainName();

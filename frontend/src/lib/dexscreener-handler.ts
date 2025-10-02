@@ -26,6 +26,36 @@ export async function getTokensInfo(tokensList: any, reader: any) {
   return partnersInfo;
 }
 
+export async function getTokenPrice(tokenList: any, reader: any) {
+  const pairs = await getTokensInfo(tokenList, reader);
+
+  const prices = [];
+  if (pairs) {
+    for (const pair in pairs) {
+      const { priceUsd } = pairs[pair];
+      prices.push(parseFloat(priceUsd));
+    }
+  }
+
+  return prices;
+}
+
+const defaultPairs: any = {
+  sonic: [
+    "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+    "0x69Dc1c36F8B26Db3471ACF0a6469D815E9A27777",
+  ],
+};
+
+export async function getDefaultPair(reader: any) {
+  const chainName = await reader.getChainName();
+  const result: any = await getTokensInfo(defaultPairs.sonic, reader);
+  const formattedPairs: any = await formatPairs(result, reader);
+  console.log(result);
+
+  return formattedPairs;
+}
+
 export async function searchDexscreener(searchItem: string, chainName: string) {
   try {
     const request = await fetch(
