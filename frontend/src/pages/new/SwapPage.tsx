@@ -76,10 +76,11 @@ function SwapPage() {
               <Box
                 sx={{
                   border: 1,
-                  p: 1,
+                  p: 3,
                   backgroundColor: "oklch(27.9% 0.041 260.031)",
                   borderColor: "oklch(27.9% 0.041 260.031)",
                   color: "white",
+                  borderRadius: "15px",
                 }}
               >
                 <div className="grid grid-rows-1 gap-2">
@@ -101,7 +102,7 @@ function SwapPage() {
                     />
                     <div className="mt-3 grid grid-cols-3 gap-1 w-30 text-sm">
                       <button
-                        className="border text-center rounded-md border-gray-600 text-gray-400 px-2"
+                        className="border text-center rounded-md border-gray-600 text-gray-300 px-2"
                         onClick={() => {
                           setSlippage("1");
                         }}
@@ -109,7 +110,7 @@ function SwapPage() {
                         1%
                       </button>
                       <button
-                        className="border text-center rounded-md border-gray-600 text-gray-400 px-2"
+                        className="border text-center rounded-md border-gray-600 text-gray-300 px-2"
                         onClick={() => {
                           setSlippage("5");
                         }}
@@ -156,13 +157,13 @@ function SwapPage() {
   function ExcecutionBTN() {
     return (
       <button
-        disabled={quoteProvider.error ? true : false}
+        disabled={quoteProvider.quote.error ? true : false}
         onClick={() => {
           setConfirmTX(true);
         }}
         className="mt-5 border w-full font-bold hover:bg-slate-800/50 hover:cursor-pointer p-2.5 rounded-lg border-gray-800 bg-slate-800 text-white"
       >
-        {quoteProvider.error ? quoteProvider.error : " Swap Asset"}
+        {quoteProvider.quote.error ? quoteProvider.quote.error : " Swap Asset"}
       </button>
     );
   }
@@ -186,7 +187,7 @@ function SwapPage() {
               type === "in"
                 ? amounts[type]
                 : type === "out" && quoteProvider
-                ? quoteProvider.quoteOut
+                ? quoteProvider.quote.quoteOut
                 : "0.00"
             }
             onChange={(e) => {
@@ -225,7 +226,7 @@ function SwapPage() {
         </div>
         <div className="flex justify-between">
           <h1 className="text-gray-600 mt-2">
-            ${quoteProvider ? quoteProvider.USD[type] : "~"}
+            ${quoteProvider ? quoteProvider.quote.USD[type] : "~"}
           </h1>
           <span className="flex text-gray-600 mt-2.5 gap-2 ">
             <FaWallet className="mt-1" />
@@ -262,14 +263,35 @@ function SwapPage() {
     <div className="p-5 border w-[90%] m-auto mt-4 rounded-md bg-slate-900 border-slate-900">
       <NewTxConfirmModal
         tokens={tokens}
-        quote={quoteProvider}
+        quote={quoteProvider.quote}
         action={async () => {
-          const result: any = await writer.performSwap(
-            quoteProvider.assembledTX,
-            quoteProvider.isApproved
+          console.log(
+            "before tx is approved: ",
+            quoteProvider.quote?.isApproved
           );
-          setTxResults(result);
-          setConfirmTX(false);
+          const swap = async () => {
+            const result: any = await writer.performSwap(
+              quoteProvider.quote.assembledTX,
+              quoteProvider.quote.isApproved
+            );
+            setTxResults(result);
+            setConfirmTX(false);
+          };
+
+          const approveSpending = async () => {
+            await writer.approveTokens(
+              quoteProvider?.quote?.assembledTX?.inputTokens[0]?.tokenAddress,
+
+              quoteProvider?.quote?.assembledTX?.transaction?.to
+            );
+            quoteProvider.updateApproval(true);
+          };
+
+          if (quoteProvider.quote.isApproved === true) {
+            swap();
+          } else if (quoteProvider.quote.isApproved === false) {
+            approveSpending();
+          }
         }}
         show={confirmTX}
         setShow={setConfirmTX}

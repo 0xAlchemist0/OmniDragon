@@ -19,6 +19,7 @@ const style = {
 export default function NewTxConfirmModal({
   tokens,
   quote,
+
   action,
   show,
   setShow,
@@ -79,14 +80,27 @@ export default function NewTxConfirmModal({
             <QuoteBox type={"in"} />
             <QuoteBox type={"out"} />
           </div>
-          <div>
+          <div className="mt-3">
+            {quote.isApproved === false && (
+              <button
+                className={`" border-0 mb-3 bg-slate-700 w-full p-2 rounded-lg hover:bg-slate-700/50"`}
+                onClick={() => {
+                  action();
+                }}
+              >
+                Aprove Tokens
+              </button>
+            )}
             <button
-              className="mt-3 border-0 bg-slate-700 w-full p-4 rounded-lg hover:bg-slate-700/50"
+              className={`"mt-3 border-0 bg-slate-700 w-full p-${
+                quote.isApproved === false ? "2" : "4"
+              } rounded-lg hover:bg-slate-700/50"`}
+              disabled={quote.isAppoved}
               onClick={() => {
                 action();
               }}
             >
-              {quote.isApproved ? "Swap Tokens" : "Approve Spending"}
+              Swap Tokens
             </button>
           </div>
         </Box>

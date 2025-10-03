@@ -23,6 +23,7 @@ function useSwapProvider(
     isApproved: false,
     rawQuote: null,
     assembledTX: null,
+    updateApproval: null,
   });
 
   useEffect(() => {
@@ -31,6 +32,9 @@ function useSwapProvider(
       // tempQuote();
     }
   }, [tokenIn, tokenOut, inAmount]);
+  const updateApproval = (type: boolean) => {
+    setQuote({ ...quote, isApproved: type });
+  };
 
   async function getTest() {
     const result: any = await generateQuote(
@@ -183,7 +187,7 @@ function useSwapProvider(
     const result = value * price;
     return result.toFixed(2);
   }
-  return quote;
+  return { quote, updateApproval };
 }
 
 export default useSwapProvider;

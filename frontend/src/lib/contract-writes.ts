@@ -60,21 +60,26 @@ export class Write {
       const { inputTokens, transaction }: any = assembledTransaction;
       const { to } = transaction;
       const { tokenAddress } = inputTokens;
-      await this.approveTokens(
-        assembledTransaction.inputTokens[0].tokenAddress,
-        assembledTransaction.transaction.to
-      );
+      // await this.approveTokens(
+      //   assembledTransaction.inputTokens[0].tokenAddress,
+      //   assembledTransaction.transaction.to
+      // );
 
       const tx = await this.walletClient.sendTransaction({
         to: assembledTransaction.transaction.to,
         value: assembledTransaction.transaction.value,
         data: assembledTransaction.transaction.data,
       });
-      const result = "";
+      const result = this.txResponse(true, tx);
+      return result;
     } catch (error) {
+      const result = this.txResponse(false, null);
+      return result;
       console.log(error);
     }
   }
+  // gonna have to reroute the transaction before completing maybe thats why gas is not found find a faster way to route?
+  public async requoteTransaction(raw: any, assembled: any) {}
 
   public async swapExactTokensForTokens(args: any) {
     console.log(args);
@@ -83,11 +88,12 @@ export class Write {
 
       const simulation = await this.readInstance.simulateTX(args);
       const response: any = await this.submitTransaction(args);
-
-      return response;
+      const result = this.txResponse(true, response);
+      return result;
     } catch (err) {
       console.error("Swap failed:", err);
-      throw err;
+      const res = this.txResponse(false, null);
+      return res;
     }
   }
 
@@ -125,7 +131,13 @@ export class Write {
       address: tokenAddress,
       abi: ERC20ABI,
       functionName: "approve",
-      args: [spender, parseUnits("2000000000000000000000000000000000", 18)],
+      args: [
+        spender,
+        parseUnits(
+          "200000000000000000000000000000000000000000000000000000",
+          18
+        ),
+      ],
     });
   }
 
