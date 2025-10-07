@@ -44,53 +44,21 @@ function useSwapProvider(
       slippage,
       reader
     );
-    const usdValues: any = getUSDValues(result.quotes, result.prices);
-    //fix code and find a way to remove is stable without bugs
-    const assembledTX = await assembleTransaction(result.rawResponse, reader);
-    if (result && assembledTX) {
-      console.log(assembledTX);
-      console.log(result.rawResponse);
-      const approved = await verifyApproval();
-      console.log("is approved: ", approved);
-      setQuote({
-        quoteOut: result.quotes[1],
-        isStable: true,
-        inAmount,
-        USD: {
-          in: usdValues[0],
-          out: usdValues[1],
-        },
-        error: undefined,
-        isApproved: approved,
-        rawQuote: result.rawResponse,
-        assembledTX: assembledTX,
-      });
-    } else {
-      setQuote({
-        quoteOut: null,
-        isStable: null,
-        inAmount: null,
-        USD: {
-          in: null,
-          out: null,
-        },
-        error: "Pair not available to trade",
-        isApproved: false,
-        rawQuote: null,
-        assembledTX: null,
-      });
-    }
-
-    //reuslt we get we now gotta format and
-    // "quotes": [
-    //     "10.890519074714155008",
-    //     "400"
-    // ],
-    // "prices": [
-    //     0.2845,
-    //     10.44
-    // ]
+    console.log("rest", result);
+    const assembledTX = await assembleTransaction(result.rawQuote, reader);
+    result.assembledTX = assembledTX;
+    setQuote(result);
   }
+
+  // // reuslt we get we now gotta format and
+  // "quotes": [
+  //     "10.890519074714155008",
+  //     "400"
+  // ],
+  // "prices": [
+  //     0.2845,
+  //     10.44
+  // ]
 
   // async function tempQuote() {
   //   const isApproved = await verifyApproval();

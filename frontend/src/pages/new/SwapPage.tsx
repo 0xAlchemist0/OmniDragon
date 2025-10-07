@@ -270,9 +270,9 @@ function SwapPage() {
             quoteProvider.quote?.isApproved
           );
           const swap = async () => {
+            console.log("pre swap: ,", quoteProvider.quote);
             const result: any = await writer.performSwap(
-              quoteProvider.quote.assembledTX,
-              quoteProvider.quote.isApproved
+              quoteProvider.quote?.assembledTX
             );
             setTxResults(result);
             setConfirmTX(false);

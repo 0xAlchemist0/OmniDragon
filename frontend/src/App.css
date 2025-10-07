@@ -26,7 +26,18 @@
   --color-accent-blue: var(--neon-cyan);
   --color-accent-green: var(--success-green);
 }
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
 body {
   background-color: var(--color-background);
   color: var(--color-text-main);

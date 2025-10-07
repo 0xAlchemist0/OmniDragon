@@ -12,6 +12,7 @@ const boxStyle = {
   transform: "translate(-50%, -50%)",
   width: 450,
   bgcolor: "background.paper",
+  borderRadius: "10px",
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
@@ -30,6 +31,7 @@ export default function NewTokenModal({
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [input, setInput] = React.useState("");
   const style = {
     border: "1px solid",
     borderColor: "grey.800",
@@ -42,8 +44,15 @@ export default function NewTokenModal({
     color: "white",
     cursor: "pointer",
   };
+  const handleChange = (e: any) => {
+    setInput(e.target.value);
+  };
 
+  // React.useEffect(() => {
+  //   setSearchInput({ ...searchInput, [type]: input });
+  // }, [input]);
   function FeaturedPairs({ image = null }: any) {
+    console.log(pairs);
     return (
       <div className="grid grid-cols-5 mt-4 p-2">
         {pairs.pairs &&
@@ -51,7 +60,7 @@ export default function NewTokenModal({
             if (index < 5) {
               return (
                 <div
-                  className="border m-auto px-3 py-1 rounded-md bg-gray-800/60 border-gray-600"
+                  className="border m-auto px-4 py-2 rounded-md bg-gray-800/60 border-gray-600"
                   key={index}
                   onClick={() => {
                     setter({ ...state, [type]: item });
@@ -63,7 +72,7 @@ export default function NewTokenModal({
                     alt=""
                     className="size-6 rounded-full m-auto"
                   />
-                  <h1 className="text-[10px] font-semibold text-gray-400 mt-1">
+                  <h1 className="text-[8px] text-center font-semibold text-gray-400 mt-1">
                     {item.symbol}
                   </h1>
                 </div>
@@ -77,7 +86,7 @@ export default function NewTokenModal({
   function Pairs({ handleClose }: any) {
     console.log("reuslt: ", pairs.searchResults);
     return (
-      <div className="p-3 overflow-y-auto h-130">
+      <div className="p-3 overflow-y-auto h-130 no-scrollbar">
         <span className="flex gap-2 ">
           <FaCoins className="text-gray-600 mt-1" />
           <h1 className="text-sm mt-1 font-bold">Your tokens</h1>
@@ -110,8 +119,17 @@ export default function NewTokenModal({
               </h1>
             </span>
             <span className="col-span-2 text-right">
-              <h1 className="text-lg font-bold">$23,983</h1>
-              <h1 className="text-sm">23.45</h1>
+              <h1 className="text-lg font-bold">
+                {" "}
+                {pairs.searchResults.balance}
+              </h1>
+              <h1 className="text-sm">
+                {" $"}
+                {parseFloat(
+                  parseFloat(pairs.searchResults.balance) *
+                    parseFloat(pairs.searchResults.priceUsd)
+                ).toFixed(2)}
+              </h1>
             </span>
           </button>
         ) : (
@@ -138,7 +156,7 @@ export default function NewTokenModal({
                     />
                   </span>
                   <span className="col-span-5 text-left ms-2">
-                    <h1 className="font-semibold text-gray-400 text-lg">
+                    <h1 className="font-semibold text-gray-400 text-md">
                       {item.name}
                     </h1>
                     <h1 className="font-light text-gray-500 text-sm">
@@ -146,8 +164,13 @@ export default function NewTokenModal({
                     </h1>
                   </span>
                   <span className="col-span-2 text-right">
-                    <h1 className="text-lg font-bold">$23,983</h1>
-                    <h1 className="text-sm">23.45</h1>
+                    <h1 className="text-lg font-bold">
+                      $
+                      {parseFloat(
+                        parseFloat(item.balance) * parseFloat(item.priceUsd)
+                      ).toFixed(2)}
+                    </h1>
+                    <h1 className="text-sm">{item.balance}</h1>
                   </span>
                 </button>
               ))}
@@ -184,23 +207,14 @@ export default function NewTokenModal({
       >
         <Box sx={boxStyle} onClick={(e) => e.stopPropagation()}>
           <div>
-            <h1 className="p-2 font-bold">
-              {state[type] ? state[type].symbol : "Select a Token"}
-            </h1>
-
             <div className="mt-2 border border-gray-600 grid grid-cols-8 p-2 rounded-full  bg-gray-800/60">
               <FaSearch className="text-gray-500 col-span-1 mt-[7px] ms-4 text-sm" />
               <input
                 type="text"
                 className=" col-span-6 p-1  outline-none font-bold text-sm"
                 placeholder="Enter a token"
-                value={searchInput[type] || ""}
-                onChange={(e) => {
-                  setSearchInput((prev: any) => ({
-                    ...prev,
-                    [type]: e.target.value,
-                  }));
-                }}
+                value={input || ""}
+                onChange={handleChange}
               />
               <button className=" col-span-1 flex gap-2 flex justify-end">
                 <img
@@ -221,3 +235,16 @@ export default function NewTokenModal({
     </div>
   );
 }
+
+//  <input
+//               type="text"
+//               className=" col-span-6 p-1  outline-none font-bold text-sm"
+//               placeholder="Enter a token"
+//               value={searchInput[type] || ""}
+//               onChange={(e) => {
+//                 setSearchInput((prev: any) => ({
+//                   ...prev,
+//                   [type]: e.target.value,
+//                 }));
+//               }}
+//             />

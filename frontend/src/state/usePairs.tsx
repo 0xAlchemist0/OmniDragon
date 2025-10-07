@@ -21,6 +21,7 @@ function usePairs(searchInput: any, setTokens: any) {
   }, [reader]);
 
   useEffect(() => {
+    if (searchInput === "") setSearchResults(null);
     if (!searchInput) return;
 
     const inVal = searchInput.in?.trim();

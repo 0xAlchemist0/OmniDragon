@@ -5,6 +5,7 @@ import UniswapV2RouterABI from "../utils/abi/UniswapV2RouterABI";
 import { veDRAGONAbi } from "../utils/abi/veDRAGONAbi";
 import contracts from "../utils/contracts";
 import { Read } from "./contract-reads";
+import { generateQuote } from "./odos-handler";
 export class Write {
   public walletClient: any = null;
   public wallet: any = null;
@@ -48,38 +49,56 @@ export class Write {
   // contract-reads.tsx:75 Cant find pairs tableness
   // contract-writes.ts:68 Is this pool stable at all:  null
   // contract-writes.ts:90 Failed TX alert stableness  not fond!
-  public async performSwap(assembledTransaction: any, isApproved: any) {
+  public async performSwap(assembledTX: any) {
     try {
-      console.log("swapping");
-      console.log(assembledTransaction);
       // const data = decodeFunctionData({
       //   abi: contracts.Odos.Router,
       //   data: "0xfb8f41b2000000000000000000000000ac041df48df9791b0654f1dbbf2cc8450c5f2e9d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002c68af0bb140000', '0xfb8f41b2000000000000000000000000ac041df48df9791b0654f1dbbf2cc8450c5f2e9d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002c68af0bb140000",
       // });
       // console.log("decoded error", data);
-      const { inputTokens, transaction }: any = assembledTransaction;
-      const { to } = transaction;
-      const { tokenAddress } = inputTokens;
-      // await this.approveTokens(
-      //   assembledTransaction.inputTokens[0].tokenAddress,
-      //   assembledTransaction.transaction.to
-      // );
-
+      console.log(assembledTX);
       const tx = await this.walletClient.sendTransaction({
-        to: assembledTransaction.transaction.to,
-        value: assembledTransaction.transaction.value,
-        data: assembledTransaction.transaction.data,
+        to: assembledTX.transaction.to,
+        value: assembledTX.transaction.value,
+        data: assembledTX.transaction.data,
       });
       const result = this.txResponse(true, tx);
       return result;
     } catch (error) {
+      console.log(error);
+
       const result = this.txResponse(false, null);
       return result;
+    }
+  }
+  //   tokenIn: any,
+  // tokenOut: any,
+  // inAmount: any,
+  // slippage: any,
+  // reader: any
+  // gonna have to reroute the transaction before completing maybe thats why gas is not found find a faster way to route?
+  public async requoteTransaction(raw: any, slippage: any, reader: any) {
+    try {
+      const quote: any = await generateQuote(
+        raw.inTokens[0],
+        raw.outTokens[0],
+        raw.inAmounts[0],
+        slippage,
+        reader
+      );
+
+      if (quote) {
+        return {
+          to: assembledTX.transaction.to,
+          value: assembledTX.transaction.value,
+          data: assembledTX.transaction.data,
+        };
+      }
+      return null;
+    } catch (error) {
       console.log(error);
     }
   }
-  // gonna have to reroute the transaction before completing maybe thats why gas is not found find a faster way to route?
-  public async requoteTransaction(raw: any, assembled: any) {}
 
   public async swapExactTokensForTokens(args: any) {
     console.log(args);

@@ -1,11 +1,16 @@
 //handles token routing
 
 import { formatUnits, parseUnits } from "viem";
+import contracts from "../utils/contracts";
 import { getTokenPrice } from "./dexscreener-handler";
 //code should be cleaned and easier when you complete swap functionality
 const endpoint = "https://api.odos.xyz/sor/quote/v2";
 const assembleEndpoint = "https://api.odos.xyz/sor/assemble";
-
+const requestQuoteParams: any = {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: null,
+};
 async function assembleTransactionBody(userAddr: any, pathID: any) {
   const assembleRequestBody = {
     userAddr: userAddr, // the checksummed address used to generate the quote
@@ -18,10 +23,13 @@ async function assembleTransactionBody(userAddr: any, pathID: any) {
 
 export async function assembleTransaction(rawBody: any, reader: any) {
   if (!rawBody) throw new Error("Missing the body parameter!");
+  console.log("ASSEMBLE BODY: ", rawBody);
   try {
     const { pathId }: any = rawBody;
     const userAddr: any = await reader.getWallet();
+    console.log("HERE LEFT OFFF: ", userAddr, pathId);
     const assembleBody: any = await assembleTransactionBody(userAddr, pathId);
+
     const result: any = await fetch(assembleEndpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -39,6 +47,17 @@ export async function assembleTransaction(rawBody: any, reader: any) {
     console.log(error);
   }
 }
+// const assembleRequestBody = {
+//   userAddr: '0x...', // the checksummed address used to generate the quote
+//   pathId: quote.pathId, // Replace with the pathId from quote response in step 1
+//   simulate: true, // this can be set to true if the user isn't doing their own estimate gas call for the transaction
+// };
+//
+
+//migration and cleaning of code
+export async function getQuoteTemp(params: any) {
+  const requestBody = bodyBuilder(params);
+}
 
 export async function generateQuote(
   tokenIn: any,
@@ -48,65 +67,90 @@ export async function generateQuote(
   reader: any
 ) {
   try {
-    let result = {};
+    let result: any = {};
     const chainID: any = await reader.getChainId();
     const userAddr: any = await reader.getWallet();
-    const reqBody: any = await bodyBuilder(
+    const reqBody: any = await bodyBuilder([
       tokenIn,
       tokenOut,
       inAmount,
       userAddr,
       slippage,
-      chainID
-    );
+      chainID,
+    ]);
     const prices = await getTokenPrice([tokenIn, tokenOut], reader);
-    const response = await fetch("https://api.odos.xyz/sor/quote/v2", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: reqBody,
-    });
+    requestQuoteParams.body = reqBody;
+    const response = await fetch(endpoint, requestQuoteParams);
     if (response.status === 200) {
       const res: any = await response.json();
-      //index zero inamount, indez one outamount
+      const quoteOut = String(
+        parseFloat(formatUnits(res.outAmounts[0], 18)).toFixed(2)
+      );
       result = {
-        quotes: [
-          inAmount,
-          String(parseFloat(formatUnits(res.outAmounts[0], 18)).toFixed(2)),
-        ],
+        quoteOut,
+        inAmount,
 
-        prices: prices,
+        // prices: prices,
         rawResponse: res,
+        USD: {},
+        isApproved: false,
+        error: undefined,
+        rawQuote: res,
       };
+
+      const usdValues: any = getUSDValues([inAmount, quoteOut], prices);
+      result.USD = {
+        in: usdValues[0],
+        out: usdValues[1],
+      };
+      // const assembledTx = await assembleTransaction(res, reader);
+      // result.assembledTx = assembledTx;
+      const isApproved: any = await verifyApproval(reader, tokenIn);
+      console.log(isApproved);
+      result.isApproved = isApproved;
+      //index zero inamount, indez one outamount
     }
 
     return result;
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
+}
+function getUSDValues(values: any, prices: any) {
+  const usdValues = [];
+  for (const value in values) {
+    const valueUSD = parseFloat(values[value]) * parseFloat(prices[value]);
+
+    usdValues.push(valueUSD.toFixed(2));
+  }
+  return usdValues;
+}
+async function verifyApproval(reader: any, tokenIn: any) {
+  const isAppoved = await reader.isApproved(
+    tokenIn,
+    contracts.Odos.Router,
+    "1000000000000000000000000000000"
+  );
+  return isAppoved;
 }
 
-async function bodyBuilder(
-  tokenIn: any,
-  tokenOut: any,
-  inAmount: any,
-  userAddr: any,
-  slippage: any,
-  chainID: any
-) {
+async function bodyBuilder(params: any) {
   const quoteRequestBody = {
-    chainId: chainID, // Replace with desired chainId
+    chainId: params[5], // Replace with desired chainId
     inputTokens: [
       {
-        tokenAddress: tokenIn, // checksummed input token address
-        amount: String(parseUnits(inAmount, 18)), // input amount as a string in fixed integer precision
+        tokenAddress: params[0], // checksummed input token address
+        amount: String(parseUnits(params[2], 18)), // input amount as a string in fixed integer precision
       },
     ],
     outputTokens: [
       {
-        tokenAddress: tokenOut, // checksummed output token address
+        tokenAddress: params[1], // checksummed output token address
         proportion: 1,
       },
     ],
-    userAddr, // checksummed user address
-    slippageLimitPercent: 5.0, // set your slippage limit percentage (1 = 1%),
+    userAddr: params[3], // checksummed user address
+    slippageLimitPercent: parseFloat(params[4]), // set your slippage limit percentage (1 = 1%),
     referralCode: 0, // referral code (recommended)
     disableRFQs: true,
     compact: true,
