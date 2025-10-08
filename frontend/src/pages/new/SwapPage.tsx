@@ -1,4 +1,14 @@
-import { Box, Fade, IconButton, Popper, Snackbar } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Fade,
+  IconButton,
+  Popper,
+  Snackbar,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FaSwimmingPool, FaWallet } from "react-icons/fa";
 import { HiArrowsUpDown } from "react-icons/hi2";
@@ -372,8 +382,57 @@ function SwapPage() {
           setSearchInput={setSearchInput}
           searchInput={searchInput}
         />
+      </div>{" "}
+      <div className="text-white mt-2">
+        {quoteProvider && quoteProvider.quote.names.in && (
+          <>
+            <Accordion
+              className="border-0"
+              sx={{
+                bgcolor: "#1f2124",
+                color: "white",
+                border: "#1f2124",
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  <HiArrowsUpDown className="text-gray-100 text-lg" />
+                }
+                aria-controls="panel1-content"
+                id="panel1-header"
+                className=""
+              >
+                Quote Details
+              </AccordionSummary>
+              <AccordionDetails className="border-0">
+                <Typography>
+                  <div className="text-sm">
+                    <div className="flex justify-between">
+                      <h1>Amount sold:</h1>
+                      <h1>{quoteProvider.quote.inAmount || "0"}</h1>
+                    </div>
+                    <div className="flex justify-between mt-2">
+                      <h1>Minimum recieved:</h1>
+                      <h1>{quoteProvider.quote.quoteOut || "0"}</h1>
+                    </div>
+                    <div className="flex justify-between mt-2">
+                      <h1>Exchange Rate:</h1>
+                      <h1>
+                        1{quoteProvider.quote.names.out} = $
+                        {quoteProvider.quote.prices.out}
+                      </h1>
+                    </div>
+                    <div className="flex justify-between mt-2">
+                      <h1>Slippage:</h1>
+                      <h1>5%</h1>
+                    </div>
+                  </div>
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
+          </>
+        )}
       </div>
-
       <ExcecutionBTN />
     </div>
   );

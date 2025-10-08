@@ -85,7 +85,7 @@ export async function generateQuote(
     const prices = await getTokenPrice([tokenIn, tokenOut], reader);
     const images = await getTokenImages([tokenIn, tokenOut]);
     const names = await getTokenNames([tokenIn, tokenOut]);
-
+    console.log("prices: ", prices);
     requestQuoteParams.body = reqBody;
     const response = await fetch(endpoint, requestQuoteParams);
     if (response.status === 200) {
@@ -108,9 +108,11 @@ export async function generateQuote(
           out: images[1],
         },
         names: { in: names[0], out: names[1] },
+        prices: { in: prices[0], out: prices[1] },
       };
 
       const usdValues: any = getUSDValues([inAmount, quoteOut], prices);
+      console.log(usdValues);
       result.USD = {
         in: usdValues[0],
         out: usdValues[1],
@@ -129,9 +131,10 @@ export async function generateQuote(
   }
 }
 function getUSDValues(values: any, prices: any) {
+  console.log(prices);
   const usdValues = [];
   for (const value in values) {
-    const valueUSD = parseFloat(values[value]) * parseFloat(prices[value]);
+    const valueUSD = parseFloat(values[value]) * prices[value];
 
     usdValues.push(valueUSD.toFixed(2));
   }

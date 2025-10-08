@@ -26,10 +26,13 @@ function useSwapProvider(
     updateApproval: null,
     images: { in: null, out: null },
     names: { in: null, out: null },
+    prices: { in: null, out: null },
   });
 
   useEffect(() => {
     if (tokenIn && tokenOut && inAmount) {
+      resetState();
+
       getTest();
       // tempQuote();
     }
@@ -52,6 +55,25 @@ function useSwapProvider(
     setQuote(result);
   }
 
+  function resetState() {
+    setQuote({
+      quoteOut: null,
+      isStable: null,
+      inAmount: null,
+      USD: {
+        in: null,
+        out: null,
+      },
+      error: undefined,
+      isApproved: false,
+      rawQuote: null,
+      assembledTX: null,
+      updateApproval: null,
+      images: { in: null, out: null },
+      names: { in: null, out: null },
+      prices: { in: null, out: null },
+    });
+  }
   // // reuslt we get we now gotta format and
   // "quotes": [
   //     "10.890519074714155008",
@@ -149,6 +171,7 @@ function useSwapProvider(
       isAppoved: false,
       rawQuote: null,
       assembledTX: null,
+      prices: { in: null, out: null },
     });
   }
   useEffect(() => {}, [quote]);

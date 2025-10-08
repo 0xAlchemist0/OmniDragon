@@ -1,6 +1,13 @@
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Typography,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { FaArrowRight, FaCheckCircle } from "react-icons/fa";
+import { HiArrowsUpDown } from "react-icons/hi2";
 import { ImSpinner8 } from "react-icons/im";
 import { IoClose, IoHelpBuoyOutline } from "react-icons/io5";
 
@@ -136,7 +143,7 @@ export default function NewTxConfirmModal({
                   Get Help?
                 </a>
               </span>
-              <IoClose className="mt-1 text-[25px]" />
+              <IoClose className="mt-1 text-[25px] text-gray-500" />
             </div>
           </div>
           {txResults !== null && txResults.complete ? (
@@ -148,6 +155,54 @@ export default function NewTxConfirmModal({
                 <QuoteBox type={"out"} />
               </div>
               <div className="mt-3">
+                {quote && quote.names.in && (
+                  <>
+                    <Accordion
+                      className="border-0"
+                      sx={{
+                        bgcolor: "#1f2124",
+                        color: "white",
+                        border: "#1f2124",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <AccordionSummary
+                        expandIcon={
+                          <HiArrowsUpDown className="text-gray-100 text-sm" />
+                        }
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                        className="text-sm"
+                      >
+                        Quote Details
+                      </AccordionSummary>
+                      <AccordionDetails className="border-0 text-xs">
+                        <Typography>
+                          <div className="text-xs">
+                            <div className="flex justify-between text-xs">
+                              <h1>Amount sold:</h1>
+                              <h1>{quote.inAmount || "0"}</h1>
+                            </div>
+                            <div className="flex justify-between mt-2 text-xs">
+                              <h1>Minimum recieved:</h1>
+                              <h1>{quote.quoteOut || "0"}</h1>
+                            </div>
+                            <div className="flex justify-between mt-2 text-xs">
+                              <h1>Exchange Rate:</h1>
+                              <h1>
+                                1{quote.names.out} = ${quote.prices.out}
+                              </h1>
+                            </div>
+                            <div className="flex justify-between mt-2">
+                              <h1>Slippage:</h1>
+                              <h1>5%</h1>
+                            </div>
+                          </div>
+                        </Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                  </>
+                )}
                 {quote.isApproved === false && (
                   <button
                     className={`" border-0 mb-3 bg-slate-700 w-full p-2 rounded-lg hover:bg-slate-700/50"`}
