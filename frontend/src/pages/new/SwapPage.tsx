@@ -1,13 +1,11 @@
 import { Box, Fade, IconButton, Popper, Snackbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { CiSettings } from "react-icons/ci";
 import { FaSwimmingPool, FaWallet } from "react-icons/fa";
 import { HiArrowsUpDown } from "react-icons/hi2";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { LuArrowDownUp } from "react-icons/lu";
 import { useTxService } from "../../state/TxServiceProvider";
-import useNewBalnces from "../../state/useNewBalances";
 import usePairs from "../../state/usePairs";
 import useSwapProvider from "../../state/useSwapProvider";
 import NewTokenModal from "./NewTokenModal";
@@ -19,16 +17,28 @@ function SwapPage() {
     decimals: number;
     image?: string;
   };
-  const [tokens, setTokens] = useState<{ in: Token | null; out: Token | null }>(
-    { in: { address: null }, out: { address: null } }
-  );
+  const [tokens, setTokens] = useState<{ in: Token | any; out: Token | any }>({
+    in: { address: null },
+    out: { address: null },
+  });
+  const [modalOpen, setModalOpen] = useState({ in: false, out: false });
+
+  const [amounts, setAmounts] = useState<{ in: string; out: string }>({
+    in: "",
+    out: "",
+  });
   const { reader, writer } = useTxService();
-  const [tokenCheckList, setTokenCheckList] = useState([]);
-  const [amounts, setAmounts] = useState<any | null>(0);
-  const [searchInput, setSearchInput] = useState<any | null>("");
+
+  const [searchInput, setSearchInput] = useState({ in: "", out: "" });
+
   const [confirmTX, setConfirmTX] = useState(false);
   //default slippage 5%
   const [slippage, setSlippage] = useState("5");
+  const [debouncedIn, setDebouncedIn] = useState(amounts.in);
+  useEffect(() => {
+    const timeout = setTimeout(() => setDebouncedIn(amounts.in), 500);
+    return () => clearTimeout(timeout);
+  }, [amounts.in]);
   const quoteProvider = useSwapProvider(
     tokens.in.address,
     tokens.out.address,
@@ -36,16 +46,21 @@ function SwapPage() {
     slippage
   );
   const [txResults, setTxResults] = useState(null);
-  const balances = useNewBalnces(tokenCheckList);
-  const pairs = usePairs(searchInput, setTokens);
+  const pairs = usePairs(searchInput, setTokens, txResults, tokens);
+  useEffect(() => {
+    if (quoteProvider?.quote?.quoteOut && amounts.in !== "") {
+      setAmounts((prev: any) => ({
+        ...prev,
+        out: quoteProvider.quote.quoteOut,
+      }));
+    }
+  }, [quoteProvider?.quote?.quoteOut]);
+  const MemoizedSelector = React.memo(Selector);
+
   function SwapSettings() {
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-      setAnchorEl(event.currentTarget);
-      setOpen((previousOpen) => !previousOpen);
-    };
     useEffect(() => {
       console.log("slippage chnaged: ", slippage);
     }, [slippage]);
@@ -55,14 +70,7 @@ function SwapPage() {
     return (
       <div className="flex justify-between">
         <h1 className="font-bold text-gray-600 text-md">Swap Tokens</h1>
-        <button
-          aria-describedby={id}
-          type="button"
-          onClick={handleClick}
-          className="border rounded-full p-1 border-gray-500 bg-gray-800 text-gray-300 text-lg hover:bg-gray-800/50 hover:text-gray-300/50 hover:cursor-pointer"
-        >
-          <CiSettings />
-        </button>
+
         <Popper
           id={id}
           open={open}
@@ -159,14 +167,19 @@ function SwapPage() {
       <button
         disabled={quoteProvider.quote.error ? true : false}
         onClick={() => {
-          setConfirmTX(true);
+          if (quoteProvider.quote && quoteProvider.quote.assembledTX) {
+            setConfirmTX(true);
+          }
         }}
-        className="mt-5 border w-full font-bold hover:bg-slate-800/50 hover:cursor-pointer p-2.5 rounded-lg border-gray-800 bg-slate-800 text-white"
+        className={`"mt-5 border w-full font-bold hover:bg-slate-800/50 hover:cursor-pointer text-white mt-4 p-2.5 rounded-lg border-gray-800 ${
+          quoteProvider.quote.assembledTX ? "bg-slate-800" : "bg-slate-800/40"
+        } text-white"`}
       >
         {quoteProvider.quote.error ? quoteProvider.quote.error : " Swap Asset"}
       </button>
     );
   }
+  const [load, setLoad] = useState(false);
 
   function Selector({
     image,
@@ -176,32 +189,42 @@ function SwapPage() {
     searchInput,
     setSearchInput,
   }: any) {
+    console.log("type<", type);
+    const [amountss, setAmountss] = useState({ in: "", out: "" });
+    const quoteProviderss = useSwapProvider(
+      tokens.in.address,
+      tokens.out.address,
+      amountss.in,
+      slippage
+    );
+    console.log(state);
+
     return (
-      <div className="mt-4 p-5 border rounded-lg border-gray-600 bg-gray-800/60 grid grid-rows-1 gap-1">
+      <div className="mt-4 p-5 border rounded-lg border-gray-600 bg-gray-800/30 grid grid-rows-1 gap-1">
         <div className="flex justify-between">
           <input
             type="text"
             placeholder="0.00"
             className="text-2xl text-gray-300 font-bold outline-none w-60"
-            value={
-              type === "in"
-                ? amounts[type]
-                : type === "out" && quoteProvider
-                ? quoteProvider.quote.quoteOut
-                : "0.00"
-            }
+            value={amounts[type]}
             onChange={(e) => {
+              console.log(e.target.value);
+              e.preventDefault();
               setAmounts({ ...amounts, [type]: e.target.value });
             }}
           />
 
           <NewTokenModal
+            open={modalOpen[type]}
+            onOpen={() => setModalOpen((prev) => ({ ...prev, [type]: true }))}
+            onClose={() => setModalOpen((prev) => ({ ...prev, [type]: false }))}
             pairs={pairs || []}
             setter={setter}
             state={state}
             type={type}
             setSearchInput={setSearchInput}
             searchInput={searchInput}
+            search={pairs.searchToken}
           >
             <span
               className={`
@@ -233,7 +256,10 @@ function SwapPage() {
             <button
               onClick={() => {
                 if (state[type].balance) {
-                  setAmounts({ ...state, [type]: String(state[type].balance) });
+                  setAmounts((prev) => ({
+                    ...prev,
+                    [type]: String(state[type].balance),
+                  }));
                 }
               }}
             >
@@ -260,30 +286,38 @@ function SwapPage() {
     </React.Fragment>
   );
   return (
-    <div className="p-5 border w-[90%] m-auto mt-4 rounded-md bg-slate-900 border-slate-900">
+    <div className="p-5 border w-[450px] m-auto mt-4 rounded-md bg-[#1f2124] border-slate-900">
       <NewTxConfirmModal
         tokens={tokens}
         quote={quoteProvider.quote}
+        load={load}
+        setLoad={setLoad}
         action={async () => {
           console.log(
             "before tx is approved: ",
             quoteProvider.quote?.isApproved
           );
           const swap = async () => {
+            setLoad(true);
+
             console.log("pre swap: ,", quoteProvider.quote);
             const result: any = await writer.performSwap(
               quoteProvider.quote?.assembledTX
             );
+            setLoad(false);
             setTxResults(result);
-            setConfirmTX(false);
           };
 
           const approveSpending = async () => {
+            setLoad(true);
+
             await writer.approveTokens(
               quoteProvider?.quote?.assembledTX?.inputTokens[0]?.tokenAddress,
 
               quoteProvider?.quote?.assembledTX?.transaction?.to
             );
+            setLoad(false);
+
             quoteProvider.updateApproval(true);
           };
 
@@ -296,6 +330,8 @@ function SwapPage() {
         show={confirmTX}
         setShow={setConfirmTX}
         setResponse={setTxResults}
+        txResults={txResults}
+        setTxResults={setTxResults}
       />
       <Snackbar
         open={txResults !== null ? true : false}
@@ -310,7 +346,7 @@ function SwapPage() {
       />
       <SwapSettings />
       <div className="grid grid-flow-row  ">
-        <Selector
+        <MemoizedSelector
           image={""}
           setter={setTokens}
           state={tokens}
@@ -328,7 +364,7 @@ function SwapPage() {
         >
           <LuArrowDownUp />
         </button>
-        <Selector
+        <MemoizedSelector
           image={""}
           setter={setTokens}
           state={tokens}

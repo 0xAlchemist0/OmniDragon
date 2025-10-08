@@ -2,7 +2,11 @@
 
 import { formatUnits, parseUnits } from "viem";
 import contracts from "../utils/contracts";
-import { getTokenPrice } from "./dexscreener-handler";
+import {
+  getTokenImages,
+  getTokenNames,
+  getTokenPrice,
+} from "./dexscreener-handler";
 //code should be cleaned and easier when you complete swap functionality
 const endpoint = "https://api.odos.xyz/sor/quote/v2";
 const assembleEndpoint = "https://api.odos.xyz/sor/assemble";
@@ -79,6 +83,9 @@ export async function generateQuote(
       chainID,
     ]);
     const prices = await getTokenPrice([tokenIn, tokenOut], reader);
+    const images = await getTokenImages([tokenIn, tokenOut]);
+    const names = await getTokenNames([tokenIn, tokenOut]);
+
     requestQuoteParams.body = reqBody;
     const response = await fetch(endpoint, requestQuoteParams);
     if (response.status === 200) {
@@ -96,6 +103,11 @@ export async function generateQuote(
         isApproved: false,
         error: undefined,
         rawQuote: res,
+        images: {
+          in: images[0],
+          out: images[1],
+        },
+        names: { in: names[0], out: names[1] },
       };
 
       const usdValues: any = getUSDValues([inAmount, quoteOut], prices);

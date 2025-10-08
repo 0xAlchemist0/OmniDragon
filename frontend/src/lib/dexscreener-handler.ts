@@ -26,6 +26,22 @@ export async function getTokensInfo(tokensList: any, reader: any) {
   return partnersInfo;
 }
 
+export async function getTokensInfoV2(tokensList: any, reader: any) {
+  const chain = await reader.getChainName();
+  const partnersInfo = [];
+
+  for (let i = 0; i < tokensList.length; i++) {
+    const tokenInfo = await getToken(tokensList[i], chain);
+    if (tokenInfo !== false) {
+      partnersInfo.push(tokenInfo);
+    } else {
+      const unkownPair = unknownPairBody(chain, tokensList[i]);
+      partnersInfo.push(unkownPair);
+    }
+  }
+  const formatted = formatPairs(partnersInfo, reader);
+  return formatted;
+}
 export async function getTokenPrice(tokenList: any, reader: any) {
   const pairs = await getTokensInfo(tokenList, reader);
 
@@ -43,7 +59,7 @@ export async function getTokenPrice(tokenList: any, reader: any) {
 const defaultPairs: any = {
   sonic: [
     "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
-    "0x69Dc1c36F8B26Db3471ACF0a6469D815E9A27777",
+    "0x69F61b9f9FD12B06e5c913835891F307d107E777",
   ],
 };
 
@@ -163,6 +179,34 @@ export async function getToken(tokenAddress: string, chain: string) {
   } catch (error) {
     return false;
   }
+}
+
+export async function getTokenImages(tokens: any) {
+  const images = [];
+
+  for (const token in tokens) {
+    const currentToken = await getToken(tokens[token], "sonic");
+    if (currentToken.info) {
+      images.push(currentToken.info.imageUrl);
+    } else {
+      images.push(
+        "https://media.tenor.com/SsTnMMMQdkQAAAAe/confusion-emoji.png"
+      );
+    }
+  }
+  return images;
+}
+
+export async function getTokenNames(tokens: any) {
+  const names = [];
+
+  for (const token in tokens) {
+    const currentToken = await getToken(tokens[token], "sonic");
+    if (currentToken.baseToken) {
+      names.push(currentToken.baseToken.symbol);
+    }
+  }
+  return names;
 }
 
 //rechec flow of this file

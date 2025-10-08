@@ -1,14 +1,10 @@
-import HomeBottom from "../components/HomeBottom";
-import HomeHero from "../components/HomeHero";
-import HomeMidSection from "../components/HomeMidSection";
+import HomePage from "../components/HomeL";
 
 function Home() {
   return (
     <div>
       <div className="p-5">
-        <HomeHero />
-        <HomeMidSection />
-        <HomeBottom />
+        <HomePage />
       </div>
     </div>
   );

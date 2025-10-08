@@ -2,7 +2,7 @@
 
 :root {
   /* Backgrounds */
-  --color-background: #0f172afa; /* dark navy/black background */
+  --color-background: rgb(26, 28, 31); /* dark navy/black background */
   --color-card: #2b2e33; /* gunmetal gray */
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;

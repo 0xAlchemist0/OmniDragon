@@ -50,6 +50,7 @@ export class Write {
   // contract-writes.ts:68 Is this pool stable at all:  null
   // contract-writes.ts:90 Failed TX alert stableness  not fond!
   public async performSwap(assembledTX: any) {
+    let result = null;
     try {
       // const data = decodeFunctionData({
       //   abi: contracts.Odos.Router,
@@ -62,14 +63,16 @@ export class Write {
         value: assembledTX.transaction.value,
         data: assembledTX.transaction.data,
       });
-      const result = this.txResponse(true, tx);
+      result = this.txResponse(true, tx);
+      console.log("tx complete ");
+      console.log(result);
       return result;
     } catch (error) {
       console.log(error);
 
-      const result = this.txResponse(false, null);
-      return result;
+      result = this.txResponse(false, null);
     }
+    return result;
   }
   //   tokenIn: any,
   // tokenOut: any,

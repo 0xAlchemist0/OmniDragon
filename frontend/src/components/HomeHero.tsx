@@ -1,37 +1,52 @@
+import { motion } from "framer-motion";
+import { FaBook, FaGithub } from "react-icons/fa";
+
 function HomeHero() {
-  function HeroSpan(props: any) {
-    const { top, bottom }: any = props;
+  function HeroStat({ top, bottom }: any) {
     return (
-      <span className="grid grid-rows-1 ">
-        <h1 className="text-3xl font-bold text-[#ff6b7a]">{top}</h1>
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        className="flex flex-col items-center"
+      >
+        <h1 className="text-4xl font-bold text-[#ff6b7a]">{top}</h1>
         <h1 className="text-sm text-stone-300">{bottom}</h1>
-      </span>
+      </motion.div>
     );
   }
+
   return (
-    <div className="border  border-gray-800 rounded-lg text-center md:w-[40%] md:m-auto p-10 text-white">
-      <h1 className=" text-4xl font-bold bg-gradient-to-r from-[#e2ca2f] via-white to-[#db5656] bg-clip-text text-transparent">
+    <div className="text-center text-white py-20 bg-gradient-to-b from-[#0f172a] to-[#1e293b]">
+      <motion.h1
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-[#e2ca2f] via-white to-[#db5656] bg-clip-text text-transparent"
+      >
         Red Dragon
-      </h1>
-      <h1 className="text-xl/9 mt-10  font-bold w-[90%] m-auto ">
+      </motion.h1>
+
+      <p className="text-xl md:text-2xl mt-8 font-semibold text-gray-200">
         Next-Generation Cross-Chain Protocol
-      </h1>
-      <h1 className="text-lg/8 mt-5 font-light text-stone-300">
-        Revolutionary ERC-20 compatible token protocol built on LayerZero V2,
+      </p>
+
+      <p className="max-w-2xl mx-auto mt-5 text-gray-400 leading-relaxed">
+        A revolutionary ERC-20 compatible token protocol built on LayerZero V2,
         delivering secure cross-chain functionality with cryptographically
-        verifiable randomness through Chainlink VRF integration.
-      </h1>
-      <div className=" grid grid-flow-col gap-4 mt-10">
-        <HeroSpan top={"5+"} bottom={"Supported Chains"} />
-        <HeroSpan top={"100%"} bottom={"Verifiable"} />
-        <HeroSpan top={"24/7"} bottom={"Active Protocol"} />
+        verifiable randomness via Chainlink VRF integration.
+      </p>
+
+      <div className="flex justify-center gap-10 mt-12">
+        <HeroStat top="5+" bottom="Supported Chains" />
+        <HeroStat top="100%" bottom="Verifiable" />
+        <HeroStat top="24/7" bottom="Active Protocol" />
       </div>
-      <div className="mt-15 grid grid-flow-row gap-5 w-75 m-auto">
-        <button className="border border-yellow-900 font-extrabold  rounded-xl p-6 bg-gradient-to-r from-yellow-500 to-red-500 text-white">
-          Explore Documentation
+
+      <div className="mt-14 flex flex-col md:flex-row justify-center gap-5">
+        <button className="flex items-center justify-center gap-2 border border-yellow-900 font-bold rounded-xl px-8 py-4 bg-gradient-to-r from-yellow-500 to-red-500 hover:opacity-90 transition-all">
+          <FaBook /> Explore Documentation
         </button>
-        <button className="border border-stone-700 rounded-xl p-6">
-          View on Gthub
+        <button className="flex items-center justify-center gap-2 border border-stone-700 rounded-xl px-8 py-4 hover:bg-gray-800 transition-all">
+          <FaGithub /> View on GitHub
         </button>
       </div>
     </div>

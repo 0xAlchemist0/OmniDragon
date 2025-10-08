@@ -24,6 +24,8 @@ function useSwapProvider(
     rawQuote: null,
     assembledTX: null,
     updateApproval: null,
+    images: { in: null, out: null },
+    names: { in: null, out: null },
   });
 
   useEffect(() => {
