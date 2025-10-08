@@ -23,7 +23,7 @@ function Layout() {
   return (
     <>
       <TxServiceProvider userInfo={userInfo}>
-        <div className="text-accent-pink">
+        <div className="text-accent-pink ">
           <NavigatorTab />
           <Outlet />
         </div>

@@ -1,3 +1,4 @@
+import { TokenARB, TokenETH, TokenMATIC, TokenSOL } from "@web3icons/react";
 import { motion } from "framer-motion";
 import {
   FaDiscord,
@@ -7,17 +8,25 @@ import {
   FaShieldAlt,
 } from "react-icons/fa";
 import { MdOutlineAutoGraph } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 export default function Home() {
+  const chains = [
+    { name: "Ethereum", icon: <TokenETH className="size-20" /> },
+    { name: "Arbitrum", icon: <TokenARB className="size-20" /> },
+    { name: "Sonic", icon: <TokenSOL className="size-20" /> }, // placeholder for Sonic
+    { name: "Polygon", icon: <TokenMATIC className="size-20" /> },
+  ];
+
   return (
     <div
-      className="relative min-h-screen w-full overflow-hidden"
-      style={{ background: "#0f172afa" }}
+      className="relative min-h-screen w-[100%]  "
+      style={{ background: "rgb(26, 28, 31)" }} // exact dark background
     >
       {/* ===== floating background layers ===== */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-150px] left-[-150px] w-[700px] h-[700px] bg-gradient-to-br from-[#e2ca2f] via-[#db5656] to-transparent opacity-20 blur-[180px]" />
-        <div className="absolute bottom-[-100px] right-[-100px] w-[600px] h-[600px] bg-gradient-to-tr from-[#db5656] to-[#e2ca2f] opacity-10 blur-[180px]" />
+        <div className="absolute top-[-150px] left-[-150px] w-[700px] h-[700px] bg-gradient-to-br from-[#e2ca2f] via-[#db5656] to-transparent opacity-25 blur-[180px]" />
+        <div className="absolute bottom-[-100px] right-[-100px] w-[600px] h-[600px] bg-gradient-to-tr from-[#db5656] to-[#e2ca2f] opacity-15 blur-[180px]" />
       </div>
 
       {/* ===== HERO SECTION ===== */}
@@ -28,7 +37,7 @@ export default function Home() {
         className="relative z-10 flex flex-col items-center text-center pt-32 pb-40"
       >
         <motion.h1
-          className="text-6xl md:text-8xl font-extrabold bg-gradient-to-r from-[#e2ca2f] via-white to-[#db5656] bg-clip-text text-transparent leading-tight"
+          className="text-6xl md:text-8xl font-extrabold bg-gradient-to-r from-yellow-400 via-white to-red-500 bg-clip-text text-transparent leading-tight"
           whileHover={{ scale: 1.01 }}
         >
           Red Dragon Protocol
@@ -38,10 +47,13 @@ export default function Home() {
           generation of DeFi apps — built on LayerZero V2 and Chainlink VRF.
         </p>
         <div className="mt-12 flex flex-col sm:flex-row gap-6">
-          <button className="px-10 py-4 bg-gradient-to-r from-yellow-500 to-red-500 rounded-2xl font-bold text-white hover:scale-105 transition">
+          <Link
+            to={"/liquidity"}
+            className="px-10 py-4 bg-gradient-to-r from-yellow-500 to-red-500 rounded-2xl font-bold text-white hover:scale-105 transition"
+          >
             Launch App
-          </button>
-          <button className="px-10 py-4 border border-gray-700 rounded-2xl text-gray-300 hover:bg-[#1a2236] transition flex items-center justify-center gap-2">
+          </Link>
+          <button className="px-10 py-4 border border-gray-700 rounded-2xl text-gray-300 hover:bg-[#1a1c20] transition flex items-center justify-center gap-2">
             <FaGithub /> View on GitHub
           </button>
         </div>
@@ -96,8 +108,8 @@ export default function Home() {
             viewport={{ once: true }}
             className="relative"
           >
-            <div className="bg-gradient-to-br from-[#111727] to-[#1d243a] p-10 rounded-3xl shadow-2xl border border-gray-800 relative overflow-hidden">
-              <div className="absolute top-[-50px] right-[-50px] w-[200px] h-[200px] bg-gradient-to-r from-yellow-500 to-red-500 opacity-20 blur-[100px]" />
+            <div className="bg-gradient-to-br from-[#1a1c20] to-[#2a2c31] p-10 rounded-3xl shadow-2xl border border-gray-800 relative overflow-hidden">
+              <div className="absolute top-[-50px] right-[-50px] w-[200px] h-[200px] bg-gradient-to-r from-yellow-500 to-red-500 opacity-25 blur-[100px]" />
               <h3 className="text-xl font-semibold mb-6 text-gray-300">
                 Protocol Metrics (Live Sync)
               </h3>
@@ -125,18 +137,18 @@ export default function Home() {
       </section>
 
       {/* ===== ECOSYSTEM GRID ===== */}
-      <section className="relative z-10 px-10 py-28 bg-[#121a2f]/60 border-y border-gray-800 text-center">
+      <section className="relative z-10 px-10 py-28 bg-[rgb(26,28,31)] border-y border-gray-800 text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
           Connected Ecosystems
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 justify-items-center">
-          {["Ethereum", "Arbitrum", "Sonic", "Base", "Polygon"].map((chain) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 justify-center ms-10 ">
+          {chains.map((chain) => (
             <motion.div
-              key={chain}
+              key={chain.name}
               whileHover={{ scale: 1.05 }}
-              className="px-6 py-4 rounded-xl border border-gray-700 bg-[#0f172a] text-gray-300 text-sm font-medium hover:text-white hover:border-yellow-400 transition"
+              className=" "
             >
-              {chain}
+              <div className="mb-2">{chain.icon}</div>
             </motion.div>
           ))}
         </div>
@@ -161,7 +173,7 @@ export default function Home() {
           <button className="px-10 py-5 bg-gradient-to-r from-yellow-500 to-red-500 rounded-2xl font-bold hover:scale-105 transition">
             Start Building
           </button>
-          <button className="px-10 py-5 border border-gray-700 rounded-2xl hover:bg-[#1c2339] transition flex items-center justify-center gap-2">
+          <button className="px-10 py-5 border border-gray-700 rounded-2xl hover:bg-[#1c1f27] transition flex items-center justify-center gap-2">
             <FaDiscord /> Join Community
           </button>
         </div>

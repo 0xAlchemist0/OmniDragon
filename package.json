@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@web3icons/react": "^4.0.26",
     "framer-motion": "^12.23.22",
     "react-metamask-avatar": "^2.0.10",
     "undici": "^7.16.0"
