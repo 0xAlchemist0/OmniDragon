@@ -15,6 +15,7 @@ import { HiArrowsUpDown } from "react-icons/hi2";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { LuArrowDownUp } from "react-icons/lu";
+import { MdOutlineLocalGasStation } from "react-icons/md";
 import { useTxService } from "../../state/TxServiceProvider";
 import usePairs from "../../state/usePairs";
 import useSwapProvider from "../../state/useSwapProvider";
@@ -294,18 +295,34 @@ function SwapPage() {
     </React.Fragment>
   );
   return (
-    <div className="   m-auto mt-4 rounded-md">
-      <span className="flex gap-2 p-5 ms-2">
+    <div className="   m-auto mt-10 rounded-md">
+      {/* <div className="flex text-sm   gap-2 p-6 ">
         <h1 className="font-bold text-gray-600 text-md">Swap </h1>
         <h1 className="font-bold text-gray-600 text-md">Pools</h1>
-      </span>
+      </div> */}
       <div
-        className=" bg-[#1f2124] p-5 sm:p-6 md:p-8 
-         w-[90%] sm:w-[400px] md:w-[450px] 
-         m-auto border border-slate-900 
-         rounded-2xl shadow-lg 
-         max-h-[90vh] overflow-y-auto"
+        className="bg-[#1f2124] p-5 sm:p-6 md:p-8 
+    w-[95%] max-w-[450px] 
+    m-auto border border-slate-900 
+    rounded-2xl shadow-lg 
+    max-h-[90vh] overflow-y-auto"
       >
+        <div className="border flex justify-between bg-gray-900/20 p-1 rounded-md text-xs border-gray-700/80">
+          <div className="flex gap-2 p-2 text-white">
+            <img
+              src="https://files.svgcdn.io/token/sonic.png"
+              alt=""
+              className="border bg-white rounded-full size-5"
+            />
+            <h1 className="text-[13px] font-   text-gray-400 mt-0.5">Sonic</h1>
+          </div>
+          <div className="flex gap-3 p-2 text-white">
+            <h1 className="text-xs mt-0.5 text-gray-300 font-bold">-wS</h1>
+
+            <MdOutlineLocalGasStation className="text-orange-500 text-lg  animate-pulse rounded-full" />
+            <IoIosArrowDown className="mt-1 font-bold" />
+          </div>
+        </div>
         <NewTxConfirmModal
           tokens={tokens}
           quote={quoteProvider.quote}

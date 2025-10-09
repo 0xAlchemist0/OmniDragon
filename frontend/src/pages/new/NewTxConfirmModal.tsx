@@ -167,9 +167,9 @@ export default function NewTxConfirmModal({
                     <Accordion
                       className="border-0"
                       sx={{
-                        bgcolor: "#1f2124",
+                        bgcolor: "#1f293780",
                         color: "white",
-                        border: "#1f2124",
+                        border: "2px solid #1f2937",
                         marginBottom: "10px",
                       }}
                     >

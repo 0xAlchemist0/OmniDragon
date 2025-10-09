@@ -48,7 +48,7 @@ function ConnectWalletBtn({}) {
           className=""
           PaperProps={{
             sx: {
-              backgroundColor: "#FFFFFF1A",
+              backgroundColor: "rgb(26, 28, 31);",
               color: "white", // text color
               borderRadius: "12px", // optional, for softer look
               border: "1px solid #FFFFFF1A", // subtle border
@@ -78,11 +78,11 @@ function ConnectWalletBtn({}) {
           <DialogActions>
             <button
               onClick={handleClose}
-              className="border p-2.5 px-5 text-center rounded-md bg-gray-900/20 border-gray-700/90 "
+              className="border p-[10px] px-5 text-center rounded-md bg-gray-900/20 border-gray-700/90  text-sm"
             >
               <span className="grid grid-flow-row">
                 <IoCopyOutline className="m-auto" />
-                <h1>Copy Address</h1>
+                <h1 className="text-xs">Copy Address</h1>
               </span>
             </button>
             <button
@@ -90,11 +90,11 @@ function ConnectWalletBtn({}) {
                 handleClose();
                 logout();
               }}
-              className="border p-2.5 px-5 text-center rounded-md bg-gray-900/20 border-gray-700/90 "
+              className="border p-[7px] px-5 text-center rounded-md bg-gray-900/20 border-gray-700/90 "
             >
               <div className="grid grid-flow-row">
                 <IoExitOutline className="m-auto size-5" />
-                <h1>Disconnect</h1>
+                <h1 className="text-xs">Disconnect</h1>
               </div>
             </button>
           </DialogActions>

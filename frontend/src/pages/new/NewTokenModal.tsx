@@ -111,7 +111,7 @@ export default React.memo(
           </span>
           {pairs.searchResults ? (
             <button
-              className="grid grid-cols-8 mt-3 w-full p-2 hover:bg-slate-100/90"
+              className="grid grid-cols-8 mt-3 w-full p-2 hover:bg-stone-900/90"
               onClick={() => {
                 setter({ ...state, [String(type)]: pairs.searchResults });
                 search(type, "", true);
