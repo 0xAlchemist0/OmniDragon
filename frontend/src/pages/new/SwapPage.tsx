@@ -249,7 +249,7 @@ function SwapPage() {
                 className="size-5 rounded-full"
               />
               <h1 className="overflow-hidden text-xs mt-0.5">
-                {state[type].symbol ? state[type].symbol : "Select Token"}
+                {state[type].symbol ? state[type].symbol : "Select"}
               </h1>
             </span>
             <IoIosArrowDown className="mt-[-1.5px] text-gray-300 font-bold text-md" />
