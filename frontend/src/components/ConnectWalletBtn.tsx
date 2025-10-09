@@ -53,7 +53,6 @@ function ConnectWalletBtn({}) {
               borderRadius: "12px", // optional, for softer look
               border: "1px solid #FFFFFF1A", // subtle border
               padding: "25px",
-              bottom: "200px",
             },
           }}
         >

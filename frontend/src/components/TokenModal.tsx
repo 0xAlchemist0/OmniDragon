@@ -10,12 +10,19 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 470,
   bgcolor: "#111827",
-  border: "2px solid #000",
   borderRadius: "15px",
   boxShadow: 24,
-  p: 4,
+  border: "1px solid rgba(255, 255, 255, 0.08)",
+  p: { xs: 2.5, sm: 3.5, md: 4 },
+  width: {
+    xs: "88%", // tighter fit for iPhone/small screens
+    sm: "75%", // small tablets
+    md: 470, // desktop
+  },
+  maxWidth: "95vw", // never exceed viewport width
+  maxHeight: "90vh",
+  overflowY: "auto",
 };
 
 export default function TokenModal({

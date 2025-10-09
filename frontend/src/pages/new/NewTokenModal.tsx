@@ -4,19 +4,23 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import * as React from "react";
 import { FaCoins, FaSearch } from "react-icons/fa";
-
 const boxStyle = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 450,
-  bgcolor: "background.paper",
-  borderRadius: "10px",
-  border: "2px solid #000",
+  bgcolor: "#1A1C1F",
+  borderRadius: "15px",
   boxShadow: 24,
-  p: 4,
-  backgroundColor: "#1A1C1F",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
+  p: { xs: 2.5, sm: 3.5, md: 4 },
+  width: {
+    xs: "85%", // mobile
+    sm: 450, // tablets
+    md: 450, // desktop
+  },
+  maxHeight: "90vh",
+  overflowY: "auto",
 };
 
 export default React.memo(
@@ -208,7 +212,7 @@ export default React.memo(
         <Button
           onClick={onOpen}
           sx={style}
-          className="border p-2 text-nowrap rounded-lg flex gap-1.5  border-gray-600 bg-gray-900/90 text-white hover:cursor-pointer "
+          className="border p-2 me-2  p-3 text-nowrap rounded-lg  gap-1.5  border-gray-600 bg-gray-900/90 text-white hover:cursor-pointer "
         >
           {children}
         </Button>

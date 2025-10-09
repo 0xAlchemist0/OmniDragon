@@ -208,7 +208,7 @@ function SwapPage() {
     console.log(state);
 
     return (
-      <div className="mt-4 p-5 border rounded-lg border-[#FFFFFF1A] bg-gray-900/20 grid grid-rows-1 gap-1">
+      <div className="mt-4 p-4 border rounded-lg border-[#FFFFFF1A] bg-gray-900/20 grid grid-rows-1 gap-1">
         <div className="flex justify-between">
           <input
             type="text"
@@ -237,7 +237,7 @@ function SwapPage() {
             <span
               className={`
                 flex gap-1.5
-              } text-sm font-stretch-normal font-semibold text-gray-400`}
+              } text-sm font-stretch-normal font-semibold text-gray-400 overflow-hidden`}
             >
               <img
                 src={
@@ -299,7 +299,13 @@ function SwapPage() {
         <h1 className="font-bold text-gray-600 text-md">Swap </h1>
         <h1 className="font-bold text-gray-600 text-md">Pools</h1>
       </span>
-      <div className=" bg-[#1f2124] p-5 w-[450px] m-auto border-slate-900">
+      <div
+        className=" bg-[#1f2124] p-5 sm:p-6 md:p-8 
+         w-[90%] sm:w-[400px] md:w-[450px] 
+         m-auto border border-slate-900 
+         rounded-2xl shadow-lg 
+         max-h-[90vh] overflow-y-auto"
+      >
         <NewTxConfirmModal
           tokens={tokens}
           quote={quoteProvider.quote}
