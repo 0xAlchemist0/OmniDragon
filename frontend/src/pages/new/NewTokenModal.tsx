@@ -68,13 +68,13 @@ export default React.memo(
     function FeaturedPairs({ image = null }: any) {
       console.log(pairs);
       return (
-        <div className="grid grid-cols-3 mt-4 p-2 gap-y-3">
+        <div className="grid grid-flow-col gap-2 mt-4 p-2 gap-y-3">
           {pairs.pairs &&
             pairs.pairs.map((item: any, index: any) => {
-              if (index < 5) {
+              if (index <= 3) {
                 return (
-                  <div
-                    className="border flex col-span-1 w-22 p-1 justify-start  gap-2 bg-gray-800/60 border-gray-600 rounded-xl"
+                  <button
+                    className="border hover:cursor-pointer flex col-span-1 p-1 justify-start  gap-2 bg-gray-900/60 border-gray-700/40 p-2 rounded-xl"
                     key={index}
                     onClick={() => {
                       setter({ ...state, [type]: item });
@@ -86,10 +86,10 @@ export default React.memo(
                       alt=""
                       className="size-5 rounded-full "
                     />
-                    <h1 className="text-[9.5px] text-center font-semibold text-gray-400 mt-1">
+                    <h1 className="text-xs text-center font-semibold text-gray-400 mt-1">
                       {item.symbol}
                     </h1>
-                  </div>
+                  </button>
                 );
               }
             })}
@@ -107,7 +107,7 @@ export default React.memo(
           </span>
           {pairs.searchResults ? (
             <button
-              className="grid grid-cols-8 mt-3 w-full p-2 hover:bg-slate-800/90"
+              className="grid grid-cols-8 mt-3 w-full p-2 hover:bg-slate-100/90"
               onClick={() => {
                 setter({ ...state, [String(type)]: pairs.searchResults });
                 search(type, "", true);
@@ -153,7 +153,7 @@ export default React.memo(
               <>
                 {pairs.pairs.map((item: any, index: any) => (
                   <button
-                    className="grid grid-cols-8 mt-3 w-full p-2 hover:bg-slate-800/90"
+                    className="grid grid-cols-8 mt-3 w-full p-3 hover:bg-stone-900/90 hover:cursor-pointer"
                     key={index}
                     onClick={() => {
                       setter({ ...state, [String(type)]: item });
@@ -208,7 +208,7 @@ export default React.memo(
         <Button
           onClick={onOpen}
           sx={style}
-          className="border p-2 text-nowrap rounded-lg flex gap-1.5  border-gray-600 bg-gray-800/90 text-white hover:cursor-pointer "
+          className="border p-2 text-nowrap rounded-lg flex gap-1.5  border-gray-600 bg-gray-900/90 text-white hover:cursor-pointer "
         >
           {children}
         </Button>
@@ -223,8 +223,8 @@ export default React.memo(
         >
           <Box sx={boxStyle} onClick={(e) => e.stopPropagation()}>
             <div>
-              <h1>Select a token: Sonic</h1>
-              <div className="mt-2 border border-gray-600 grid grid-cols-8 p-1.5 rounded-md  bg-gray-800/60">
+              <h1>Chain</h1>
+              <div className="mt-2 border border-gray-600/40 grid grid-cols-8 p-1.5 rounded-md  bg-gray-800/30">
                 <FaSearch className="text-gray-500 col-span-1 mt-[7px] ms-4 text-sm" />
                 <input
                   type="text"

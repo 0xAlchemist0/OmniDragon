@@ -79,8 +79,6 @@ function SwapPage() {
 
     return (
       <div className="flex justify-between">
-        <h1 className="font-bold text-gray-600 text-md">Swap Tokens</h1>
-
         <Popper
           id={id}
           open={open}
@@ -181,8 +179,8 @@ function SwapPage() {
             setConfirmTX(true);
           }
         }}
-        className={`"mt-5 border w-full font-bold hover:bg-slate-800/50 hover:cursor-pointer text-white mt-4 p-2.5 rounded-lg border-gray-800 ${
-          quoteProvider.quote.assembledTX ? "bg-slate-800" : "bg-slate-800/40"
+        className={`"mt-5 mb-32border w-full font-bold hover:bg-slate-800/50 hover:cursor-pointer text-white mt-4 p-2.5 rounded-lg border-gray-800 ${
+          quoteProvider.quote.assembledTX ? "bg-gray-800/50" : "bg-slate-800/50"
         } text-white"`}
       >
         {quoteProvider.quote.error ? quoteProvider.quote.error : " Swap Asset"}
@@ -210,7 +208,7 @@ function SwapPage() {
     console.log(state);
 
     return (
-      <div className="mt-4 p-5 border rounded-lg border-gray-600 bg-gray-800/30 grid grid-rows-1 gap-1">
+      <div className="mt-4 p-5 border rounded-lg border-[#FFFFFF1A] bg-gray-900/20 grid grid-rows-1 gap-1">
         <div className="flex justify-between">
           <input
             type="text"
@@ -296,144 +294,153 @@ function SwapPage() {
     </React.Fragment>
   );
   return (
-    <div className="p-5 border w-[450px] m-auto mt-4 rounded-md bg-[#1f2124] border-slate-900">
-      <NewTxConfirmModal
-        tokens={tokens}
-        quote={quoteProvider.quote}
-        load={load}
-        setLoad={setLoad}
-        action={async () => {
-          console.log(
-            "before tx is approved: ",
-            quoteProvider.quote?.isApproved
-          );
-          const swap = async () => {
-            setLoad(true);
-
-            console.log("pre swap: ,", quoteProvider.quote);
-            const result: any = await writer.performSwap(
-              quoteProvider.quote?.assembledTX
+    <div className="   m-auto mt-4 rounded-md">
+      <span className="flex gap-2 p-5 ms-2">
+        <h1 className="font-bold text-gray-600 text-md">Swap </h1>
+        <h1 className="font-bold text-gray-600 text-md">Pools</h1>
+      </span>
+      <div className=" bg-[#1f2124] p-5 w-[450px] m-auto border-slate-900">
+        <NewTxConfirmModal
+          tokens={tokens}
+          quote={quoteProvider.quote}
+          load={load}
+          setLoad={setLoad}
+          action={async () => {
+            console.log(
+              "before tx is approved: ",
+              quoteProvider.quote?.isApproved
             );
-            setLoad(false);
-            setTxResults(result);
-          };
+            const swap = async () => {
+              setLoad(true);
 
-          const approveSpending = async () => {
-            setLoad(true);
+              console.log("pre swap: ,", quoteProvider.quote);
+              const result: any = await writer.performSwap(
+                quoteProvider.quote?.assembledTX
+              );
+              setLoad(false);
+              setTxResults(result);
+            };
 
-            await writer.approveTokens(
-              quoteProvider?.quote?.assembledTX?.inputTokens[0]?.tokenAddress,
+            const approveSpending = async () => {
+              setLoad(true);
 
-              quoteProvider?.quote?.assembledTX?.transaction?.to
-            );
-            setLoad(false);
+              await writer.approveTokens(
+                quoteProvider?.quote?.assembledTX?.inputTokens[0]?.tokenAddress,
 
-            quoteProvider.updateApproval(true);
-          };
+                quoteProvider?.quote?.assembledTX?.transaction?.to
+              );
+              setLoad(false);
 
-          if (quoteProvider.quote.isApproved === true) {
-            swap();
-          } else if (quoteProvider.quote.isApproved === false) {
-            approveSpending();
-          }
-        }}
-        show={confirmTX}
-        setShow={setConfirmTX}
-        setResponse={setTxResults}
-        txResults={txResults}
-        setTxResults={setTxResults}
-      />
-      <Snackbar
-        open={txResults !== null ? true : false}
-        autoHideDuration={6000}
-        onClose={() => {
-          setTxResults(null);
-        }}
-        message={
-          txResults && txResults.message !== null ? txResults.message : "Error"
-        }
-        action={action}
-      />
-      <SwapSettings />
-      <div className="grid grid-flow-row  ">
-        <MemoizedSelector
-          image={""}
-          setter={setTokens}
-          state={tokens}
-          type={"in"}
-          setSearchInput={setSearchInput}
-          searchInput={searchInput}
-        />
-        <button
-          className="flex justify-center text-2xl font-bold text-gray-500 mt-3 hover:cursor-pointer"
-          onClick={() => {
-            if (tokens.in || tokens.out) {
-              setTokens({ out: tokens.in, in: tokens.out });
+              quoteProvider.updateApproval(true);
+            };
+
+            if (quoteProvider.quote.isApproved === true) {
+              swap();
+            } else if (quoteProvider.quote.isApproved === false) {
+              approveSpending();
             }
           }}
-        >
-          <LuArrowDownUp />
-        </button>
-        <MemoizedSelector
-          image={""}
-          setter={setTokens}
-          state={tokens}
-          type={"out"}
-          setSearchInput={setSearchInput}
-          searchInput={searchInput}
+          show={confirmTX}
+          setShow={setConfirmTX}
+          setResponse={setTxResults}
+          txResults={txResults}
+          setTxResults={setTxResults}
         />
-      </div>{" "}
-      <div className="text-white mt-2">
-        {quoteProvider && quoteProvider.quote.names.in && (
-          <>
-            <Accordion
-              className="border-0"
-              sx={{
-                bgcolor: "#1f2124",
-                color: "white",
-                border: "#1f2124",
-              }}
-            >
-              <AccordionSummary
-                expandIcon={
-                  <HiArrowsUpDown className="text-gray-100 text-lg" />
-                }
-                aria-controls="panel1-content"
-                id="panel1-header"
-                className=""
+        <Snackbar
+          open={txResults !== null ? true : false}
+          autoHideDuration={6000}
+          onClose={() => {
+            setTxResults(null);
+          }}
+          message={
+            txResults && txResults.message !== null
+              ? txResults.message
+              : "Error"
+          }
+          action={action}
+        />
+        <SwapSettings />
+        <div className="grid grid-flow-row  ">
+          <MemoizedSelector
+            image={""}
+            setter={setTokens}
+            state={tokens}
+            type={"in"}
+            setSearchInput={setSearchInput}
+            searchInput={searchInput}
+          />
+          <button
+            className="flex justify-center text-2xl font-bold text-gray-500 mt-3 hover:cursor-pointer"
+            onClick={() => {
+              if (tokens.in || tokens.out) {
+                setTokens({ out: tokens.in, in: tokens.out });
+              }
+            }}
+          >
+            <LuArrowDownUp />
+          </button>
+          <MemoizedSelector
+            image={""}
+            setter={setTokens}
+            state={tokens}
+            type={"out"}
+            setSearchInput={setSearchInput}
+            searchInput={searchInput}
+          />
+        </div>{" "}
+        <div className="text-white">
+          {quoteProvider && quoteProvider.quote.names.in && (
+            <div className="mt-3">
+              <Accordion
+                className="border-0"
+                sx={{
+                  bgcolor: "#11182733",
+                  color: "white",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "12px",
+                }}
               >
-                Quote Details
-              </AccordionSummary>
-              <AccordionDetails className="border-0">
-                <Typography>
-                  <div className="text-sm">
-                    <div className="flex justify-between">
-                      <h1>Amount sold:</h1>
-                      <h1>{quoteProvider.quote.inAmount || "0"}</h1>
+                <AccordionSummary
+                  expandIcon={
+                    <HiArrowsUpDown className="text-gray-100 text-lg" />
+                  }
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                  className=""
+                >
+                  Quote Details
+                </AccordionSummary>
+                <AccordionDetails className="border-0">
+                  <Typography>
+                    <div className="text-sm">
+                      <div className="flex justify-between">
+                        <h1>Amount sold:</h1>
+                        <h1>{quoteProvider.quote.inAmount || "0"}</h1>
+                      </div>
+                      <div className="flex justify-between mt-2">
+                        <h1>Minimum recieved:</h1>
+                        <h1>{quoteProvider.quote.quoteOut || "0"}</h1>
+                      </div>
+                      <div className="flex justify-between mt-2">
+                        <h1>Exchange Rate:</h1>
+                        <h1>
+                          1{quoteProvider.quote.names.out} = $
+                          {quoteProvider.quote.prices.out}
+                        </h1>
+                      </div>
+                      <div className="flex justify-between mt-2">
+                        <h1>Slippage:</h1>
+                        <h1>5%</h1>
+                      </div>
                     </div>
-                    <div className="flex justify-between mt-2">
-                      <h1>Minimum recieved:</h1>
-                      <h1>{quoteProvider.quote.quoteOut || "0"}</h1>
-                    </div>
-                    <div className="flex justify-between mt-2">
-                      <h1>Exchange Rate:</h1>
-                      <h1>
-                        1{quoteProvider.quote.names.out} = $
-                        {quoteProvider.quote.prices.out}
-                      </h1>
-                    </div>
-                    <div className="flex justify-between mt-2">
-                      <h1>Slippage:</h1>
-                      <h1>5%</h1>
-                    </div>
-                  </div>
-                </Typography>
-              </AccordionDetails>
-            </Accordion>
-          </>
-        )}
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+            </div>
+          )}
+        </div>
+        <ExcecutionBTN />
       </div>
-      <ExcecutionBTN />
     </div>
   );
 }

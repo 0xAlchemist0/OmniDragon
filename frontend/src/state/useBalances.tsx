@@ -14,7 +14,6 @@ function useBalances(address?: string) {
       const provider = await user.getEthereumProvider();
       const account = user.address;
       const dragon = await getDragonBalance(account);
-
       const chain = user.chainId;
 
       const chainId = chain.slice(chain.indexOf(":") + 1);

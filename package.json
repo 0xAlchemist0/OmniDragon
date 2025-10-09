@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.4",
     "@web3icons/react": "^4.0.26",
     "framer-motion": "^12.23.22",
     "react-metamask-avatar": "^2.0.10",

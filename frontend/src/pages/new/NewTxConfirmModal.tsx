@@ -46,16 +46,16 @@ export default function NewTxConfirmModal({
     console.log(quote);
     console.log(tokens[type]);
     return (
-      <div className="border px-4 rounded-lg border-gray-700  bg-gray-800/30 grid grid-cols-2 ">
+      <div className="border px-4 rounded-lg border-gray-700  bg-gray-800/20 grid grid-cols-2 ">
         <div className="grid grid-rows-3">
           <h1 className="text-gray-500 font-light mt-2">
             {type === "in" ? "You Pay" : "You Recieve"}
           </h1>
-          <h1 className="text-gray-300 text-4xl font-bold">
+          <h1 className="text-gray-300 text-3xl font-bold">
             {quote ? quote.inAmount : ""}
           </h1>
           <h1 className="text-gray-600 text-lg font-bold mt-0.5">
-            {quote ? (type === "in" ? quote.inAmount : quote.quoteOut) : null}
+            $ {quote ? (type === "in" ? quote.USD.in : quote.USD.out) : null}
           </h1>
         </div>
         <div className="  flex justify-end mt-8">
@@ -68,7 +68,7 @@ export default function NewTxConfirmModal({
                 : null
             }
             alt=""
-            className="border rounded-full border-0 size-11"
+            className="border rounded-full border-0 size-10"
           />
         </div>
       </div>
@@ -143,7 +143,14 @@ export default function NewTxConfirmModal({
                   Get Help?
                 </a>
               </span>
-              <IoClose className="mt-1 text-[25px] text-gray-500" />
+              <button
+                className="hover:cursor-pointer"
+                onClick={() => {
+                  setShow(false);
+                }}
+              >
+                <IoClose className="mt-1 text-[25px] text-gray-500" />
+              </button>
             </div>
           </div>
           {txResults !== null && txResults.complete ? (
@@ -205,7 +212,7 @@ export default function NewTxConfirmModal({
                 )}
                 {quote.isApproved === false && (
                   <button
-                    className={`" border-0 mb-3 bg-slate-700 w-full p-2 rounded-lg hover:bg-slate-700/50"`}
+                    className={`" border-0 mb-3 bg-slate-800/50 w-full p-2 rounded-lg hover:bg-slate-700/50"`}
                     onClick={() => {
                       action();
                     }}
@@ -218,7 +225,7 @@ export default function NewTxConfirmModal({
                   </button>
                 )}
                 <button
-                  className={`"mt-3 border-0  bg-gray-800/90 w-full p-${
+                  className={`"mt-3 border-0  bg-slate-800/30 w-full p-${
                     quote.isApproved === false ? "2" : "4"
                   } rounded-lg hover:bg-slate-800/50 ${
                     load === true && " animate-spin"
