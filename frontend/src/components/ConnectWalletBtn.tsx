@@ -25,7 +25,7 @@ function ConnectWalletBtn({}) {
   const handleClose = () => {
     setOpen(false);
   };
-  function UserDrawer({ open, setOpen, user }: any) {
+  function UserDrawer({ open, setOpen }: any) {
     const Transition = React.forwardRef(function Transition(
       props: TransitionProps & {
         children: React.ReactElement<any, any>;
@@ -52,7 +52,8 @@ function ConnectWalletBtn({}) {
               color: "white", // text color
               borderRadius: "12px", // optional, for softer look
               border: "1px solid #FFFFFF1A", // subtle border
-              padding: "55px",
+              padding: "25px",
+              bottom: "200px",
             },
           }}
         >
@@ -105,7 +106,7 @@ function ConnectWalletBtn({}) {
 
   return (
     <div>
-      {user.address && <UserDrawer open={open} setOpen={setOpen} user={user} />}
+      {user && <UserDrawer open={open} setOpen={setOpen} />}
       <button
         className="text-md text-gray-200 font-light border p-2 rounded-lg border-gray-800 hover:border-gray-900 hover:text-gray-300"
         onClick={() => {
