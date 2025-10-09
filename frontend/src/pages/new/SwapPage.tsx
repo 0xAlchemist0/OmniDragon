@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { CiReceipt } from "react-icons/ci";
 import { FaSwimmingPool, FaWallet } from "react-icons/fa";
 import { HiArrowsUpDown } from "react-icons/hi2";
 import { IoIosArrowDown } from "react-icons/io";
@@ -180,8 +181,10 @@ function SwapPage() {
             setConfirmTX(true);
           }
         }}
-        className={`"mt-5 mb-32border w-full font-bold hover:bg-slate-800/50 hover:cursor-pointer text-white mt-4 p-2.5 rounded-lg border-gray-800 ${
-          quoteProvider.quote.assembledTX ? "bg-gray-800/50" : "bg-slate-800/50"
+        className={`"mt-5 mb-32border w-full font-bold hover:bg-slate-800/50 hover:cursor-pointer text-white mt-4 p-3.5 rounded-lg border-gray-800 ${
+          quoteProvider.quote.assembledTX
+            ? "bg-slate-800/50"
+            : "bg-slate-800/50"
         } text-white"`}
       >
         {quoteProvider.quote.error ? quoteProvider.quote.error : " Swap Asset"}
@@ -295,17 +298,37 @@ function SwapPage() {
     </React.Fragment>
   );
   return (
-    <div className="   m-auto mt-10 rounded-md">
+    <div className="   m-auto mt-10 rounded-md ">
       {/* <div className="flex text-sm   gap-2 p-6 ">
         <h1 className="font-bold text-gray-600 text-md">Swap </h1>
         <h1 className="font-bold text-gray-600 text-md">Pools</h1>
+      </div> */}
+      {/* <div
+        className="bg-[#1f2124] p-5 sm:p-6 md:p-8 
+    w-[95%] max-w-[450px] 
+    m-auto border border-slate-900 
+    rounded-2xl shadow-lg 
+    max-h-[90vh] overflow-y-auto flex justify-between rounded-md "
+      >
+        <div className="grid grid-flow-row  w-full text-gray-400/50 font-light">
+          <div className="flex justify-between">
+            {" "}
+            <h1 className="text-md ">Jackpot:</h1>
+            <h1 className="text-md">$2300</h1>
+          </div>
+          <div className="flex justify-between">
+            {" "}
+            <h1 className="text-md ">24hr Fees:</h1>
+            <h1 className="text-md">$2300</h1>
+          </div>
+        </div>
       </div> */}
       <div
         className="bg-[#1f2124] p-5 sm:p-6 md:p-8 
     w-[95%] max-w-[450px] 
     m-auto border border-slate-900 
     rounded-2xl shadow-lg 
-    max-h-[90vh] overflow-y-auto"
+    max-h-[90vh] overflow-y-auto "
       >
         <div className="border flex justify-between bg-gray-900/20 p-1 rounded-md text-xs border-gray-700/80">
           <div className="flex gap-2 p-2 text-white">
@@ -400,7 +423,7 @@ function SwapPage() {
               }
             }}
           >
-            <LuArrowDownUp />
+            <LuArrowDownUp className="text-gray-500 font-light" />
           </button>
           <MemoizedSelector
             image={""}
@@ -425,13 +448,16 @@ function SwapPage() {
               >
                 <AccordionSummary
                   expandIcon={
-                    <HiArrowsUpDown className="text-gray-100 text-lg" />
+                    <IoIosArrowDown className=" font-bold text-gray-300" />
                   }
                   aria-controls="panel1-content"
                   id="panel1-header"
                   className=""
                 >
-                  Quote Details
+                  <span className="flex gap-1">
+                    <CiReceipt className="text-gray-300 text-xl mt-0.5" />
+                    <h1 className="text-gray-300 font-">Quote Details</h1>
+                  </span>
                 </AccordionSummary>
                 <AccordionDetails className="border-0">
                   <Typography>

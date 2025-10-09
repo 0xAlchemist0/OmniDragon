@@ -6,9 +6,10 @@ import {
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
+import { CiReceipt } from "react-icons/ci";
 import { FaArrowRight, FaCheckCircle } from "react-icons/fa";
-import { HiArrowsUpDown } from "react-icons/hi2";
 import { ImSpinner8 } from "react-icons/im";
+import { IoIosArrowDown } from "react-icons/io";
 import { IoClose, IoHelpBuoyOutline } from "react-icons/io5";
 
 const style = {
@@ -175,13 +176,16 @@ export default function NewTxConfirmModal({
                     >
                       <AccordionSummary
                         expandIcon={
-                          <HiArrowsUpDown className="text-gray-100 text-sm" />
+                          <IoIosArrowDown className=" font-bold text-gray-300" />
                         }
                         aria-controls="panel1-content"
                         id="panel1-header"
                         className="text-sm"
                       >
-                        Quote Details
+                        <span className="flex gap-1">
+                          <CiReceipt className="text-gray-300 text-xl mt-0.5" />
+                          <h1 className="text-gray-300 font-">Quote Details</h1>
+                        </span>
                       </AccordionSummary>
                       <AccordionDetails className="border-0 text-xs">
                         <Typography>

@@ -46,7 +46,7 @@ export default React.memo(
       borderRadius: "0.5rem", // lg = 0.5rem
       display: "flex",
       gap: "0.375rem", // 1.5 * 0.25rem
-      bgcolor: "rgba(31, 41, 55, 0.9)", // gray-800/90
+      bgcolor: "#11182733", // gray-800/90
       color: "white",
       cursor: "pointer",
     };
@@ -212,7 +212,7 @@ export default React.memo(
         <Button
           onClick={onOpen}
           sx={style}
-          className="border p-2 me-2  p-3 text-nowrap rounded-lg  gap-1.5  border-gray-600 bg-gray-900/90 text-white hover:cursor-pointer "
+          className="border p-2 me-2  p-3 text-nowrap rounded-lg  gap-1.5  border-gray-600  bg-gray-900/20 text-white hover:cursor-pointer "
         >
           {children}
         </Button>
@@ -227,7 +227,6 @@ export default React.memo(
         >
           <Box sx={boxStyle} onClick={(e) => e.stopPropagation()}>
             <div>
-              <h1>Chain</h1>
               <div className="mt-2 border border-gray-600/40 grid grid-cols-8 p-1.5 rounded-md  bg-gray-800/30">
                 <FaSearch className="text-gray-500 col-span-1 mt-[7px] ms-4 text-sm" />
                 <input
